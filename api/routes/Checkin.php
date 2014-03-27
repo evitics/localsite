@@ -3,15 +3,15 @@ Class Checkin {
   public function __construct () {
     require_once("./library/DB.php");
     require_once("./library/GTED.php");
+    require_once("./library/Helpers.php");
     $this->gted = new GTED();
     $this->userDb = new DB("users");
     $this->checkinDb = new DB("checkin");
+
   }
   public function getStaistics($orgId, $meetingId) {
-    if(is_nan($orgId)) {
-      throw new Error("OrgId is not a number: " . $orgId); return;
-    }
-    $orgId = intval($orgId);
+    $orgId = Helpers::orgId2Int($orgId);
+    
     $sql = "SELECT COUNT(`timestamp`) FROM $org WHERE `meetingId` = :meetingId AND `timestamp` > DATE_SUB(NOW(), INTERVAL 6 HOURS)";
     $attendance = $this->checkinDb->fetchAll($sql, array("meetingId"=>$meetingId), "COLUMN");
     if($attendance) {
@@ -32,10 +32,8 @@ Class Checkin {
     Gets records in desc order
   */
   public function getRecords($orgId, $meetingId, $number) {
-    if(is_nan($orgId)) {
-      throw new Error("OrgId is not a number: " . $orgId); return;
-    }
-    $orgId = intval($orgId);
+    $orgId = Helpers::orgId2Int($orgId);
+
     $number = intval($number);
     $sql = "SELECT * FROM $orgId WHERE `meetingId` = :meetingId ORDER BY `timestamp` DESC LIMIT 0, $number";
     $records = $this->checkinDb->fetchAll($sql, array("meetingId"=>$meetingId));
@@ -57,10 +55,8 @@ Class Checkin {
     adds the gtusername associated with userId to our checkin table
   */
   private function checkInUser($orgId, $meetingId, $userId) {
-    if(is_nan($orgId)) {
-      throw new Error("OrgId is not a number: " . $orgId); return;
-    } 
-    $orgId = intval($orgId);
+    $orgId = Helpers::orgId2Int($orgId);
+
     try {
       $userId = $this->gtedUser($userId)["gtprimarygtaccountusername"][0];
     } catch(Error $e) {
@@ -82,10 +78,8 @@ Class Checkin {
     in the past 6 hours
   */
   public function isCheckedIn($orgId, $meetingId, $userId) {
-    if(is_nan($orgId)) {
-      throw new Error("OrgId is not a number: " . $orgId); return;
-    }
-    $orgId = intval($orgId);
+    $orgId = Helpers::orgId2Int($orgId);
+    
     $sql = "SELECT * FROM $orgId WHERE `timestamp` > DATE_SUB(NOW(), INTERVAL 6 HOURS) AND `userId` = :userId";
     $this->checkinDb->query($sql, array("userId" => $userId));
     if($this->checkinDb->rowCount() === 0) {

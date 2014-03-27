@@ -55,7 +55,24 @@ $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $u
     echo json_encode($statistics);
 
 });
-   
+
+$app->get('/log/:orgId/:meetingId/all', function($orgId, $meetingId) {
+
+});
+
+$app->get('/log/:orgId/:meetingId', function($orgId, $meetingId) { 
+
+});
+
+$app->get('/log/:orgId/:meetingId/:yyyy', function($orgId, $meetingId, $year) {
+
+});
+
+$app->get('/log/:orgId/:meetingId/:yyyy/:mm', function($orgId, $meetingId, $year, $month) {
+
+});
+
+
 $app->notFound(function () use ($app) {
    echo '{ "error" : "invalid API call"}';
 });
