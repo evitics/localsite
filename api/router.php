@@ -2,11 +2,12 @@
 
 $app->get('/user/:id', function($id) { User::get($id); });
 
+//require "routes/User.php";
+$app->get('/user/:id', function($id){ User::get($id); });
 $app->get('/organizations', function() { Organization::getAll(); });
-$app->get('/organization/:id', function($id) { Organization::get($id); });
-$app->post('/organization/join/:id', function($id) { Organization::join($id); });
-
-$app->post('/organization/memberPermission/:id', function($id) { User::permissions($id); });
+$app->get('/organizations/:id', function($id) { Organization::get($id); });
+$app->post('/organizations/join/:id', function($id) { Organization::join($id); });
+$app->post('/organizations/memberPermission/:id', function($id) { User::permissions($id); });
 
 //Gets the current checkins
 $app->get('/checkin/:orgId/:meetingId', function($orgId, $meetingId) {
