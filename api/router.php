@@ -56,60 +56,6 @@ $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $u
 
 });
    
-// $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $userId) {
-//   //Sample Output...also puts in a bad query (should always be @ top)
-//   echo '
-//   {
-//     "checkins" : [
-//         {
-//          "id" : "'.$userId.'",
-//          "major" : "CMPE",
-//          "email" : "cbookman@gatech.edu", 
-//          "affiliation" : "student",
-//          "name" : {
-//             "first" : "Colin",
-//             "middle" : "Paul",
-//             "last" : "Bookman",
-//             "full" : "'.$userId.'"
-//          },
-//          "checkinTime" : "2014-03-27T15:20:51.869Z",
-//          "isNew" : false
-//         },
-//         {
-//          "id" : "cbookman3",
-//          "major" : "CMPE",
-//          "email" : "cbookman@gatech.edu", 
-//          "affiliation" : "student",
-//          "name" : {
-//             "first" : "Colin",
-//             "middle" : "Paul",
-//             "last" : "Bookman",
-//             "full" : "Bookman, Colin Paul"
-//          },
-//          "checkinTime" : "2014-03-27T15:20:51.869Z",
-//          "isNew" : true
-//         },
-//         { "id" : "gburdell3",
-//          "major" : "CMPE",
-//          "email" : "cbookman@gatech.edu", 
-//          "affiliation" : "student",
-//          "name" : {
-//             "first" : "Colin",
-//             "middle" : "Paul",
-//             "last" : "Bookman",
-//             "full" : "Bookman, Colin Paul"
-//          },
-//          "checkinTime" : "2014-03-27T15:20:22.578Z",
-//          "isNew" : false
-//         }
-//     ],
-//     "statistics" : {
-//         "attendance" : 53,
-//         "rate"  : 2,
-//         "newMembers" : 4
-//     }
-//   }';
-// });
 $app->notFound(function () use ($app) {
    echo '{ "error" : "invalid API call"}';
 });

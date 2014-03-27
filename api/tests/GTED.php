@@ -21,7 +21,7 @@ function testGTED() {
     $gtAccessCardQuery2 = array(
       "gtaccesscardnumber"=> $gted->padWithZeros("378127",9) //could also run like this
     );
-    var_dump($gted->query($gtUsernameQuery)[0]);   
+    var_dump($gted->query($gtUsernameQuery)[0]["gtprimarygtaccountusername"][0]);   
     assert($gted->query($gtIdQuery)[0]["gtprimarygtaccountusername"][0]==="cbookman3");
     assert($gted->query($gtUsernameQuery)[0]["gtprimarygtaccountusername"][0]==="cbookman3");
     assert($gted->query($gtAccessCardQuery)[0]["gtprimarygtaccountusername"][0]==="cbookman3");
