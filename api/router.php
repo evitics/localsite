@@ -9,6 +9,24 @@ $app->get('/organizations/:id', function($id) { Organization::get($id); });
 $app->post('/organizations/join/:id', function($id) { Organization::join($id); });
 $app->post('/organizations/memberPermission/:id', function($id) { User::permissions($id); });
 
+$app->get('/meetings/:orgId/:meetingId', function($orgId, $meetingId) { 
+	$meeting = MeetingRoutes::getMeetId($orgId, $meetingId); 
+	if($meeting) {
+		echo json_encode($meeting);
+	} else {
+		echo '{"error" : "could not fetch meeting"}';
+	}
+});
+
+$app->get('/meetings/:orgId/', function($orgId){
+$org = MeetingRoutes::getOrgId($orgId); 
+	if($org) {
+		echo json_encode($org);
+	} else {
+		echo '{"error" : "could not fetch meeting"}';
+	}
+});
+
 //Gets the current checkins
 $app->get('/checkin/:orgId/:meetingId', function($orgId, $meetingId) {
     $checkin = new Checkin();
