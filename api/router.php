@@ -1,29 +1,43 @@
 <?php
 
-$app->get('/user/:id', function($id) { User::get($id); });
-
-//require "routes/User.php";
-$app->get('/user/:id', function($id){ User::get($id); });
-$app->get('/organizations', function() { Organization::getAll(); });
-$app->get('/organizations/:id', function($id) { Organization::get($id); });
-$app->post('/organizations/join/:id', function($id) { Organization::join($id); });
-$app->post('/organizations/memberPermission/:id', function($id) { User::permissions($id); });
-
+$app->get('/user/:id', function($id) { 
+    $userInfo = $User::get($id);
+    if($userInfo) {
+        echo json_encode($userInfo);
+    } else {
+        echo '{"error" : "could not fetch user info"}';
+    }
+});
+$app->get('/organizations', function() { 
+    $orgs = Organization::getAll();
+    if($orgs) {
+        echo json_encode($orgs);
+    } else {
+        echo '{"error" : "could not fetch the organizations"}';
+    }
+});
+$app->get('/organizations/:id', function($id) { 
+    $org = Organization::get($id);
+    if($org) {
+        echo json_encode($org);
+    } else {
+        echo '{"error" : "could not fetch org with id"'.$id.'"}';
+    }
+});
 $app->get('/meetings/:orgId/:meetingId', function($orgId, $meetingId) { 
 	$meeting = MeetingRoutes::getMeetId($orgId, $meetingId); 
 	if($meeting) {
 		echo json_encode($meeting);
 	} else {
-		echo '{"error" : "could not fetch meeting"}';
+		echo '{"error" : "could not fetch meeting with orgId: '.$orgId.' and meetingId: '.$meetingId.'"}';
 	}
 });
-
-$app->get('/meetings/:orgId/', function($orgId){
-$org = MeetingRoutes::getOrgId($orgId); 
+$app->get('/meetings/:orgId/', function($orgId) {
+    $org = MeetingRoutes::getOrgId($orgId); 
 	if($org) {
 		echo json_encode($org);
 	} else {
-		echo '{"error" : "could not fetch meeting"}';
+		echo '{"error" : "could not fetch meetings for orgId: '.$orgId.'"}';
 	}
 });
 

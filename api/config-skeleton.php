@@ -18,6 +18,8 @@ return array(
       "tree"=> "ou=people,dc=gted,dc=gatech,dc=edu",
       "password" => "**********",
       "rfidCardLength" => 9
-    )
+    ),
+    "jacketpagesURL"=> "http://jacketpages.gatech.edu"
 );
+
 ?>

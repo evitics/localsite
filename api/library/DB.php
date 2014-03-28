@@ -62,7 +62,7 @@ Class DB {
     if($this->query($sql, $params)) { //successfull
       $res = $this->currentQuery->fetchAll($type);
     } else {   //query didn't successfully run
-      $res = false;
+      return false;
     }
 
     if(count($res) > 0) {
