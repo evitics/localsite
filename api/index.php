@@ -3,7 +3,7 @@
 =======
 <?php
 //Make sure user is logged in
-$_ENV["REMOTE_USER"] = "gburdell3"; //remove when not testing
+$_ENV["REMOTE_USER"] = "cbookman3"; //remove when not testing
 
 if(empty($_ENV["REMOTE_USER"])) {
   echo '{"error" : "not logged in"}'; 

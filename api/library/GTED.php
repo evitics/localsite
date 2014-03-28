@@ -46,7 +46,7 @@ Class GTED {
     if no results match params, then returns a boolean false
   */
   private function filter($result, $from, $maxSize) {
-    $output = [];
+    $output = array();
     $currEntry = 0;
     $entries = ldap_get_entries($this->link, $result);
     $numEntries = $entries["count"];
@@ -115,6 +115,24 @@ Class GTED {
     } else {
       return false;
     }
+  }
+  /*
+    Return a single users information using either a 
+    buzzcardid, gtusername, or gtid
+  */
+  public function getUser($userId) {
+    $output = false;
+    if(is_numeric($userId)) { //must be a buzzcard or gtid
+      $userId = strval($userId);
+      if(strlen($userId) >= 9) {
+        $output = $this->gted->queryGTID($userId);
+      } else {
+        $output = $this->gted->queryBuzzCard($userId);
+      }
+    } else { //its a gt-username
+      $output = $this->gted->queryGTUsername($userId);
+    }
+    return $output;
   }
 }
 
