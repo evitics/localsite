@@ -5,11 +5,8 @@ $_ENV["REMOTE_USER"] = "cbookman3"; //remove when not testing
 if(empty($_ENV["REMOTE_USER"])) {
   echo '{"error" : "not logged in"}'; 
   return;
-  throw new Error("User Not Logged In");
-
-} else {
-  $GLOBALS["USERNAME"] = $_ENV["REMOTE_USER"];//$_ENV["REMOTE_USER"];
 }
+$GLOBALS["USERNAME"] = $_ENV["REMOTE_USER"];
 
 //Instatiate the SLIM framework
 require 'vendor/autoload.php';
@@ -32,17 +29,15 @@ spl_autoload_register(function ($class_name) {
 require "./router.php";
 //Get any fatal errors
 register_shutdown_function(function() {
-  http_response_code(404);
   $error = error_get_last();
-  if( $error !== NULL) {
+  if(isset($error)) {
+    $app->response()->status(404);
     $error =  $error["type"] . ': '. $error["message"];
-  } else {
-    $error = "PHP died, could not find error msg";
   }
 });
 //Capture slim errors
 $app->error(function (\Exception $e) use ($app) {
-  http_response_code(404);
+  $app->response()->status(404);
   echo '{ "error" : ' . json_encode($e->getMessage()) . ' }';
 });
 //Run app

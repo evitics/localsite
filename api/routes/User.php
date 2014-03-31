@@ -51,7 +51,9 @@ class User {
         $orgs[$i]["isPending"] = $userRecords[$i]["isPending"];    
 
         //fetch organization information
-        $org = $preparedOrgQuery->fetchAll(PDO::FETCH_ASSOC)[0];
+        $org = $preparedOrgQuery->fetchAll(PDO::FETCH_ASSOC);
+        $org = $org[0];
+        
         foreach($org as $column=>$value) {
           $orgs[$i][$column] = $value;
         }

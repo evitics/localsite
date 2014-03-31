@@ -31,9 +31,8 @@ function($,        Backbone,   OrganizationModel   ,  OrganizationCollection   ,
 
     //Fetch a list of organizations
     var that = this;
-    var organizationCollection = new OrganizationCollection({user: this.user});
+    var organizationCollection = new OrganizationCollection();
     organizationCollection.fetch({
-      user : that.user, //Here so that the model gets the user obj
       success : function() {
         that.app.views.current = new OrganizationList({organizations: organizationCollection, user: that.user});
         that.removeLoadingView();

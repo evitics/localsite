@@ -1,16 +1,24 @@
-define(['backbone'],
-function(backbone) {
+define(['backbone', 'views/errorPage'],
+function(backbone ,  ErrorPage       ) {
   var OrganizationModel = Backbone.Model.extend({
     idAttribute : 'orgId',
     initialize : function(options) {
-      if(typeof options.orgId === 'undefined') {
-        throw new Error("orgId not specified");
-      }
       this.orgId = options.orgId;
-      this.user = options.user;
     },
     url : function() {
-      return '/api/organizations/' + this.orgId;
+      var out = '/api/organizations';
+      if(typeof this.orgId !== "undefined") {
+        out += '/' + this.orgId;
+      }
+      return out;
+    },
+    parse : function(res) {
+      if(res.hasOwnProperty("error")) {
+        ( new ErrorPage() ).render(res.error);
+        return false;
+      } else {
+        return res;
+      }
     }
   });
   return OrganizationModel;
