@@ -10,14 +10,12 @@
   <div class="large-8 columns">
     <h3>Checkedin Guests:</h3>
       {{#each checkins}}
-        {{#unless invalid}}
-          <div class="row collapse">
-            <h5>
-              {{timestamp}} - {{name.full}}
-              {{#if isNew}} <img src="http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-11/512/new-icon.png" width="25px" height="25px"> {{/if}}
-            </h5>
-          </div>
-        {{/unless}}
+        <div class="row collapse">
+          <h5>
+            {{timestamp}} - {{name.full}}
+            {{#if isNew}} <img src="http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-11/512/new-icon.png" width="25px" height="25px"> {{/if}}
+          </h5>
+        </div>
       {{/each}}
   </div>
 </div>

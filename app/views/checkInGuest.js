@@ -34,14 +34,20 @@ function($,        Backbone,   templates ,  CheckInCollection    ) {
     renderCheckin : function(checkInCollection) {
       debug = checkInCollection;
       debug2 = this.checkInCollection;
-      var html = templates['checkinGuest/checkIns'](checkInCollection.toJSON());
-      //See if any 'errors'
-      var checkins = checkInCollection.get('checkins');
-      for(var i = 0; i < checkins.length; ++i) {
-        if(checkins[i].hasOwnProperty('invalid') && checkins[i].invalid === true) {
-          html = templates['checkinGuest/error'](checkins[i]) + html;
-        }
+      var html = '';
+      //See if any errors, warning, or if successful (under res property) 
+      var res = checkInCollection.get('res');
+      if(res && res.hasOwnProperty("success")) {
+        html += templates['checkinGuest/success'](res.success);
       }
+      if(res && res.hasOwnProperty("error")) {
+        html += templates['checkinGuest/error'](res.error);
+      }
+      if(res && res.hasOwnProperty("warning")) {
+        html += templates['checkinGuest/warning'](res.warning);
+      }
+      //render previous results
+      html += templates['checkinGuest/checkIns'](checkInCollection.toJSON());
       this.$el.find("#checkedinGuests").html(html);
     },
     checkinAGuest : function(ev) {

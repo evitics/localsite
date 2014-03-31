@@ -67,17 +67,16 @@ $app->get('/checkin/:orgId/:meetingId(/)', function($orgId, $meetingId) {
 $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $userId) {
     $checkin = new Checkin();
     $output = array(
+        "res" => array(),
         "checkins" => array(),
         "statistics" => array()
     );
+    //checkin user, and attach result to the 'message' property
+    $output["res"]=$checkin->guest($orgId, $meetingId, $userId);
 
-    //checkin user
-    if(!$checkin->guest($orgId, $meetingId, $userId)) { //error
-        array_push($output["checkins"],  array("invalid"=>true, "userId"=>$userId));
-    }
 
     //Get list of records
-    $records= $checkin->getRecords($orgId, $meetingId, 25);
+    $records = $checkin->getRecords($orgId, $meetingId, 25);
     if($records) {
         $output["checkins"]= array_merge($output["checkins"], $records);
     }

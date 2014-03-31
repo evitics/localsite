@@ -22,21 +22,38 @@ Class Checkin {
     Checks in a guest, returns true if successful, or false if unsucsessful
   */
   public function guest($orgId, $meetingId, $userId) {
+
+    $gtUsername = null;
+    $gtFullName = "";
+    //get userId in form of gtusername
     try {
-      $userId = $this->gted->getUser($userId)["gtprimarygtaccountusername"][0];
-      
-      if(empty($userId)) {
-        throw new Exception("Invalid user Id");
-      }
+      $userGTED = $this->gted->getUser($userId);
+      $gtUsername = $userGTED["gtprimarygtaccountusername"][0];
+      $gtFullName = $userGTED["cn"][0];
     } catch(Exception $e) {
-      return false;
+      //disregard exceptions, empty($userId) takes care of err handling
+    }
+
+    if(empty($gtUsername)) {
+      return array("error"=>"There is no user with an id of: " . $userId, "userId"=>$userId);
+    }
+
+    //Check if logged in user belongs to org
+    if(!$this->doesBelong2Org($GLOBALS["USERNAME"], $orgId)) {
+      return array("error"=>"Logged in user (".$GLOBALS["USERNAME"].") does not belong to orgId: ". $orgId, "userId"=>$userId);
     }
     
-    
-    if($this->isLoggedInOrg($orgId) && !$this->isCheckedIn($orgId, $meetingId, $userId)) {
-      return $this->checkInUser($orgId, $meetingId, $userId);
+    //Check if guest has already checked in
+    if(!$this->isCheckedIn($orgId, $meetingId, $gtUsername)) {
+      $res = $this->checkInUser($orgId, $meetingId, $gtUsername);
+      //if error, pass it
+      if(isset($res["error"])) { 
+        return $res; 
+      } else { //else pass a success!
+        return array("success"=>$gtFullName . " was checked in");
+      } 
     } else {
-      return false;
+      return array("error"=>"".$gtFullName . " has already checked in", "userId"=>$userId);
     }
   }
   /*
@@ -46,7 +63,7 @@ Class Checkin {
     $orgId = Helpers::id2Int($orgId);
     $number = intval($number);
 
-    $sql = "SELECT * FROM `$orgId` WHERE `meetingId` = :meetingId ORDER BY `timestamp` DESC LIMIT 0, $number";
+    $sql = "SELECT `userId`, `timestamp`, `by` FROM `$orgId` WHERE `meetingId` = :meetingId ORDER BY `timestamp` DESC LIMIT 0, $number";
     $records = $this->checkinDb->fetchAll($sql, array("meetingId"=>$meetingId));
     
     //Check if user has ever checked into this organization
@@ -88,7 +105,7 @@ Class Checkin {
     if($this->checkinDb->query($sql, array("userId"=>$userId, "meetingId"=>$meetingId, "by"=>$GLOBALS["USERNAME"]))) {
       return true;
     } else {
-      return false;
+      return array("error"=>"Could not checkin: " . $userId . ", into meeting: " . $meetingId . ", for organization: " . $orgId);
     }
 
   }
@@ -112,10 +129,11 @@ Class Checkin {
     Returns true if logged in user belogns to said org id
             false if logged in user doesn't belong to said org id
   */
-  public function isLoggedInOrg($orgId) {
+  public function doesBelong2Org($userId, $orgId) {
+
     $sql = "SELECT * FROM `user` WHERE `userId` = :userId AND `orgId` = :orgId";
 
-    $this->userDb->query($sql, array("orgId"=>$orgId, "userId"=>$GLOBALS["USERNAME"]));
+    $this->userDb->query($sql, array("orgId"=>$orgId, "userId"=>$userId));
     if($this->userDb->rowCount() >= 1) {
       return true;
     } else {

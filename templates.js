@@ -43,20 +43,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return buffer;
   });
 
-this["templates"]["checkinGuest/alreadyCheckedIn"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
-  this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
-
-
-  buffer += "<div data-alert=\"\" class=\"alert-box warning round\">\n   ";
-  if (stack1 = helpers.userId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
-  else { stack1 = (depth0 && depth0.userId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
-  buffer += escapeExpression(stack1)
-    + " has already checkedIn\n</div>";
-  return buffer;
-  });
-
 this["templates"]["checkinGuest/checkIns"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -64,29 +50,20 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n        ";
-  stack1 = helpers.unless.call(depth0, (depth0 && depth0.invalid), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n      ";
-  return buffer;
-  }
-function program2(depth0,data) {
-  
   var buffer = "", stack1, stack2;
-  buffer += "\n          <div class=\"row collapse\">\n            <h5>\n              ";
+  buffer += "\n        <div class=\"row collapse\">\n          <h5>\n            ";
   if (stack1 = helpers.timestamp) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.timestamp); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
     + " - "
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.name)),stack1 == null || stack1 === false ? stack1 : stack1.full)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\n              ";
-  stack2 = helpers['if'].call(depth0, (depth0 && depth0.isNew), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+    + "\n            ";
+  stack2 = helpers['if'].call(depth0, (depth0 && depth0.isNew), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n            </h5>\n          </div>\n        ";
+  buffer += "\n          </h5>\n        </div>\n      ";
   return buffer;
   }
-function program3(depth0,data) {
+function program2(depth0,data) {
   
   
   return " <img src=\"http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-11/512/new-icon.png\" width=\"25px\" height=\"25px\"> ";
@@ -104,13 +81,35 @@ function program3(depth0,data) {
 this["templates"]["checkinGuest/error"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
+  var buffer = "", functionType="function", escapeExpression=this.escapeExpression;
 
 
-  buffer += "<div data-alert=\"\" class=\"alert-box alert round\">\n  Invalid Id: ";
-  if (stack1 = helpers.userId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
-  else { stack1 = (depth0 && depth0.userId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
-  buffer += escapeExpression(stack1)
+  buffer += "<div data-alert=\"\" class=\"alert-box alert round\">\n  "
+    + escapeExpression((typeof depth0 === functionType ? depth0.apply(depth0) : depth0))
+    + "\n</div>";
+  return buffer;
+  });
+
+this["templates"]["checkinGuest/success"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<div data-alert=\"\" class=\"alert-box success round\">\n  "
+    + escapeExpression((typeof depth0 === functionType ? depth0.apply(depth0) : depth0))
+    + "\n</div>";
+  return buffer;
+  });
+
+this["templates"]["checkinGuest/warning"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<div data-alert=\"\" class=\"alert-box warning round\">\n  "
+    + escapeExpression((typeof depth0 === functionType ? depth0.apply(depth0) : depth0))
     + "\n</div>";
   return buffer;
   });
