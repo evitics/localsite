@@ -11,8 +11,8 @@ function($,        Backbone,   templates ,  CheckInCollection    ) {
     
       //Create checkinCollection      
       var params = {};
-      params.meetingId = this.meeting.get('id');
-      params.orgId = this.organization.get('id');
+      params.meetingId = this.meeting.get('meetingId');
+      params.orgId = this.organization.get('orgId');
       
       this.checkInCollection = new CheckInCollection(params);
       this.listenTo(this.checkInCollection, 'reset add change remove', this.renderCheckin, this);
@@ -32,6 +32,8 @@ function($,        Backbone,   templates ,  CheckInCollection    ) {
     },
     //Renders the checkins whenever checkInCollection is fetched
     renderCheckin : function(checkInCollection) {
+      debug = checkInCollection;
+      debug2 = this.checkInCollection;
       var html = templates['checkinGuest/checkIns'](checkInCollection.toJSON());
       //See if any 'errors'
       var checkins = checkInCollection.get('checkins');

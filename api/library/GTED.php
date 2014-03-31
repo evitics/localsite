@@ -125,12 +125,12 @@ Class GTED {
     if(is_numeric($userId)) { //must be a buzzcard or gtid
       $userId = strval($userId);
       if(strlen($userId) >= 9) {
-        $output = $this->gted->queryGTID($userId);
+        $output = $this->queryGTID($userId);
       } else {
-        $output = $this->gted->queryBuzzCard($userId);
+        $output = $this->queryBuzzCard($userId);
       }
     } else { //its a gt-username
-      $output = $this->gted->queryGTUsername($userId);
+      $output = $this->queryGTUsername($userId);
     }
     return $output;
   }

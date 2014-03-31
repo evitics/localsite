@@ -33,7 +33,7 @@ function($,        Backbone,   templates) {
       var usersOrganizations = this.user.get("organizations");
       
       this.organizations.each(function(organization) {
-        if(!usersOrganizations.get(organization.id)) {
+        if(!usersOrganizations.get(organization.orgId)) {
           html += itemTemplate(organization.toJSON());
         }
       });

@@ -1,6 +1,12 @@
 <li>
-  <a class="th" href="/organizations/{{id}}">
-    <h4>{{name}}</h4>
-    <img src="{{img.src}}"></img><br/>
+  <a class="th" href="/organizations/{{orgId}}">
+    <h4>
+      {{#if short_name}}
+        {{short_name}}
+      {{else}}
+        {{name}}
+      {{/if}}
+    </h4>
+    <img src="{{logo_path}}"></img>
   </a>
 </li>

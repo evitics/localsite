@@ -1,8 +1,9 @@
 define(['backbone', "collections/organization", "collections/meeting"],
 function(backbone,   OrganizationCollection   ,  MeetingCollection   ) {
   var UserModel = Backbone.Model.extend({
+    idAttribute : "username",
     initialize: function(options) {
-      this.set('id', options.id);
+      this.set('username', options.username);
     },
     parse : function(res) {
       //convert to organization collection

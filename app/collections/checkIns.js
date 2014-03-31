@@ -1,7 +1,6 @@
 define(['backbone'],
 function(backbone) {
   var CheckInCollection = Backbone.Model.extend({
-    idAttribute : 'id',
     initialize: function(options) {
       //Check that required params given
       if(typeof options.orgId === "undefined") {

@@ -1,11 +1,11 @@
 <?php
 
 class Helpers {
-  public static function orgId2Int($orgId) {
-    if(is_nan($orgId)) {
-      throw new Error("OrgId is not a number: " . $orgId); return;
+  public static function id2Int($id) {
+    if(is_nan($id)) {
+      throw new Exception("Id is not a number: " . $id); return;
     }
-    return intval($orgId);
+    return intval($id);
   }
 }
 

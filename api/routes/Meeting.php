@@ -2,7 +2,7 @@
 
 require_once("./library/DB.php");
 
-class MeetingRoutes {
+class Meetings {
   public static function getMeetId($orgId, $meetingId) 
   {
 	$db = new DB("evitics");

@@ -13,8 +13,7 @@ if(empty($_ENV["REMOTE_USER"])) {
 
 //Instatiate the SLIM framework
 require 'vendor/autoload.php';
-$app = new \Slim\Slim();
-
+$app = new \Slim\Slim(array("debug"=>true));
 //Change the http Content-type header to json
 $response = $app->response();
 $response['Content-Type'] = "application/json; charset=utf-8";
@@ -31,10 +30,22 @@ spl_autoload_register(function ($class_name) {
 
 //Binds our routes
 require "./router.php";
+//Get any fatal errors
+register_shutdown_function(function() {
+  http_response_code(404);
+  $error = error_get_last();
+  if( $error !== NULL) {
+    $error =  $error["type"] . ': '. $error["message"];
+  } else {
+    $error = "PHP died, could not find error msg";
+  }
+});
+//Capture slim errors
+$app->error(function (\Exception $e) use ($app) {
+  http_response_code(404);
+  echo '{ "error" : ' . json_encode($e->getMessage()) . ' }';
+});
+//Run app
+$app->run();
 
-try {
-  $app->run();
-} catch(Error $e) {
-  echo '{ "error" : ' + json_encode($e->getMessage()) + '}';
-}
 ?>

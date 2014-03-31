@@ -1,13 +1,13 @@
 <?php
 require_once("./library/DB.php");
 require_once("./library/GTED.php");
-require_once("./config.php");
-
 class User {
   public static function get($userId) {
+    $config = require("./config.php");
+
     //Only allow logged in users to request data on themselves
     if($userId !== $GLOBALS["USERNAME"]) {
-      throw new Error("Cannot request user information on people other than yourself");
+      throw new Exception("Cannot request user information on people other than yourself");
       return false;
     }
     $eviticsDB = new DB("evitics");
@@ -17,38 +17,56 @@ class User {
     $result = array();
     
     //Getting the User info from GTED   
-    $userinfo = $gted->getUser($userId);
-    $result["email"] = $userinfo["mail"][0];
-    $result["firstname"]= $userinfo["givenname"][0];
-    $result["lastnname"] = $userinfo["sn"][0];  
+    $userInfo = $gted->getUser($userId);
+    if(!$userInfo) { throw new Error("User with username: $userId was not found"); }
+    $result["username"] = $userInfo["gtprimarygtaccountusername"][0];
+    $result["email"] = $userInfo["mail"][0];
+    
+    $result["name"] = array();
+    $result["name"]["first"]= $userInfo["givenname"][0];
+    $result["name"]["last"] = $userInfo["sn"][0];  
     
     $userQuery = "SELECT `orgId`, `writePerm`, `isPending` FROM `user` WHERE `userId`=:userId"; 
     $userRecords = $eviticsDB->fetchAll($userQuery, array("userId"=>$userId));
     if($userRecords === false) {
-      throw new Error("Could not fetch user with userId: " . $userId);
+      throw new Exception("Could not fetch user with userId: " . $userId);
       return false; 
     }
     
-    $orgQuery = "SELECT `orgId`,`name`, `description`, `website`, `logo_path`, `org_email`, `phone_number` FROM `organizations` WHERE `orgId`=:orgId";  
+    $orgQuery = "SELECT * FROM `organizations` WHERE `orgId`=:orgId";  
     $preparedOrgQuery = $jacketpagesDB->prepare($orgQuery);
 
+    $meetingQuery = "SELECT * FROM `meeting` WHERE `orgId` = :orgId";
+    $preparedMeetingQuery = $eviticsDB->prepare($meetingQuery);
 
+    //attach all organization information
+    $orgs = array();
     for($i=0, $l = count($userRecords); $i < $l; ++$i) {
       //If Checks if organization exists, and we can get jacketpages info on said org
-      if($preparedOrgQuery->execute($query2, array("orgId"=>$userRecords[$i]["orgId"]))) {
-        $result["organizations"][$i]["orgId"]     = $userRecords[$i]["orgId"];      
-        $result["organizations"][$i]["writePerm"] = $userRecords[$i]["writePerm"];
-        $result["organizations"][$i]["isPending"] = $userRecords[$i]["isPending"];    
+      $orgId = $userRecords[$i]["orgId"];
+      if($preparedOrgQuery->execute(array("orgId"=>$orgId)) && $preparedOrgQuery->rowCount() === 1) {
+        $orgs[$i] = array();
+        $orgs[$i]["orgId"]     = $orgId;
+        $orgs[$i]["writePerm"] = $userRecords[$i]["writePerm"];
+        $orgs[$i]["isPending"] = $userRecords[$i]["isPending"];    
+
+        //fetch organization information
+        $org = $preparedOrgQuery->fetchAll(PDO::FETCH_ASSOC)[0];
+        foreach($org as $column=>$value) {
+          $orgs[$i][$column] = $value;
+        }
+        //add jacketpages url to logo path
+        $orgs[$i]["logo_path"] = $config["jacketpagesURL"] . $orgs[$i]["logo_path"];
         
-        $org = $preparedOrgQuery->fetchAll();
-        $result["organizations"][$i]["name"] = $org[0]["name"];
-        $result["organizations"][$i]["website"] = $org[0]["website"];
-        $result["organizations"][$i]["description"] = $org[0]["description"];  
-        $result["organizations"][$i]["email"] = $org[0]["org_email"];      
-        $result["organizations"][$i]["phone"] = $org[0]["phone_number"];
-        $result["organizations"][$i]["logo"] = "http://jacketpages.gatech.edu". $org[0]["logo_path"];              
+        //Fetch organization's meeting
+        $orgs[$i]["meetings"] = array();
+
+        if($preparedMeetingQuery->execute(array("orgId"=>$orgId)) && $preparedMeetingQuery->rowCount() > 0) {
+          $orgs[$i]["meetings"] = $preparedMeetingQuery->fetchAll(PDO::FETCH_ASSOC);
+        } 
       }
     }
+    $result["organizations"] = $orgs;
     return $result;
   }
   public static function permissions($id) 

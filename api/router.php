@@ -1,43 +1,43 @@
 <?php
 
 $app->get('/user/:id', function($id) { 
-    $userInfo = $User::get($id);
+    $userInfo = User::get($id);
     if($userInfo) {
-        echo json_encode($userInfo);
+        echo json_encode($userInfo, JSON_PRETTY_PRINT);
     } else {
-        echo '{"error" : "could not fetch user info"}';
+        throw new Exception("Could not fetch user info");
     }
 });
 $app->get('/organizations', function() { 
     $orgs = Organization::getAll();
     if($orgs) {
-        echo json_encode($orgs);
+        echo json_encode($orgs, JSON_PRETTY_PRINT);
     } else {
-        echo '{"error" : "could not fetch the organizations"}';
+        throw new Exception("Could not fetch all of the organizations");
     }
 });
 $app->get('/organizations/:id', function($id) { 
     $org = Organization::get($id);
     if($org) {
-        echo json_encode($org);
+        echo json_encode($org, JSON_PRETTY_PRINT);
     } else {
-        echo '{"error" : "could not fetch org with id"'.$id.'"}';
+        throw new Exception("Could not fetch org with id: $id");
     }
 });
 $app->get('/meetings/:orgId/:meetingId', function($orgId, $meetingId) { 
-	$meeting = MeetingRoutes::getMeetId($orgId, $meetingId); 
+	$meeting = Meeting::getMeetId($orgId, $meetingId); 
 	if($meeting) {
 		echo json_encode($meeting);
 	} else {
-		echo '{"error" : "could not fetch meeting with orgId: '.$orgId.' and meetingId: '.$meetingId.'"}';
+        throw new Exception("Could not fetch the meeting with orgId: $orgId, and meetingId: $meetingId");
 	}
 });
 $app->get('/meetings/:orgId/', function($orgId) {
-    $org = MeetingRoutes::getOrgId($orgId); 
+    $org = Meeting::getOrgId($orgId); 
 	if($org) {
-		echo json_encode($org);
+		echo json_encode($org, JSON_PRETTY_PRINT);
 	} else {
-		echo '{"error" : "could not fetch meetings for orgId: '.$orgId.'"}';
+        throw new Exception("Could not fetch meetings for orgId: $orgId");
 	}
 });
 
@@ -48,19 +48,24 @@ $app->get('/checkin/:orgId/:meetingId', function($orgId, $meetingId) {
         "checkins" => array(),
         "statistics" => array()
     );
-   
     //Get list of records
     $records= $checkin->getRecords($orgId, $meetingId, 25);
     if($records) {
-        array_push($output["checkins"], $records);
+        foreach($records as $record) {
+            array_push($output["checkins"], $record);    
+        }
     }
 
     //Get statistics on event
     $statistics = $checkin->getStaistics($orgId, $meetingId);
+
     if($statistics) {
-        array_push($output["statistics"], $statistics);  
+        foreach($statistics as $name=>$statistic) {
+            $output["statistics"][$name] = $statistic;
+        }
     }
-    echo json_encode($statistics);
+
+    echo json_encode($output, JSON_PRETTY_PRINT);
 });
 
 $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $userId) {
@@ -69,23 +74,26 @@ $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $u
         "checkins" => array(),
         "statistics" => array()
     );
+
     //checkin user
     if(!$checkin->guest($orgId, $meetingId, $userId)) { //error
-        array_push($output["checkins"],  array("invalid"=>true, "id"=>$userId));
+        array_push($output["checkins"],  array("invalid"=>true, "userId"=>$userId));
     }
 
     //Get list of records
     $records= $checkin->getRecords($orgId, $meetingId, 25);
     if($records) {
-        array_push($output["checkins"], $records);
+        foreach($records as $record) {
+            array_push($output["checkins"], $record);
+        }
     }
-
     //Get statistics on event
     $statistics = $checkin->getStaistics($orgId, $meetingId);
     if($statistics) {
         array_push($output["statistics"], $statistics);  
     }
-    echo json_encode($statistics);
+
+    echo json_encode($output, JSON_PRETTY_PRINT);
 
 });
 
@@ -107,6 +115,6 @@ $app->get('/log/:orgId/:meetingId/:yyyy/:mm', function($orgId, $meetingId, $year
 
 
 $app->notFound(function () use ($app) {
-   echo '{ "error" : "invalid API call"}';
+    throw new Exception("Invalid api call");
 });
 ?>
