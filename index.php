@@ -49,7 +49,14 @@
   </div>
   <script>
     //PHP should write the username here
-    var username = "<?php $_ENV["REMOTE_USER"] = "cbookman3"; echo $_ENV["REMOTE_USER"]; ?>";
+    var username = "<?php 
+	$config = require("./api/config.php");
+	if($config["development"]) {
+		echo $config["development"]["username"];
+	} else {
+		echo $_ENV["REMOTE_USER"];
+	}
+    ?>";
   </script>
   <script>
     var debug = null; //debug variable

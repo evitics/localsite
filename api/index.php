@@ -1,7 +1,10 @@
 <?php
-//Make sure user is logged in
-$_ENV["REMOTE_USER"] = "cbookman3"; //remove when not testing
+$config = require("./config.php");
+if($config["development"]) {
+  $_ENV["REMOTE_USER"] = $config["development"]["username"];
+}
 
+//Make sure user is logged in
 if(empty($_ENV["REMOTE_USER"])) {
   echo '{"error" : "not logged in"}'; 
   return;
@@ -10,7 +13,7 @@ $GLOBALS["USERNAME"] = $_ENV["REMOTE_USER"];
 
 //Instatiate the SLIM framework
 require 'vendor/autoload.php';
-$app = new \Slim\Slim(array("debug"=>true));
+$app = new \Slim\Slim(array("debug"=>false));
 //Change the http Content-type header to json
 $response = $app->response();
 $response['Content-Type'] = "application/json; charset=utf-8";

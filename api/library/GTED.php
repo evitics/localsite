@@ -1,10 +1,17 @@
 <?php
 Class GTED {
+  private $ldapConfig;
+  private $cacheDB;
+  private static $cacheFields = array("username","gtid","buzzcardId");
   function __construct () {
     $config = require(dirname(__FILE__)."/../config.php");
-    $ldapConfig = $config["ldap"];
-    $this->tree = $ldapConfig["tree"];
-    $this->rfidCardLength = $ldapConfig["rfidCardLength"];
+    $this->ldapConfig = $config["ldap"];
+    $this->tree = $this->ldapConfig["tree"];
+    $this->rfidCardLength = $this->ldapConfig["rfidCardLength"];
+    $this->link = null; //LDAP connection stored here
+  }
+  private function _connect2Ldap() {
+    $ldapConfig = $this->ldapConfig;
     $this->link = $ldapconn = ldap_connect($ldapConfig["host"], $ldapConfig["port"]);
     if(!$this->link) {
       throw new Exception("Unable to connect to the LDAP database");
@@ -15,11 +22,138 @@ Class GTED {
       }
     }
   }
+  private function _connect2Cache() {
+    require_once(dirname(__FILE__)."/DB.php");
+    if(!$this->cacheDB) {
+      $this->cacheDB = new DB($this->ldapConfig["cache"]["database"]);
+    }
+    if($this->cacheDB) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   /*
+    Gets (and potentially sets) cached result using the username field
+  */
+  public function _cacheByUsername($username) {
+    //try and get cache
+    if($cache = $this->_getCacheByField("username", $username)) {
+      return $cache;  //cache hit
+    }
+    //cacheMiss
+    $ldapData = $this->queryGTUsername($username);
+    //if ldap hit
+    if($ldapData) {
+      $this->_setCacheByField("username", $username, $ldapData);
+      return $ldapData; //return ldap
+    } else {
+      return false;
+    }
+  }
+  /*
+    Gets (and potentially sets) cached result using the gtid field
+  */
+  public function _cacheByGTID($gtid) {
+    //try and get cache
+    if($cache = $this->_getCacheByField("gtid", $gtid)) {
+      return $cache; //cache hit
+    }
+    //cacheMiss
+    $ldapData = $this->queryGTID($gtid);
+    //if ldap hit
+    if($ldapData) {
+      $this->_setCacheByField("gtid", $gtid, $ldapData);
+      return $ldapData; //return ldap
+    } else {
+      return false;
+    }
+  }
+  /*
+    Gets (and potentially sets) cached result using the buzzcardId field
+  */
+  public function _cacheByBuzzcardId($buzzcardId) {
+    //try and get cache
+    if($cache = $this->_getCacheByField("buzzcardId", $buzzcardId)) {
+      return $cache; //cache hit
+    }
+    //cacheMiss
+    $ldapData = $this->queryBuzzCard($buzzcardId);
+    //if ldap hit
+    if($ldapData) {
+      $this->_setCacheByField("buzzcardId", $buzzcardId, $ldapData);
+      return $ldapData; //return ldap
+    } else {
+      return false;
+    }
+  }
+  private function _isValidCacheField($field) {
+    if(!in_array($field, $this::$cacheFields)) {
+      throw new Exception($file . ' is not a field which can be used to get an entry in the cache table');
+      return false;
+    } else {
+      return true;
+    }
+  }
+  private function _setCacheByField($field, $value, $data) {
+    if(!$this->_isValidCacheField($field)) {
+      return false;
+    }
+    //make sure we've connected to the cache
+    if(!$this->cacheDB) {
+      $this->_connect2Cache();
+    }
+
+    $sql = 'REPLACE INTO `%2$s`
+                   (`username`, `gtid`, `buzzcardId`, `data`, `timestamp`) 
+            VALUES (:username, :gtid, :buzzcardId, :data, NOW());';
+    $sql = sprintf($sql, $field, $this->ldapConfig["cache"]["table"]);
+    
+    $sqlParams = array(
+      "username"=>$data["gtprimarygtaccountusername"][0],
+      "gtid"=>$data["gtgtid"][0],
+      "buzzcardId"=>$data["gtaccesscardnumber"][0],
+      "data"=>json_encode($data)
+    );
+    //if sql worked, then query returns link to query, else returns false....hence the true/false returns
+    if($this->cacheDB->query($sql, $sqlParams)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  /*
+    Gets the cache using the specified field=>value combination
+    E.g: $field = 'username', $value="gburdell3"
+  */
+  private function _getCacheByField($field, $value) {
+    if(!$this->_isValidCacheField($field)) {
+      return false;
+    }
+    //make sure we've connected to the cache
+    if(!$this->cacheDB) { 
+      $this->_connect2Cache(); 
+    }
+    //prepare sql statement
+    $sql = 'SELECT `data` FROM `%s` WHERE `%s` = :value AND `timestamp` < DATE_ADD(`timestamp`, INTERVAL %s DAY)'; 
+    $sql = sprintf($sql, $this->ldapConfig["cache"]["table"], $field, intval($this->ldapConfig["cache"]["ttl"]));
+    $res = $this->cacheDB->fetchAll($sql, array(":value"=>$value));
+    if($res && $res[0] && $res[0]["data"]) { //cacheHit
+      return json_decode($res[0]["data"], true);
+    } else { //cacheMiss
+      return false;
+    }
+  }
+  /*
+    ***DOES NOT QUERY CACHE OR SET CACHE****
     Creates an AND query for all parameters
-    returns the results which match query, or a false for no results
+    returns the results which match query, or a false for no results.
   */
   public function query($params) {
+    //make sure if we've connected to ldap
+    if(!$this->link) {
+      $this->_connect2Ldap();
+    }
     //Default settings
     $from = 0;
     $maxSize = 25;
@@ -60,6 +194,7 @@ Class GTED {
     return $output;
   }
   /*
+    QUERIES CACHE AND SETS CACHE
     Queries GTED for the first result matching the given buzzCardId
     returns LDAP entry or false (No results match)
   */
@@ -117,20 +252,21 @@ Class GTED {
     }
   }
   /*
+    *****USES THE GTED CACHE*****
     Return a single users information using either a 
-    buzzcardid, gtusername, or gtid
+    buzzcardId, gtusername, or gtid
   */
   public function getUser($userId) {
     $output = false;
     if(is_numeric($userId)) { //must be a buzzcard or gtid
       $userId = strval($userId);
       if(strlen($userId) >= 9) {
-        $output = $this->queryGTID($userId);
+        $output = $this->_cacheByGTID($userId);
       } else {
-        $output = $this->queryBuzzCard($userId);
+        $output = $this->_cacheByBuzzcardId($userId);
       }
     } else { //its a gt-username
-      $output = $this->queryGTUsername($userId);
+      $output = $this->_cacheByUsername($userId);
     }
     return $output;
   }

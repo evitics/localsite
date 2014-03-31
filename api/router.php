@@ -1,5 +1,4 @@
 <?php
-
 $app->get('/user/:id', function($id) { 
     $userInfo = User::get($id);
     if($userInfo) {
