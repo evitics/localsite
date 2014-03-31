@@ -66,7 +66,7 @@ function program1(depth0,data) {
 function program2(depth0,data) {
   
   
-  return " <img src=\"http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-11/512/new-icon.png\" width=\"25px\" height=\"25px\"> ";
+  return " <img src=\"/app/img/new-icon.png\" width=\"25px\" height=\"25px\"> ";
   }
 
   buffer += "<div class=\"row collapse\">\n  <div class=\"large-4 columns\">\n    <div class=\"row collapse\">\n      <h3>Statistics</h3>\n      <ul>\n        <li>"
@@ -266,7 +266,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.name); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "\n  <li><a href=\"/\">Home</a></li>\n  <li><a href=\"/organizations\">Organizations</a></li>\n  <li><a href=\"/analyitics\">Analyitics</a></li>\n  <li><a href=\"/marketing\">Marketing</a></li>\n  <li><a href=\"/triggers\">Triggers</a></li>\n  <li><a href=\"/help\">Help</a></li>\n  <li><a href=\"https://login.gatech.edu/cas/login?service=https://critique.gatech.edu\">Login</a></li>\n</ul>\n";
+    + "\n  <li><a href=\"/\">Home</a></li>\n  <li><a href=\"/organizations\">Organizations</a></li>\n  <li><a href=\"/analyitics\">Analyitics</a></li>\n  <li><a href=\"/marketing\">Marketing</a></li>\n  <li><a href=\"/triggers\">Triggers</a></li>\n  <li><a href=\"/help\">Help</a></li>\n  <li><a href=\"https://login.gatech.edu/cas/logout\">Logout</a></li>\n</ul>\n";
   return buffer;
   });
 
@@ -276,7 +276,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<ul class=\"title-area\">\n  <li class=\"name\">\n    <h1><a href=\"/\">Evitics</a></h1>\n  </li>\n</ul>\n<section class=\"top-bar-section\"> \n  <ul class=\"right\">\n    <li class=\"divider\"></li>\n    <li><a href=\"/organizations\">Organizations</a></li>\n\n    <li class=\"divider\"></li>\n    <li><a href=\"/analyitics\">Analytics</a></li>\n\n    <li class=\"divider\"></li>\n    <li><a href=\"/marketing\">Marketing</a></li>\n    \n    <li class=\"divider\"></li>\n    <li><a href=\"/triggers\">Triggers</a></li>\n    \n    <li class=\"divider\"></li>\n    <li><a href=\"/help\">Help</a></li>\n\n    <li class=\"active\"><a href=\"https://login.gatech.edu/cas/login?service=https://evitics.gatech.edu/login.php\">Login</a></li>\n  </ul> \n  <!-- Left Nav Section --> \n  <ul class=\"left\">\n  </ul>\n</section>";
+  return "<ul class=\"title-area\">\n  <li class=\"name\">\n    <h1><a href=\"/\">Evitics</a></h1>\n  </li>\n</ul>\n<section class=\"top-bar-section\"> \n  <ul class=\"right\">\n    <li class=\"divider\"></li>\n    <li><a href=\"/organizations\">Organizations</a></li>\n\n    <li class=\"divider\"></li>\n    <li><a href=\"/analyitics\">Analytics</a></li>\n\n    <li class=\"divider\"></li>\n    <li><a href=\"/marketing\">Marketing</a></li>\n    \n    <li class=\"divider\"></li>\n    <li><a href=\"/triggers\">Triggers</a></li>\n    \n    <li class=\"divider\"></li>\n    <li><a href=\"/help\">Help</a></li>\n\n    <li class=\"active\"><a href=\"https://login.gatech.edu/cas/logout\">Logout</a></li>\n  </ul> \n  <!-- Left Nav Section --> \n  <ul class=\"left\">\n  </ul>\n</section>";
   });
 
 this["templates"]["organization/info"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {

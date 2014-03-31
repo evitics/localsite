@@ -1,5 +1,5 @@
-define(['backbone'],
-function(backbone) {
+define(['backbone', 'views/errorPage'],
+function(backbone ,  ErrorPage       ) {
   var CheckInCollection = Backbone.Model.extend({
     initialize: function(options) {
       //Check that required params given
@@ -30,6 +30,14 @@ function(backbone) {
       }
       this.userId = userId;
       this.fetch({data: {userId: userId}, type: "POST", reset:true});
+    },
+    parse : function(res) {
+      if(res.hasOwnProperty("error")) {
+        ( new ErrorPage() ).render(res.error);
+        return false;
+      } else {
+        return res;
+      }
     }
   });
   return CheckInCollection;

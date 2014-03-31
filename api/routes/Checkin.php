@@ -53,7 +53,7 @@ Class Checkin {
         return array("success"=>$gtFullName . " was checked in");
       } 
     } else {
-      return array("error"=>"".$gtFullName . " has already checked in", "userId"=>$userId);
+      return array("warning"=>"".$gtFullName . " has already checked in", "userId"=>$userId);
     }
   }
   /*

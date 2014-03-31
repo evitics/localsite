@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 31, 2014 at 01:13 PM
+-- Generation Time: Mar 31, 2014 at 11:43 PM
 -- Server version: 5.6.17
 -- PHP Version: 5.4.24
 
@@ -19,7 +19,31 @@ SET time_zone = "+00:00";
 --
 -- Database: `evitics`
 --
-CREATE DATABASE IF NOT EXISTS `evitics`;
+CREATE DATABASE IF NOT EXISTS `evitics` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `evitics`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `gtedCache`
+--
+
+CREATE TABLE IF NOT EXISTS `gtedCache` (
+  `username` varchar(255) NOT NULL,
+  `gtid` varchar(255) NOT NULL,
+  `buzzcardId` int(255) NOT NULL,
+  `data` mediumtext,
+  `timestamp` datetime NOT NULL,
+  PRIMARY KEY (`username`),
+  UNIQUE KEY `buzzcardId` (`buzzcardId`),
+  UNIQUE KEY `buzzcardId_2` (`buzzcardId`),
+  UNIQUE KEY `gtid` (`gtid`),
+  KEY `gtid_2` (`gtid`),
+  KEY `buzzcardId_3` (`buzzcardId`),
+  KEY `gtid_3` (`gtid`),
+  KEY `buzzcardId_4` (`buzzcardId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- --------------------------------------------------------
 
 --

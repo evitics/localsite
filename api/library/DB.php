@@ -19,6 +19,11 @@ Class DB {
     $hostStr = $dbConfig['type'] . ':host=' . $dbConfig['host'] . ';dbname=' . $dbName;
     $optionalParams = array(PDO::ATTR_EMULATE_PREPARES => false,PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION);
     $this->link =new PDO($hostStr, $dbConfig['username'], $dbConfig['password'], $optionalParams);
+    if($this->link) {
+      return true;
+    } else {
+      return false;
+    }
   }
   /*
     Runs a query, and returns the link.

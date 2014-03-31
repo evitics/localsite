@@ -4,16 +4,14 @@ require_once("./library/GTED.php");
 class User {
   public static function get($userId) {
     $config = require("./config.php");
-
     //Only allow logged in users to request data on themselves
     if($userId !== $GLOBALS["USERNAME"]) {
       throw new Exception("Cannot request user information on people other than yourself");
       return false;
     }
     $eviticsDB = new DB("evitics");
-    $jacketpagesDB = new Db("jacketpages");
-    $gted = new GTED(); 
-
+    $jacketpagesDB = new DB("jacketpages");
+    $gted = new GTED();
     $result = array();
     
     //Getting the User info from GTED   
@@ -28,9 +26,13 @@ class User {
     
     $userQuery = "SELECT `orgId`, `writePerm`, `isPending` FROM `user` WHERE `userId`=:userId"; 
     $userRecords = $eviticsDB->fetchAll($userQuery, array("userId"=>$userId));
+    /*
+      Do to some weird ass PHP shit, count(false) === 1.
+      we want count(false) === 0, therefore set as empty array as
+      count(array()) === 0
+    */
     if($userRecords === false) {
-      throw new Exception("Could not fetch user with userId: " . $userId);
-      return false; 
+      $userRecords = array();
     }
     
     $orgQuery = "SELECT * FROM `organizations` WHERE `orgId`=:orgId";  
@@ -51,7 +53,9 @@ class User {
         $orgs[$i]["isPending"] = $userRecords[$i]["isPending"];    
 
         //fetch organization information
-        $org = $preparedOrgQuery->fetchAll(PDO::FETCH_ASSOC)[0];
+        $org = $preparedOrgQuery->fetchAll(PDO::FETCH_ASSOC);
+        $org = $org[0];
+        
         foreach($org as $column=>$value) {
           $orgs[$i][$column] = $value;
         }

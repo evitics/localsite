@@ -1,9 +1,8 @@
 <?php
-
 $app->get('/user/:id', function($id) { 
     $userInfo = User::get($id);
     if($userInfo) {
-        echo json_encode($userInfo, JSON_PRETTY_PRINT);
+        echo json_encode($userInfo);
     } else {
         throw new Exception("Could not fetch user info");
     }
@@ -11,7 +10,7 @@ $app->get('/user/:id', function($id) {
 $app->get('/organizations', function() { 
     $orgs = Organization::getAll();
     if($orgs) {
-        echo json_encode($orgs, JSON_PRETTY_PRINT);
+        echo json_encode($orgs);
     } else {
         throw new Exception("Could not fetch all of the organizations");
     }
@@ -19,7 +18,7 @@ $app->get('/organizations', function() {
 $app->get('/organizations/:id', function($id) { 
     $org = Organization::get($id);
     if($org) {
-        echo json_encode($org, JSON_PRETTY_PRINT);
+        echo json_encode($org);
     } else {
         throw new Exception("Could not fetch org with id: $id");
     }
@@ -35,7 +34,7 @@ $app->get('/meetings/:orgId/:meetingId', function($orgId, $meetingId) {
 $app->get('/meetings/:orgId(/)', function($orgId) {
     $org = Meeting::getOrgId($orgId); 
 	if($org) {
-		echo json_encode($org, JSON_PRETTY_PRINT);
+		echo json_encode($org);
 	} else {
         throw new Exception("Could not fetch meetings for orgId: $orgId");
 	}
@@ -61,7 +60,7 @@ $app->get('/checkin/:orgId/:meetingId(/)', function($orgId, $meetingId) {
         $output["statistics"] = $statistics;
     }
 
-    echo json_encode($output, JSON_PRETTY_PRINT);
+    echo json_encode($output);
 });
 
 $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $userId) {
@@ -87,7 +86,7 @@ $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $u
         $output["statistics"] = $statistics;  
     }
 
-    echo json_encode($output, JSON_PRETTY_PRINT);
+    echo json_encode($output);
 
 });
 

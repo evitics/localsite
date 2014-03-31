@@ -1,5 +1,5 @@
-define(['backbone'],
-function(backbone) {
+define(['backbone', 'views/errorPage'],
+function(backbone ,  ErrorPage       ) {
   var MeetingModel = Backbone.Model.extend({
     idAttribute : 'meetingId',
     initialize : function(options) {
@@ -15,6 +15,14 @@ function(backbone) {
     },
     url : function() {
       return '/api/meeting/' + this.orgId + '/' +this.meetingId;
+    },
+    parse : function(res) {
+      if(res.hasOwnProperty("error")) {
+        ( new ErrorPage() ).render(res.error);
+        return false;
+      } else {
+        return res;
+      }
     }
   });
   return MeetingModel;

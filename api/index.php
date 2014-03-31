@@ -1,19 +1,19 @@
 <?php
-//Make sure user is logged in
-$_ENV["REMOTE_USER"] = "cbookman3"; //remove when not testing
+$config = require("./config.php");
+if($config["development"]) {
+  $_ENV["REMOTE_USER"] = $config["development"]["username"];
+}
 
+//Make sure user is logged in
 if(empty($_ENV["REMOTE_USER"])) {
   echo '{"error" : "not logged in"}'; 
   return;
-  throw new Error("User Not Logged In");
-
-} else {
-  $GLOBALS["USERNAME"] = $_ENV["REMOTE_USER"];//$_ENV["REMOTE_USER"];
 }
+$GLOBALS["USERNAME"] = $_ENV["REMOTE_USER"];
 
 //Instatiate the SLIM framework
 require 'vendor/autoload.php';
-$app = new \Slim\Slim(array("debug"=>true));
+$app = new \Slim\Slim(array("debug"=>false));
 //Change the http Content-type header to json
 $response = $app->response();
 $response['Content-Type'] = "application/json; charset=utf-8";
@@ -32,17 +32,15 @@ spl_autoload_register(function ($class_name) {
 require "./router.php";
 //Get any fatal errors
 register_shutdown_function(function() {
-  http_response_code(404);
   $error = error_get_last();
-  if( $error !== NULL) {
+  if(isset($error)) {
+    $app->response()->status(404);
     $error =  $error["type"] . ': '. $error["message"];
-  } else {
-    $error = "PHP died, could not find error msg";
   }
 });
 //Capture slim errors
 $app->error(function (\Exception $e) use ($app) {
-  http_response_code(404);
+  $app->response()->status(404);
   echo '{ "error" : ' . json_encode($e->getMessage()) . ' }';
 });
 //Run app
