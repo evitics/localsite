@@ -66,7 +66,7 @@ function program1(depth0,data) {
 function program2(depth0,data) {
   
   
-  return " <img src=\"http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-11/512/new-icon.png\" width=\"25px\" height=\"25px\"> ";
+  return " <img src=\"/app/img/new-icon.png\" width=\"25px\" height=\"25px\"> ";
   }
 
   buffer += "<div class=\"row collapse\">\n  <div class=\"large-4 columns\">\n    <div class=\"row collapse\">\n      <h3>Statistics</h3>\n      <ul>\n        <li>"
