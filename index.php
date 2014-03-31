@@ -49,7 +49,7 @@
   </div>
   <script>
     //PHP should write the username here
-    var userId = 'gburdell3';
+    var username = "<?php $_ENV["REMOTE_USER"] = "cbookman3"; echo $_ENV["REMOTE_USER"]; ?>";
   </script>
   <script>
     var debug = null; //debug variable

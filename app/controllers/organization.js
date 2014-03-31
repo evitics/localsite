@@ -54,7 +54,7 @@ function($,        Backbone,   OrganizationModel   ,  OrganizationCollection   ,
 
     //fetch the organization
     var that = this;
-    var organizationModel = new OrganizationModel({id : orgId, user: this.user});
+    var organizationModel = new OrganizationModel({orgId : orgId, user: this.user});
     organizationModel.fetch({
       success : function() {
         that.app.views.current = new OrganizationInfo({organization: organizationModel, user: that.user});

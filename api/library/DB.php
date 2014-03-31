@@ -12,7 +12,7 @@ Class DB {
 
     $dbConfig = null;
     if(!isset($config["dbs"][$dbName])) {
-      throw new Error("Database with the name of " . $dbName . " is not in the config file.");
+      throw new Exception("Database with the name of " . $dbName . " is not in the config file.");
     } else {
       $dbConfig = $config["dbs"][$dbName];
     }
@@ -77,8 +77,11 @@ Class DB {
     if not query not executed successfully, returns -1.
     Should not use this as a means of checking query success
   */
-  public function rowCount($resultLink) {
-    if(isset($this->currentQuery->rowCount)) {
+  public function rowCount($resultLink = null) {
+    if(!empty($resultLink)) {
+      return $resultLink->rowCount();
+    }
+    if(isset($this->currentQuery)) {
       return $this->currentQuery->rowCount();
     } else {
       return -1;

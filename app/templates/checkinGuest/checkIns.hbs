@@ -4,22 +4,18 @@
       <h3>Statistics</h3>
       <ul>
         <li>{{statistics.attendance}} Guests Atending</li>
-        <li>{{statistics.rate}} Guests/min</li>
-        <li>{{statistics.newMembers}} New Members</li>
       </ul>
     </div>
   </div>
   <div class="large-8 columns">
     <h3>Checkedin Guests:</h3>
       {{#each checkins}}
-        {{#unless invalid}}
-          <div class="row collapse">
-            <h5>
-              {{checkinTime}} - {{name.full}}
-              {{#if isNew}} <img src="http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-11/512/new-icon.png" width="25px" height="25px"> {{/if}}
-            </h5>
-          </div>
-        {{/unless}}
+        <div class="row collapse">
+          <h5>
+            {{timestamp}} - {{name.full}}
+            {{#if isNew}} <img src="http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-11/512/new-icon.png" width="25px" height="25px"> {{/if}}
+          </h5>
+        </div>
       {{/each}}
   </div>
 </div>
