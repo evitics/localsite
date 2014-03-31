@@ -32,7 +32,7 @@ $app->get('/meetings/:orgId/:meetingId', function($orgId, $meetingId) {
         throw new Exception("Could not fetch the meeting with orgId: $orgId, and meetingId: $meetingId");
 	}
 });
-$app->get('/meetings/:orgId/', function($orgId) {
+$app->get('/meetings/:orgId(/)', function($orgId) {
     $org = Meeting::getOrgId($orgId); 
 	if($org) {
 		echo json_encode($org, JSON_PRETTY_PRINT);
@@ -42,27 +42,23 @@ $app->get('/meetings/:orgId/', function($orgId) {
 });
 
 //Gets the current checkins
-$app->get('/checkin/:orgId/:meetingId', function($orgId, $meetingId) {
+$app->get('/checkin/:orgId/:meetingId(/)', function($orgId, $meetingId) {
     $checkin = new Checkin();
     $output = array(
         "checkins" => array(),
         "statistics" => array()
     );
+    
     //Get list of records
     $records= $checkin->getRecords($orgId, $meetingId, 25);
     if($records) {
-        foreach($records as $record) {
-            array_push($output["checkins"], $record);    
-        }
+        $output["checkins"]= array_merge($output["checkins"], $records);
     }
 
     //Get statistics on event
     $statistics = $checkin->getStaistics($orgId, $meetingId);
-
     if($statistics) {
-        foreach($statistics as $name=>$statistic) {
-            $output["statistics"][$name] = $statistic;
-        }
+        $output["statistics"] = $statistics;
     }
 
     echo json_encode($output, JSON_PRETTY_PRINT);
@@ -83,14 +79,13 @@ $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $u
     //Get list of records
     $records= $checkin->getRecords($orgId, $meetingId, 25);
     if($records) {
-        foreach($records as $record) {
-            array_push($output["checkins"], $record);
-        }
+        $output["checkins"]= array_merge($output["checkins"], $records);
     }
+    
     //Get statistics on event
     $statistics = $checkin->getStaistics($orgId, $meetingId);
     if($statistics) {
-        array_push($output["statistics"], $statistics);  
+        $output["statistics"] = $statistics;  
     }
 
     echo json_encode($output, JSON_PRETTY_PRINT);

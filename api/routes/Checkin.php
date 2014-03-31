@@ -24,10 +24,15 @@ Class Checkin {
   public function guest($orgId, $meetingId, $userId) {
     try {
       $userId = $this->gted->getUser($userId)["gtprimarygtaccountusername"][0];
-    } catch(Error $e) {
+      
+      if(empty($userId)) {
+        throw new Exception("Invalid user Id");
+      }
+    } catch(Exception $e) {
       return false;
     }
-
+    
+    
     if($this->isLoggedInOrg($orgId) && !$this->isCheckedIn($orgId, $meetingId, $userId)) {
       return $this->checkInUser($orgId, $meetingId, $userId);
     } else {
@@ -79,8 +84,7 @@ Class Checkin {
   private function checkInUser($orgId, $meetingId, $userId) {
     $orgId = Helpers::id2Int($orgId);
 
-    $sql = "INSERT INTO `$orgId` (`userId`, `meetingId`, `timestamp`, `by`) VALUES  (:userId ,  :meetingId,  now(), :by )
-           ";
+    $sql = "INSERT INTO `$orgId` (`userId`, `meetingId`, `timestamp`, `by`) VALUES  (:userId ,  :meetingId,  now(), :by )";
     if($this->checkinDb->query($sql, array("userId"=>$userId, "meetingId"=>$meetingId, "by"=>$GLOBALS["USERNAME"]))) {
       return true;
     } else {
