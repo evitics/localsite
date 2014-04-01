@@ -1,6 +1,10 @@
 <?php
+
+header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+
 $config = require("./config.php");
-if($config["development"]) {
+if(isset($config["development"])) {
   $_ENV["REMOTE_USER"] = $config["development"]["username"];
 }
 
@@ -14,6 +18,7 @@ $GLOBALS["USERNAME"] = $_ENV["REMOTE_USER"];
 //Instatiate the SLIM framework
 require 'vendor/autoload.php';
 $app = new \Slim\Slim(array("debug"=>false));
+$GLOBALS["APP"] = $app;
 //Change the http Content-type header to json
 $response = $app->response();
 $response['Content-Type'] = "application/json; charset=utf-8";
@@ -34,8 +39,9 @@ require "./router.php";
 register_shutdown_function(function() {
   $error = error_get_last();
   if(isset($error)) {
-    $app->response()->status(404);
-    $error =  $error["type"] . ': '. $error["message"];
+    $GLOBLAS["APP"]->response()->status(404);
+    $error =  $error["type"] . ' - '. $error["message"];
+    echo '{ "error" : "' . $error .'" }'; die();
   }
 });
 //Capture slim errors

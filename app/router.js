@@ -14,10 +14,6 @@ define(function(require, exports, module) {
       "organizations/new"    : "newOrganizationForm",
       "organizations/:orgId" : "organizations",
       "meeting/:orgId/:meetingId" : "checkinGuest"
-    },
-
-    index: function() {
-      console.log("Welcome to your / route.");
     }
   });
 });

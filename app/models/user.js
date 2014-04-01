@@ -2,9 +2,6 @@ define(['backbone', "collections/organization", "collections/meeting", 'views/er
 function(backbone,   OrganizationCollection   ,  MeetingCollection   ,  ErrorPage       ) {
   var UserModel = Backbone.Model.extend({
     idAttribute : "username",
-    initialize: function(options) {
-      this.set('username', options.username);
-    },
     parse : function(res) {
       if(res.hasOwnProperty("error")) {
         ( new ErrorPage() ).render(res.error);
@@ -18,7 +15,7 @@ function(backbone,   OrganizationCollection   ,  MeetingCollection   ,  ErrorPag
       });
       return res;
     },
-    urlRoot : '/api/user/',
+    urlRoot : '/api/user',
     /*
       Recursive toJSON, which converts the collection to a 
       json obj
