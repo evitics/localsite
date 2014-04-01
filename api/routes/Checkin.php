@@ -67,8 +67,8 @@ Class Checkin {
     $records = $this->checkinDb->fetchAll($sql, array("meetingId"=>$meetingId));
     
     //Check if user has ever checked into this organization
-    $existsQuery = $this->checkinDb->prepare("SELECT * FROM `$orgId` WHERE `userId` = :userId");
-    
+    $existsQuery = $this->checkinDb->prepare("SELECT COUNT(*) FROM `$orgId` WHERE `userId` = :userId");
+    $existsQuery->setFetchMode(PDO::FETCH_NUM);
     //For w/e reason count(false) == 1...go figure
     $iterations = 0;
     if(is_array($records)) { $iterations = count($records); }
@@ -84,8 +84,8 @@ Class Checkin {
         
         
         $records[$i]["affiliation"]  = $userInfo["edupersonprimaryaffiliation"][0];
-        
-        if($existsQuery->rowCount() === 1) {
+        $userCheckedIn = $existsQuery->fetchAll();
+        if(isset($userCheckedIn[0]) && isset($userCheckedIn[0][0]) && $userCheckedIn[0][0] == 1) {
           $records[$i]["isNew"] = true;
         } else {
           $records[$i]["isNew"] = false;

@@ -1,7 +1,7 @@
 <?php
 return array(
 /*
-  uncomment the following two lines if you want to 
+  uncomment the following three lines if you want to 
   Go into debugging mode.  if uncommented, the logged in
   user is set to $this["development"]["username"].
 */

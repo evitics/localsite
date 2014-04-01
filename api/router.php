@@ -1,6 +1,7 @@
 <?php
-$app->get('/user/:id', function($id) { 
-    $userInfo = User::get($id);
+
+$app->get('/user', function() {
+    $userInfo = User::get($GLOBALS["USERNAME"]);
     if($userInfo) {
         echo json_encode($userInfo);
     } else {

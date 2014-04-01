@@ -4,7 +4,7 @@ require(["config"], function() {
   // Kick off the application.
   require(["app", "router", "foundation", "views/errorPage", "models/user", "views/nav", "controllers/bindLinksToBackbone", "controllers/bindControllers" ],
   function( app,   Router,   foundation,   ErrorPage,         User,          NavView,     bindLinksToBackbone,               bindControllers) {
-    var user = new User({username: username});
+    var user = new User();
     user.fetch({
       success : function(user) {
         // Define your master router on the application namespace and trigger all

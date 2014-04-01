@@ -48,17 +48,6 @@
     </div>
   </div>
   <script>
-    //PHP should write the username here
-    var username = "<?php 
-	$config = require("./api/config.php");
-	if($config["development"]) {
-		echo $config["development"]["username"];
-	} else {
-		echo $_ENV["REMOTE_USER"];
-	}
-    ?>";
-  </script>
-  <script>
     var debug = null; //debug variable
     //make sure that the side mobile nav is at least the full window height
     (function() {
