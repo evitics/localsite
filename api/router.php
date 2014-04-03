@@ -40,6 +40,22 @@ $app->get('/meetings/:orgId(/)', function($orgId) {
         throw new Exception("Could not fetch meetings for orgId: $orgId");
 	}
 });
+//Creation
+$app->put('/meeting/:orgId', function($orgId){
+		
+});
+
+//Modification
+$app->post('/meeting/:org/:meetingID', function($org, $meetingID){
+	
+});
+//Deletion
+$app->delete('/meeting/:orgID/:meetingID', function($orgID, $meetingID){
+	$result = MeetingRoutes::delMeet($ordID, $meetingID);
+	if($result == false){
+		echo '{"error" : "could not delete meeting"}';
+	}
+});
 
 //Gets the current checkins
 $app->get('/checkin/:orgId/:meetingId(/)', function($orgId, $meetingId) {

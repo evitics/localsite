@@ -30,5 +30,14 @@ class Meetings {
 }
 
 
+	public static function delMeet($orgID, $meetingID)
+	{
+		$db = new DB("evitics");
+		$query = "DELETE FROM 'meeting' WHERE 'orgID' =:orgid AND 'meetingID' =:meetingID";
+		$result = query($query, array("ordID"=>$orgID, "meetingID"=>$meetingID));
+		return $result;
+		
+	}
+
 ?>
 
