@@ -8,7 +8,7 @@ define(function(require, exports, module) {
   module.exports = Backbone.Router.extend({
     routes: {
       "(/)": "index",
-      "analytics" : "analytics",
+      "analytics" : "checkInTotals",
       "analytics/log/:orgId/:meetingId/:year" : "log",
       "analytics/log/:orgId/:meetingId/:year/:month" : "log",
       "analytics/log/:orgId/:meetingId/:year/:month/:day" : "log",
@@ -16,7 +16,7 @@ define(function(require, exports, module) {
       "organizations" : "organizations",
       "organizations/new"    : "newOrganizationForm",
       "organizations/:orgId" : "organizations",
-      "meeting/:orgId/:meetingId" : "checkinGuest"
+      "meeting/:orgId/:meetingId" : "checkInGuest"
     }
   });
 });

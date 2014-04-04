@@ -1,5 +1,5 @@
-define(['jquery', 'underscore', 'backbone', 'controllers/home', 'controllers/analyitics', 'controllers/triggers/new', 'controllers/organization', 'controllers/checkinGuest'],
-function($      ,  _          ,  Backbone ,  HomeController   ,  AnalyiticsController   ,  NewTriggerController     ,  OrganizationController   ,  CheckinGuestController) {
+define(['jquery', 'underscore', 'backbone', 'controllers/home', 'controllers/checkInTotals', 'controllers/triggers/new', 'controllers/organization', 'controllers/checkInGuest'],
+function($      ,  _          ,  Backbone ,  HomeController   ,  CheckInTotalsController   ,  NewTriggerController     ,  OrganizationController   ,  CheckInGuestController) {
   var bindControllers = function(app, user) {
     var vent = _.extend({}, Backbone.Events);
 
@@ -7,8 +7,8 @@ function($      ,  _          ,  Backbone ,  HomeController   ,  AnalyiticsContr
       app.controller = new HomeController({app : app, user: user, vent : vent});
     });
 
-    app.router.on('route:analytics', function() {
-      app.controller = new AnalyiticsController({ app : app, user: user, vent: vent });
+    app.router.on('route:checkInTotals', function() {
+      app.controller = new CheckInTotalsController({ app : app, user: user, vent: vent });
     });
 
     app.router.on('route:newTrigger', function(triggerType) {
@@ -32,8 +32,8 @@ function($      ,  _          ,  Backbone ,  HomeController   ,  AnalyiticsContr
     app.router.on('route:newOrganizationForm', function() {
       window.location.href= "http://jacketpages.gatech.edu/pages/contact";
     });
-    app.router.on('route:checkinGuest', function(orgId, meetingId) {
-      app.views.current = new CheckinGuestController({
+    app.router.on('route:checkInGuest', function(orgId, meetingId) {
+      app.views.current = new CheckInGuestController({
         app : app,
         user: user,
         vent: vent,

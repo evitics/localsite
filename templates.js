@@ -140,7 +140,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<table id=\"analyticsTotals\" class=\"pivotTable\" style=\"max-width:800px; width:100%; margin:0 auto;\"> \n<thead>\n  <tr>\n    <th>Year</th>\n    <th>Month</th>\n    <th>Day</th>\n    <th>Total</th>\n  </tr>\n</thead>\n<tbody>\n</tbody>\n</table>";
+  return "<table id=\"analyticsTotals\" class=\"pivotTable\" style=\"max-width:800px; width:100%; margin:0 auto;\"> \n<thead>\n  <tr>\n    <th>Year</th>\n    <th>Month</th>\n    <th>Day</th>\n    <th>Total</th>\n  </tr>\n</thead>\n</table>";
   });
 
 this["templates"]["analytics/total/monthRow"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -149,15 +149,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
 
 
-  buffer += "<tr id=\"?year=";
-  if (stack1 = helpers.year) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
-  else { stack1 = (depth0 && depth0.year); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
-  buffer += escapeExpression(stack1)
-    + "&month=";
-  if (stack1 = helpers.month) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
-  else { stack1 = (depth0 && depth0.month); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
-  buffer += escapeExpression(stack1)
-    + "\" class=\"monthHeader\">\n  <td></td>\n  <td colspan=\"3\">\n    <a href=\"/analytics/log/";
+  buffer += "<tr class=\"monthHeader\">\n  <td></td>\n  <td colspan=\"3\">\n    <a href=\"/analytics/log/";
   if (stack1 = helpers.orgId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.orgId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
@@ -187,11 +179,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
 
 
-  buffer += "<tr id=\"?year=";
-  if (stack1 = helpers.year) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
-  else { stack1 = (depth0 && depth0.year); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
-  buffer += escapeExpression(stack1)
-    + "\" class=\"yearHeader\">\n  <td colspan=\"4\"><a href=\"/analytics/log/";
+  buffer += "<tr class=\"yearHeader\">\n  <td colspan=\"4\"><a href=\"/analytics/log/";
   if (stack1 = helpers.orgId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.orgId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)

@@ -24,11 +24,11 @@ require.config({
     "views/loading"             :  "views/loading",
     "views/nav"                 :  "views/nav",
     "views/home"                :  "views/home",
-    "views/analyitics"          :  "views/analyitics",
+    "views/checkInTotals"       :  "views/checkInTotals",
     "views/orgMeetingForm"      :  "views/orgMeetingForm",
     "views/organizations/info"  :  "views/organizations/info",
     "views/organizations/list"  :  "views/organizations/list",
-    "views/checkinGuest"        :  "views/checkinGuest",
+    "views/checkInGuest"        :  "views/checkInGuest",
     //Models
     "models/user" : "models/user",
     "models/organization" : "models/organization",
@@ -37,17 +37,17 @@ require.config({
     //Collections
     "collections/organization" : "collections/organization",
     "collections/meeting"      : "collections/meeting",
-    "collections/checkIns.js"  : "collecitons/checkIns",
+    "collections/checkIns.js"  : "collections/checkIns",
     
     //Controllers
     "controllers/bindControllers" : "controllers/bindControllers",
     "controllers/bindLinksToBackbone" : "controllers/bindLinksToBackbone",
     
     "controllers/home"  : "controllers/home",
-    "controllers/analyitics" : "controllers/analyitics",
+    "controllers/checkInTotals" : "controllers/checkInTotals",
     "controllers/triggers/new" : "controllers/triggers/new",
     "controllers/organization" : "controllers/organization",
-    "controllers/checkinGuest" : "controllers/checkinGuest"
+    "controllers/checkInGuest" : "controllers/checkInGuest"
   },
 
   shim: {
