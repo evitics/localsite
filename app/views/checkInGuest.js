@@ -8,7 +8,7 @@ function($,        Backbone,   templates ,  CheckInCollection    ) {
     initialize: function(options) {
       this.meeting = options.meeting;
       this.organization = options.organization;
-    
+      
       //Create checkinCollection      
       var params = {};
       params.meetingId = this.meeting.get('meetingId');

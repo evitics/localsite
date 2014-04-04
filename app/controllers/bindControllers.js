@@ -7,8 +7,8 @@ function($      ,  _          ,  Backbone ,  HomeController   ,  AnalyiticsContr
       app.controller = new HomeController({app : app, user: user, vent : vent});
     });
 
-    app.router.on('route:analyitics', function() {
-      app.controller = new AnalyiticsController({app : app, user: user, vent: vent});
+    app.router.on('route:analytics', function() {
+      app.controller = new AnalyiticsController({ app : app, user: user, vent: vent });
     });
 
     app.router.on('route:newTrigger', function(triggerType) {
@@ -45,7 +45,7 @@ function($      ,  _          ,  Backbone ,  HomeController   ,  AnalyiticsContr
       Vent Actions
     */
     vent.bind("post:startMeeting", function(post) {
-       if(post.hasOwnProperty('orgId') && post.hasOwnProperty('meetingId')) {
+      if(post.hasOwnProperty('orgId') && post.hasOwnProperty('meetingId')) {
         app.views.current.remove();
         app.router.navigate("/meeting/" + post.orgId + "/" + post.meetingId, {trigger :true});
       }

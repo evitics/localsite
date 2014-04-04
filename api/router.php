@@ -107,6 +107,19 @@ $app->get('/log/:orgId/:meetingId/:yyyy/:mm', function($orgId, $meetingId, $year
 
 });
 
+$app->get('/gted/:userId', function($userId) {
+    require_once("./library/GTED.php");
+    $gted = new GTED();
+    $userLDAPObj = $gted->getUser($userId);
+    if(!$userLDAPObj) {
+        $userLDAPObj = array("error"=> "invalid userId");
+    } else {
+        //We don't want to show these...security issues
+        unset($userLDAPObj["gtaccesscardnumber"]);
+        unset($userLDAPObj["gtgtid"]);
+    }
+    echo json_encode($userLDAPObj);
+});
 
 $app->notFound(function () use ($app) {
     throw new Exception("Invalid api call");

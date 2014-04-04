@@ -3,4 +3,5 @@
 @import "../../vendor/bower/foundation/css/normalize.css";
 @import "../../vendor/bower/foundation/css/foundation.css";
 @import "./custom.css";
+@import "./pivotTable.css";
 /*-- Application stylesheets. -----------------------------------------------*/
