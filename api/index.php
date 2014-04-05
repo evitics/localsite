@@ -1,5 +1,4 @@
 <?php
-
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
@@ -49,6 +48,15 @@ $app->error(function (\Exception $e) use ($app) {
   $app->response()->status(404);
   echo '{ "error" : ' . json_encode($e->getMessage()) . ' }';
 });
+
+//If requiest is a PUT, put the PUT's data inside $_POST
+if($_SERVER['REQUEST_METHOD'] == 'PUT') {
+  $post_vars;
+  parse_str(file_get_contents("php://input"),$post_vars);
+  foreach($post_vars as $key=>$post_var) {
+    $_POST[$key] = $post_var;
+  }
+}
 //Run app
 $app->run();
 

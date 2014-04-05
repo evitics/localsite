@@ -24,7 +24,7 @@ $app->get('/organizations/:id', function($id) {
         throw new Exception("Could not fetch org with id: $id");
     }
 });
-$app->get('/meetings/:orgId/:meetingId', function($orgId, $meetingId) { 
+$app->get('/meeting/:orgId/:meetingId', function($orgId, $meetingId) { 
 	$meeting = Meeting::getMeetId($orgId, $meetingId); 
 	if($meeting) {
 		echo json_encode($meeting);
@@ -32,7 +32,7 @@ $app->get('/meetings/:orgId/:meetingId', function($orgId, $meetingId) {
         throw new Exception("Could not fetch the meeting with orgId: $orgId, and meetingId: $meetingId");
 	}
 });
-$app->get('/meetings/:orgId(/)', function($orgId) {
+$app->get('/meeting/:orgId(/)', function($orgId) {
     $org = Meeting::getOrgId($orgId); 
 	if($org) {
 		echo json_encode($org);
@@ -40,7 +40,33 @@ $app->get('/meetings/:orgId(/)', function($orgId) {
         throw new Exception("Could not fetch meetings for orgId: $orgId");
 	}
 });
-
+$app->put('/meeting/:orgId', function($orgId) {
+    if(!isset($_POST['name'])) {
+        echo '{ "error" : "Meeting Name not specified" }'; return;
+    }
+    $params = array(
+        'orgId'=>$orgId,
+        'name' => $_POST['name']
+    );
+    if(isset($_POST['onCheckIn'])) {
+        $params['onCheckIn'] = $_POST['onCheckIn'];
+    }
+    echo json_encode(Meeting::create($params));
+});
+$app->post('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
+    if(!isset($_POST['name'])) {
+        echo '{ "error" : "Meeting Name not specified" }'; return;
+    }
+    $params = array(
+        'orgId'=>$orgId,
+        'meetingId'=>$meetingId,
+        'name' => $_POST['name']
+    );
+    if(isset($_POST['onCheckIn'])) {
+        $params['onCheckIn'] = $_POST['onCheckIn'];
+    }
+    echo json_encode(Meeting::create($params));
+});
 //Gets the current checkins
 $app->get('/checkin/:orgId/:meetingId(/)', function($orgId, $meetingId) {
     $checkin = new Checkin();
@@ -90,7 +116,27 @@ $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $u
     echo json_encode($output);
 
 });
-
+$app->post('/mail', function() {
+    $requiredParams = array('from', 'to', 'subject', 'message');
+    foreach($requiredParams as $requiredParam) {
+        if(empty($_POST[$requiredParam])){
+            echo '{"error" : "Missing a required param (from, to, subject, and message are required)" }';
+            return;
+        } 
+    }
+    //turn array of $_POST['to'], to proper form
+    if(is_array($_POST['to'])) { $_POST['to'] = implode(',', $_POST['to']); }
+    //Gen PHP Headers
+    $headers = 'From: ' . $_POST['from'] . "\r\n" .
+               'Reply-To: ' . $_POST['from'] . "\r\n" .
+               'X-Mailer: PHP/' . phpversion();
+    //attempt to send mail
+    if(mail($_POST['to'], $_POST['subject'], $_POST['message'], $headers)) {
+        echo '{ "success" : "email sent"}';
+    } else {
+        echo '{ "error" : "email could not be sent" }';
+    }
+});
 $app->get('/log/:orgId/:meetingId/all', function($orgId, $meetingId) {
 
 });

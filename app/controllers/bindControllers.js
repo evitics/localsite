@@ -1,12 +1,30 @@
-define(['jquery', 'underscore', 'backbone', 'controllers/home', 'controllers/checkInTotals', 'controllers/triggers/new', 'controllers/organization', 'controllers/checkInGuest'],
-function($      ,  _          ,  Backbone ,  HomeController   ,  CheckInTotalsController   ,  NewTriggerController     ,  OrganizationController   ,  CheckInGuestController) {
+define(['jquery', 'underscore', 'backbone', 'controllers/home', 'controllers/checkInTotals', 'controllers/triggers/new', 'controllers/organization', 'controllers/checkInGuest', 'controllers/log'],
+function($      ,  _          ,  Backbone ,  HomeController   ,  CheckInTotalsController   ,  NewTriggerController     ,  OrganizationController   ,  CheckInGuestController   ,  LogController   ) {
   var bindControllers = function(app, user) {
     var vent = _.extend({}, Backbone.Events);
 
     app.router.on('route:index', function() {
       app.controller = new HomeController({app : app, user: user, vent : vent});
     });
-
+    app.router.on('route:log', function(orgId, meetingId, year, month, day) {
+      var params = {
+        app : app,
+        user : user,
+        vent : vent,
+        orgId : orgId,
+        meetingId : meetingId
+      };
+      if(typeof year !== 'undefined') {
+        params.year = year;
+      }
+      if(typeof month !== 'undefined') {
+        params.month = month;
+      }
+      if(typeof day !== 'undefined') {
+        params.day = day;
+      }
+      app.controller = new LogController(params);
+    });
     app.router.on('route:checkInTotals', function() {
       app.controller = new CheckInTotalsController({ app : app, user: user, vent: vent });
     });

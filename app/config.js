@@ -29,6 +29,8 @@ require.config({
     "views/organizations/info"  :  "views/organizations/info",
     "views/organizations/list"  :  "views/organizations/list",
     "views/checkInGuest"        :  "views/checkInGuest",
+    "views/log"                 :  "views/log",
+    
     //Models
     "models/user" : "models/user",
     "models/organization" : "models/organization",
@@ -47,7 +49,8 @@ require.config({
     "controllers/checkInTotals" : "controllers/checkInTotals",
     "controllers/triggers/new" : "controllers/triggers/new",
     "controllers/organization" : "controllers/organization",
-    "controllers/checkInGuest" : "controllers/checkInGuest"
+    "controllers/checkInGuest" : "controllers/checkInGuest",
+    "controllers/log"          : "controllers/log"
   },
 
   shim: {

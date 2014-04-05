@@ -69,7 +69,7 @@ Class DB {
     } else {   //query didn't successfully run
       return false;
     }
-
+    
     if(count($res) > 0) {
       return $res;
     } else {
@@ -91,6 +91,10 @@ Class DB {
     } else {
       return -1;
     }
+  }
+  //Avoid PDO confusion
+  public function lastInsertId() {
+    return $this->link->lastInsertId();
   }
   function __destruct() {
     $this->link = null;
