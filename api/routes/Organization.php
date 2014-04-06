@@ -25,7 +25,7 @@ class Organization {
   public static function getAll() {
     $config = require("./config.php");
     $jacketpagesDB = new DB("jacketpages");
-    $query = "SELECT `orgId`, `name`, `short_name`, `description`, `logo_path` FROM `organizations`";
+    $query = "SELECT `orgId`, `name`, `short_name`, `description`, `logo_path` FROM `organizations` ORDER BY `name` ASC";
     
     $organizations = $jacketpagesDB->fetchAll($query, array());
 
@@ -34,7 +34,9 @@ class Organization {
     }   
     return $organizations;  
   }
- 
+  public static function join($orgId) {
+    
+  }
 }
 
 

@@ -73,6 +73,17 @@ class User {
     $result["organizations"] = $orgs;
     return $result;
   }
+  public static function getPermissions($orgId) {
+    $eviticsDB = new DB("evitics");
+    $sql = "SELECT * FROM `user` WHERE `userId` = :userId AND `orgId` = :orgId"; 
+    $res = $eviticsDB->fetchAll($sql, array('userId'=>$GLOBALS['USERNAME'], 'orgId'=>$orgId));
+    
+    if(count($res) == 1) {
+      return $res[0];
+    } else {
+      return false; //should only have 1 result for this query
+    }
+  }
   public static function permissions($id) 
   {
     echo "Changing permissions for: $id";

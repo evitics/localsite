@@ -1,14 +1,32 @@
-define(['jquery', 'underscore', 'backbone', 'controllers/home', 'controllers/analyitics', 'controllers/triggers/new', 'controllers/organization', 'controllers/checkinGuest'],
-function($      ,  _          ,  Backbone ,  HomeController   ,  AnalyiticsController   ,  NewTriggerController     ,  OrganizationController   ,  CheckinGuestController) {
+define(['jquery', 'underscore', 'backbone', 'controllers/home', 'controllers/checkInTotals', 'controllers/triggers/new', 'controllers/organization', 'controllers/checkInGuest', 'controllers/log', 'controllers/meetings', 'views/help'],
+function($      ,  _          ,  Backbone ,  HomeController   ,  CheckInTotalsController   ,  NewTriggerController     ,  OrganizationController   ,  CheckInGuestController   ,  LogController   ,  MeetingsController   ,  HelpView   ) {
   var bindControllers = function(app, user) {
     var vent = _.extend({}, Backbone.Events);
 
     app.router.on('route:index', function() {
       app.controller = new HomeController({app : app, user: user, vent : vent});
     });
-
-    app.router.on('route:analyitics', function() {
-      app.controller = new AnalyiticsController({app : app, user: user, vent: vent});
+    app.router.on('route:log', function(orgId, meetingId, year, month, day) {
+      var params = {
+        app : app,
+        user : user,
+        vent : vent,
+        orgId : orgId,
+        meetingId : meetingId
+      };
+      if(typeof year !== 'undefined') {
+        params.year = year;
+      }
+      if(typeof month !== 'undefined') {
+        params.month = month;
+      }
+      if(typeof day !== 'undefined') {
+        params.day = day;
+      }
+      app.controller = new LogController(params);
+    });
+    app.router.on('route:checkInTotals', function() {
+      app.controller = new CheckInTotalsController({ app : app, user: user, vent: vent });
     });
 
     app.router.on('route:newTrigger', function(triggerType) {
@@ -32,8 +50,8 @@ function($      ,  _          ,  Backbone ,  HomeController   ,  AnalyiticsContr
     app.router.on('route:newOrganizationForm', function() {
       window.location.href= "http://jacketpages.gatech.edu/pages/contact";
     });
-    app.router.on('route:checkinGuest', function(orgId, meetingId) {
-      app.views.current = new CheckinGuestController({
+    app.router.on('route:checkInGuest', function(orgId, meetingId) {
+      app.views.current = new CheckInGuestController({
         app : app,
         user: user,
         vent: vent,
@@ -41,11 +59,22 @@ function($      ,  _          ,  Backbone ,  HomeController   ,  AnalyiticsContr
         meetingId: meetingId
       });
     });
+    app.router.on('route:help', function() {
+      app.views.current = new HelpView();
+      app.views.current.render();
+    });
+    app.router.on('route:meetings', function() {
+      app.controller = new MeetingsController({
+        app: app,
+        user: user,
+        vent: vent
+      });
+    });
     /*
       Vent Actions
     */
     vent.bind("post:startMeeting", function(post) {
-       if(post.hasOwnProperty('orgId') && post.hasOwnProperty('meetingId')) {
+      if(post.hasOwnProperty('orgId') && post.hasOwnProperty('meetingId')) {
         app.views.current.remove();
         app.router.navigate("/meeting/" + post.orgId + "/" + post.meetingId, {trigger :true});
       }

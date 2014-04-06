@@ -2,6 +2,10 @@ define(['jquery', 'backbone', 'templates'],
 function($,        Backbone,   templates) {
   var OrganizationInfoView = Backbone.View.extend({
     el : '.site-content',
+    events : {
+      'click .leaveOrg' : 'leaveOrg',
+      'click .joinOrg'  : 'request2JoinOrg'
+    },
     initialize : function(options) {
       this.organization = options.organization;
       this.user = options.user;
@@ -22,9 +26,17 @@ function($,        Backbone,   templates) {
           context.joined = true;
         }
       }
-
       this.$el.html(templates['organization/info'](context));
+    },
+    request2JoinOrg : function(ev) {
+      ev.stopPropegation();
+      ev.preventDefault();
       
+    },
+    leaveOrg : function(ev) {
+      ev.stopPropegation();
+      ev.preventDefault();
+
     },
     remove : function() {
       this.stopListening();
