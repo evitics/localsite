@@ -38,6 +38,23 @@ class Meeting {
       return array('error'=>'Could not create/update meeting');
     }
   }
+  public static function delete($orgId, $meetingId) {
+    //Check that user has permission to delete
+    require_once(dirname(__FILE__) . '/User.php');
+    $permissions = User::getPermissions($orgId);
+    if(!$permissions || !$permissions['writePerm']) {
+      return array('error'=>'You do not have permissions to delete this meeting');
+    } else {
+      $sql = 'DELETE FROM `meeting` WHERE `meetingId` = :meetingId AND `orgId` = :orgId';
+      $eviticsDB = new DB("evitics");
+      
+      if($res = $eviticsDB->query($sql, array('meetingId'=>$meetingId, 'orgId'=>$orgId))) {
+        return array('status'=>'successful');
+      } else {
+        return array('error'=>'could not delete meeting with id: ' . $meetingId .' for org: ' . $orgId);
+      }
+    }
+  }
   public static function getMeetId($orgId, $meetingId) 
   {
 	$db = new DB("evitics");

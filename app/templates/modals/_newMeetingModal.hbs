@@ -10,35 +10,23 @@
       </div>
     </div>
     <div class="row triggers">
-      <h4>Attach Triggers</h4>
-      <div class="medium-4 columns">
-        <div class="row collapse">
-          <label>At Start of Meeting</label>
-          <div class="small-10 columns">
-            <select class="start">
-              <option value="null">None</option>
-              <option>Something else here</option>
-            </select>
-          </div>
-          <div class="small-2 columns">
-            <a class="button postfix secondary addEvTrigger" href="/triggers/new/start">+</a>
-          </div>
-        </div>
-      </div>
-      <div class="medium-4 columns">
-        <div class="row collapse">
-          <label>X Min</label>
-          <div class="small-10 columns">
-            <select class="xmin">
-              <option value="null">None</option>
-              <option>Something else here</option>          
-            </select>
-          </div>
-          <div class="small-2 columns">
-            <a class="button postfix secondary addEvTrigger" href="/triggers/new/xmin">+</a>
-          </div>            
-        </div>
-      </div>
+      <h4>JavaScript code to execute on Guest Checkin</h4>
+      <p>Example code given below. <a id="moreHelpLink" href="/help#triggers">For more Information and Templates click here</a></p>
+      <textarea style="height:9rem;">
+function() {
+  mail({
+    to      : \{{checkedIn.email}},
+    from    : \{{organization.contact.email}},
+    subject : Glad you had fun at: \{{meeting.name}},
+    message : "
+      Hi \{{checkedIn.name}},
+      Hope you had fun at \{{organization.name}}'s event.  We sure did!.
+      Cordially,
+      \{{organization.contact.name}}
+    ";
+  });
+}
+       </textarea>
       <div class="medium-4 columns">
         <div class="row collapse">
           <label>At End of Meeting</label>

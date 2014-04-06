@@ -1,0 +1,39 @@
+{{#if writePerm}}
+<form id="saveMeeting">
+  <div class="row">
+    <label>Meeting Name:
+      <input type="text" id="meetingName" value="{{name}}" style="font-size:1.5em; height:2em;">
+    </label>
+  </div>
+
+  <div class="row">
+    <label>JavaScript code to execute on Guest Checkin
+      <a id="moreHelpLink" href="/help#triggers">
+        For more Information and Templates click here
+      </a>
+      <textarea id="onCheckIn" style="height:15rem;">
+        {{#if onCheckIn}}{{onCheckIn}}{{else}}
+          //example email code
+          function() {
+            mail({
+              from: null,
+              to: null,
+              subject : null,
+              message: null
+            });
+          }
+        {{/if}}
+      </textarea>
+    </label>
+  </div>
+  <div class="row">
+    <input class="button save" type="submit" value="Save">
+    <button class="delete">Delete</button>
+  </div>
+</form>
+
+{{else}}
+  <div data-alert class="alert-box alert">
+    You do not have write permissions for this oganization.  Therefore you cannot not modify/delete this meeting.
+  </div>
+{{/if}}

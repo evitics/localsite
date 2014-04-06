@@ -104,6 +104,7 @@ function($,        Backbone,   templates ,  OrgMeetingForm       ) {
       }));
     },
     remove : function() {
+      this.meetingForm.remove();
       this.stopListening();
       this.vent.off("post:orgMeetingForm");
       this.$el.html('');

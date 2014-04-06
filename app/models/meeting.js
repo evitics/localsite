@@ -11,7 +11,6 @@ function(backbone ,  ErrorPage       ) {
       }
       this.meetingId = options.meetingId;
       this.orgId = options.orgId;
-      this.meetings = options.meetings;
     },
     url : function() {
       return '/api/meeting/' + this.orgId + '/' +this.meetingId;

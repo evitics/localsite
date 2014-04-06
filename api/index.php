@@ -49,12 +49,17 @@ $app->error(function (\Exception $e) use ($app) {
   echo '{ "error" : ' . json_encode($e->getMessage()) . ' }';
 });
 
-//If requiest is a PUT, put the PUT's data inside $_POST
-if($_SERVER['REQUEST_METHOD'] == 'PUT') {
-  $post_vars;
-  parse_str(file_get_contents("php://input"),$post_vars);
-  foreach($post_vars as $key=>$post_var) {
-    $_POST[$key] = $post_var;
+//Make PUT and POST payloads of JSON to php array
+if($_SERVER['REQUEST_METHOD'] == 'PUT' || $_SERVER['REQUEST_METHOD'] == 'POST') {
+  //parse_str(file_get_contents("php://input"),$post_vars);
+  $postStr = file_get_contents("php://input");
+  try {
+    $_POST = json_decode($postStr, true);
+  } catch(Error $e) { //must not be json, use query str version
+    $postStr = parse_str($postStr);
+    foreach($post_vars as $key=>$post_var) {
+      $_POST[$key] = $post_var;
+    }
   }
 }
 //Run app

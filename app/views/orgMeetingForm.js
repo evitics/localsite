@@ -8,9 +8,6 @@ function($      ,  foundation ,  Backbone,   templates) {
       if(!options.hasOwnProperty('vent')) {
         throw new Error("No vent given in options");
       }
-      if(!options.hasOwnProperty('submitButtonTXT')) {
-        throw new Error("Need submitButton (Text to put in the submit Button");
-      }
       if(!options.hasOwnProperty('el')) {
         throw new Error("No element givent to bind to");
       }
@@ -24,7 +21,7 @@ function($      ,  foundation ,  Backbone,   templates) {
     },
     events : {
       'click button.submit' : 'submitForm',
-      'change select.organization-dropdown' : 'organizationChanged',
+      'change select.organization-dropdown' : 'organizationChanged'
     },
     closeModal : function() {
       this.$newMeetingModal.foundation('reveal', 'close');
@@ -125,9 +122,9 @@ function($      ,  foundation ,  Backbone,   templates) {
       this.stopListening();
       this.unbindModalEvents();
       //Make sure the modal actually removes itself (ugh)
-      this.$newMeetingModal.remove();
-
-      this.$el.remove();
+      this.closeModal(); //removes any stray elements w/animation
+      this.$newMeetingModal.remove(); //stops animation and removes elemnts
+      this.$el.remove(); //remove the view's contents
     }
   });
   return OrgMeetingFormView;

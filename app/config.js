@@ -30,7 +30,8 @@ require.config({
     "views/organizations/list"  :  "views/organizations/list",
     "views/checkInGuest"        :  "views/checkInGuest",
     "views/log"                 :  "views/log",
-    
+    "views/meetings"            :  "views/meetings",
+
     //Models
     "models/user" : "models/user",
     "models/organization" : "models/organization",
@@ -42,15 +43,16 @@ require.config({
     "collections/checkIns.js"  : "collections/checkIns",
     
     //Controllers
-    "controllers/bindControllers" : "controllers/bindControllers",
+    "controllers/bindControllers"     : "controllers/bindControllers",
     "controllers/bindLinksToBackbone" : "controllers/bindLinksToBackbone",
     
-    "controllers/home"  : "controllers/home",
-    "controllers/checkInTotals" : "controllers/checkInTotals",
-    "controllers/triggers/new" : "controllers/triggers/new",
-    "controllers/organization" : "controllers/organization",
-    "controllers/checkInGuest" : "controllers/checkInGuest",
-    "controllers/log"          : "controllers/log"
+    "controllers/home"          :  "controllers/home",
+    "controllers/checkInTotals" :  "controllers/checkInTotals",
+    "controllers/triggers/new"  :  "controllers/triggers/new",
+    "controllers/organization"  :  "controllers/organization",
+    "controllers/checkInGuest"  :  "controllers/checkInGuest",
+    "controllers/log"           :  "controllers/log",
+    "controllers/meetings"      :  "controllers/meetings",
   },
 
   shim: {

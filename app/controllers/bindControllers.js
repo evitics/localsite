@@ -1,5 +1,5 @@
-define(['jquery', 'underscore', 'backbone', 'controllers/home', 'controllers/checkInTotals', 'controllers/triggers/new', 'controllers/organization', 'controllers/checkInGuest', 'controllers/log'],
-function($      ,  _          ,  Backbone ,  HomeController   ,  CheckInTotalsController   ,  NewTriggerController     ,  OrganizationController   ,  CheckInGuestController   ,  LogController   ) {
+define(['jquery', 'underscore', 'backbone', 'controllers/home', 'controllers/checkInTotals', 'controllers/triggers/new', 'controllers/organization', 'controllers/checkInGuest', 'controllers/log', 'controllers/meetings', 'views/help'],
+function($      ,  _          ,  Backbone ,  HomeController   ,  CheckInTotalsController   ,  NewTriggerController     ,  OrganizationController   ,  CheckInGuestController   ,  LogController   ,  MeetingsController   ,  HelpView   ) {
   var bindControllers = function(app, user) {
     var vent = _.extend({}, Backbone.Events);
 
@@ -57,6 +57,17 @@ function($      ,  _          ,  Backbone ,  HomeController   ,  CheckInTotalsCo
         vent: vent,
         orgId: orgId,
         meetingId: meetingId
+      });
+    });
+    app.router.on('route:help', function() {
+      app.views.current = new HelpView();
+      app.views.current.render();
+    });
+    app.router.on('route:meetings', function() {
+      app.controller = new MeetingsController({
+        app: app,
+        user: user,
+        vent: vent
       });
     });
     /*

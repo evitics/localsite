@@ -40,7 +40,7 @@ $app->get('/meeting/:orgId(/)', function($orgId) {
         throw new Exception("Could not fetch meetings for orgId: $orgId");
 	}
 });
-$app->put('/meeting/:orgId', function($orgId) {
+$app->post('/meeting/:orgId', function($orgId) {
     if(!isset($_POST['name'])) {
         echo '{ "error" : "Meeting Name not specified" }'; return;
     }
@@ -53,9 +53,9 @@ $app->put('/meeting/:orgId', function($orgId) {
     }
     echo json_encode(Meeting::create($params));
 });
-$app->post('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
+$app->put('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
     if(!isset($_POST['name'])) {
-        echo '{ "error" : "Meeting Name not specified" }'; return;
+        echo '{ "error" : "Meeting Name not specified'.$_POST['name'].'"  }'; return;
     }
     $params = array(
         'orgId'=>$orgId,
@@ -66,6 +66,9 @@ $app->post('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
         $params['onCheckIn'] = $_POST['onCheckIn'];
     }
     echo json_encode(Meeting::create($params));
+});
+$app->delete('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
+    echo json_encode(Meeting::delete($orgId, $meetingId));
 });
 //Gets the current checkins
 $app->get('/checkin/:orgId/:meetingId(/)', function($orgId, $meetingId) {

@@ -32,12 +32,13 @@
       <a class="disabled button postfix secondary revealNewMeetingModal" style="min-width:3em">+</a>
     </div>
   </div>
-
+  {{#if submitButtonTXT}}
   <div class="row">
     <div class="small-12 columns">
       <button type="submit" class="button submit" disabled="true">{{submitButtonTXT}}</button>
     </div>
   </div>
+  {{/if}}
 </form>
 
 {{> newMeetingModal }}
