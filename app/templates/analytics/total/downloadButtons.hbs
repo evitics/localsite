@@ -1,13 +1,11 @@
 <div class="row collapse text-center">
   <div class="medium-6 columns">
-    <h4>Download logs for the meeting</h4>
-    <a class="button" href="/api/downloadCheckins/csv/{{orgId}}/{{meetingId}}">CSV</a>
-    <a class="button" href="/api/downloadCheckins/sql/{{orgId}}/{{meetingId}}">SQL</a>
+    <h4>Raw Meeting Log</h4>
+    <a class="button" href="/api/log/download/{{orgId}}/{{meetingId}}" download>CSV</a>
   </div>
   <div class="medium-6 columns text-center">
-    <h4>Donload logs for all meetings</h4>
-    <a class="button" href="/api/downloadCheckins/csv/{{orgId}}" downloadxs>CSV</a>
-    <a class="button" href="/api/downloadCheckins/sql/{{orgId}}" download>SQL</a>
+    <h4>Raw Organization Log</h4>
+    <a class="button" href="/api/log/download/{{orgId}}" download>CSV</a>
   </div>
 </div>
 

@@ -12,7 +12,7 @@ Class Checkin {
   public function getStaistics($orgId, $meetingId) {
     $orgId = Helpers::id2Int($orgId);
     $sql = "SELECT COUNT(`userId`) FROM `$orgId` WHERE `meetingId` = :meetingId AND `timestamp` > DATE_SUB(NOW(), INTERVAL 6 HOUR)";
-    $attendance = $this->checkinDb->fetchAll($sql, array("meetingId"=>$meetingId), "COLUMN");
+    $attendance = $this->checkinDb->fetchAll($sql, array("meetingId"=>$meetingId), "NUMERIC");
     if($attendance) {
       $attendance = $attendance[0]; //first record, first field
     }

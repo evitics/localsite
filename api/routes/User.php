@@ -2,6 +2,7 @@
 require_once("./library/DB.php");
 require_once("./library/GTED.php");
 class User {
+  //TODO - REFACTOR - SUPER LONG FUNCTION CODE, Which has reusable parts
   public static function get($userId) {
     $config = require("./config.php");
     //Only allow logged in users to request data on themselves
@@ -78,15 +79,42 @@ class User {
     $sql = "SELECT * FROM `user` WHERE `userId` = :userId AND `orgId` = :orgId"; 
     $res = $eviticsDB->fetchAll($sql, array('userId'=>$GLOBALS['USERNAME'], 'orgId'=>$orgId));
     
-    if(count($res) == 1) {
+    if($res && count($res) === 1) {
       return $res[0];
     } else {
       return false; //should only have 1 result for this query
     }
   }
-  public static function permissions($id) 
-  {
-    echo "Changing permissions for: $id";
+  public static function joinOrg($orgId) {
+    require_once(dirname(__FILE__) . '/Organization.php');
+    
+    if($this::getPermissions($orgId)) {
+      return array("error"=>"already in organization");
+    } 
+    
+    $organizationInfo = Organization::get($orgId);
+    if(!$organizationInfo) {
+      return array('error'=>'Organization with id: '.$orgId.' does not exist, therefore cannot join it');
+    }
+
+    $gted = new GTED();
+    $userInfo = $gted->getUser($GLOBALS['USERNAME']);
+    if(!$userInfo || !isset($userInfo['mail'][0]) || !isset($userInfo['displayname'][0])) { //serious error
+      throw new Error('Could not fetch user information');
+    }
+
+
+    $to = 'cbookman3@gatech.edu'; //$organizationInfo['org_email'];
+    $from = $userInfo['mail'][0];
+    $subject = '[Evitics] ' . $userInfo['displayname'][0] . ' wnats to join your organization (' . $organizationInfo['name'] . ')';
+    $message = 'Hi-\r\nPlease go to the following link to allow ' . $userInfo['displayname'][0] . ' to be part of your organization.';
+    $headers = 'From: ' . $_POST['from'] . "\r\n" .
+               'Reply-To: ' . $_POST['from'] . "\r\n" .
+               'X-Mailer: PHP/' . phpversion();
+    return mail($to, $from, $subject, $message, $headers);
+  }
+  public static function leaveOrg($orgId) {
+
   }
 }
 ?>

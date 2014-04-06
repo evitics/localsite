@@ -10,8 +10,11 @@ function($,        Backbone) {
   var bindLinksToBackbone = function(app) {
     $(document).on("click", "a[href^='/']", function(event) {
       if (!event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
-        event.preventDefault();
         var url = $(event.currentTarget).attr("href").replace(/^\//, "");
+        
+        if(url.indexOf('api') === 0) { return; }
+        event.preventDefault();
+        
         
         // Route to only new url paths
         if(Backbone.history.fragment !== url) {

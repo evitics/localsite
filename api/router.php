@@ -14,7 +14,7 @@ $app->get('/user', function() {
     Put in a request to join an organization
 */
 $app->post('/organization/join/:id', function($orgId) {
-    echo json_encode(Organization::join($orgId));
+    echo json_encode(User::joinOrg($orgId));
 });
 /*
     Get list of organizations
@@ -169,22 +169,31 @@ $app->post('/mail', function() {
         echo '{ "error" : "email could not be sent" }';
     }
 });
-$app->get('/log/:orgId/:meetingId/all', function($orgId, $meetingId) {
 
+/*
+    Raw log data
+*/
+$app->get('/log/download/:orgId(/:meetingId)(/:year)(/:month)(/:day)', function($orgId, $meetingId = false, $year = false, $month = false, $day = false) {
+    $filename = "log.$orgId";
+    $log = new Log();
+    $params = array(
+        "orgId" => $orgId,
+    );
+    //optional parameters
+    if($meetingId) { $params['meetingId'] = $meetingId;    $filename .= ".$meetingId"; }
+    if($year)      { $params["year"]      = $year;         $filename .= ".$year";      }
+    if($month)     { $params["month"]     = $month;        $filename .= ".$month";     }
+    if($day)       { $params["day"]       = $day;          $filename .= ".$day";       }
+    header("Content-Disposition: attachment; filename=\"$filename.csv\"");
+    echo $log->getAll($params);
 });
-
-$app->get('/log/:orgId/:meetingId', function($orgId, $meetingId) { 
-
+/*
+    Pivot Table Data
+*/
+$app->get('/log/:orgId/:meetingId', function($orgId, $meetingId) {
+    $log = new Log();
+    echo json_encode($log->getOverview(array("orgId"=>$orgId, "meetingId"=>$meetingId)));
 });
-
-$app->get('/log/:orgId/:meetingId/:yyyy', function($orgId, $meetingId, $year) {
-
-});
-
-$app->get('/log/:orgId/:meetingId/:yyyy/:mm', function($orgId, $meetingId, $year, $month) {
-
-});
-
 $app->get('/gted/:userId', function($userId) {
     require_once("./library/GTED.php");
     $gted = new GTED();

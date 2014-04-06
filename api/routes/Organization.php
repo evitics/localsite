@@ -34,9 +34,6 @@ class Organization {
     }   
     return $organizations;  
   }
-  public static function join($orgId) {
-    
-  }
 }
 
 

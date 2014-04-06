@@ -1,4 +1,4 @@
-define(['jquery', 'foundation', 'backbone', 'templates', 'models/Meeting'],
+define(['jquery', 'foundation', 'backbone', 'templates', 'models/meeting'],
 function($      ,  foundation ,  Backbone,   templates ,  MeetingModel) {
   var OrgMeetingFormView = Backbone.View.extend({
     initialize: function(options) {
