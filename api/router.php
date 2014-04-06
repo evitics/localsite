@@ -1,5 +1,7 @@
 <?php
-
+/* 
+    Get your user information
+*/
 $app->get('/user', function() {
     $userInfo = User::get($GLOBALS["USERNAME"]);
     if($userInfo) {
@@ -8,6 +10,15 @@ $app->get('/user', function() {
         throw new Exception("Could not fetch user info");
     }
 });
+/*
+    Put in a request to join an organization
+*/
+$app->post('/organization/join/:id', function($orgId) {
+    echo json_encode(Organization::join($orgId));
+});
+/*
+    Get list of organizations
+*/
 $app->get('/organizations', function() { 
     $orgs = Organization::getAll();
     if($orgs) {
@@ -16,6 +27,9 @@ $app->get('/organizations', function() {
         throw new Exception("Could not fetch all of the organizations");
     }
 });
+/*
+    Get organization's information
+*/
 $app->get('/organizations/:id', function($id) { 
     $org = Organization::get($id);
     if($org) {
@@ -24,6 +38,9 @@ $app->get('/organizations/:id', function($id) {
         throw new Exception("Could not fetch org with id: $id");
     }
 });
+/*
+    Get meeting's information
+*/
 $app->get('/meeting/:orgId/:meetingId', function($orgId, $meetingId) { 
 	$meeting = Meeting::getMeetId($orgId, $meetingId); 
 	if($meeting) {
@@ -32,6 +49,9 @@ $app->get('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
         throw new Exception("Could not fetch the meeting with orgId: $orgId, and meetingId: $meetingId");
 	}
 });
+/*
+    Get meetings for said organization
+*/
 $app->get('/meeting/:orgId(/)', function($orgId) {
     $org = Meeting::getOrgId($orgId); 
 	if($org) {
@@ -40,6 +60,9 @@ $app->get('/meeting/:orgId(/)', function($orgId) {
         throw new Exception("Could not fetch meetings for orgId: $orgId");
 	}
 });
+/*
+    Create new meeting
+*/
 $app->post('/meeting/:orgId', function($orgId) {
     if(!isset($_POST['name'])) {
         echo '{ "error" : "Meeting Name not specified" }'; return;
@@ -53,6 +76,9 @@ $app->post('/meeting/:orgId', function($orgId) {
     }
     echo json_encode(Meeting::create($params));
 });
+/*
+    Update meeting's info
+*/
 $app->put('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
     if(!isset($_POST['name'])) {
         echo '{ "error" : "Meeting Name not specified'.$_POST['name'].'"  }'; return;
@@ -67,6 +93,9 @@ $app->put('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
     }
     echo json_encode(Meeting::create($params));
 });
+/*
+    Remove specified meeting
+*/
 $app->delete('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
     echo json_encode(Meeting::delete($orgId, $meetingId));
 });

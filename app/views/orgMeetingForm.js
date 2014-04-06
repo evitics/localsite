@@ -1,5 +1,5 @@
-define(['jquery', 'foundation', 'backbone', 'templates'],
-function($      ,  foundation ,  Backbone,   templates) {
+define(['jquery', 'foundation', 'backbone', 'templates', 'models/Meeting'],
+function($      ,  foundation ,  Backbone,   templates ,  MeetingModel) {
   var OrgMeetingFormView = Backbone.View.extend({
     initialize: function(options) {
       if(!options.hasOwnProperty('user')) {
@@ -21,6 +21,7 @@ function($      ,  foundation ,  Backbone,   templates) {
     },
     events : {
       'click button.submit' : 'submitForm',
+      'submit #createNewMeeting' : 'submitForm',
       'change select.organization-dropdown' : 'organizationChanged'
     },
     closeModal : function() {
@@ -29,20 +30,28 @@ function($      ,  foundation ,  Backbone,   templates) {
     createAMeeting : function(ev) {
       ev.preventDefault();
       ev.stopPropagation();
-      var triggerDiv = this.$newMeetingModal.find(".triggers");
-      var post = {
-        organizationId : this.$el.find('.organization-dropdown').val(),
-        meeting : {
-          name: this.$newMeetingModal.find(".name").val(),
-          triggers : {
-            start :  triggerDiv.find(".start").val(),
-            xmin  :  triggerDiv.find(".xmin").val(),
-            end   :  triggerDiv.find(".end").val()
-          }
+      var orgId = this.$el.find('.organization-dropdown').val();
+      var that = this;
+      var meeting = new MeetingModel({
+        name: $("#createNewMeeting .meetingName").val(),
+        orgId : orgId,
+        onCheckIn : $('#createNewMeeting #onCheckIn').val()
+      });
+      
+      meeting.save(null, {
+        success : function(res) {
+          debug3 = res;
+          that.user.get('organizations').get(orgId).get('meetings').add(res);
+          that.render();
+          var context = res.toJSON();
+          context.orgName = that.user.get('organizations').get(orgId).toJSON().name;
+          that.$el.find("#orgMeetingAlert").html(templates['forms/orgMeeting/alert'](context));
+        },
+        error : function(r,s) {
+          alert("error: Could not add meeting");
         }
-      };
+      });
       this.closeModal();
-      this.vent.trigger("post:createAMeeting", post);
     },
     organizationChanged : function(ev) {
       var optionValue = ev.target.value.trim();
@@ -106,6 +115,8 @@ function($      ,  foundation ,  Backbone,   templates) {
 
       //Bind ot valid form submission
       this.$newMeetingModal.on('valid', function(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
         that.createAMeeting(ev);
       });
 

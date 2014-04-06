@@ -10,7 +10,6 @@ function($,        Backbone,   templates ) {
       this.$el.html(templates.help());
     },
     remove : function() {
-      this.unBindVents();
       this.stopListening();
       this.$el.html('');
     }

@@ -26,7 +26,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "";
 
 
-  buffer += "<div id=\"newMeetingModal\" class=\"reveal-modal\" data-reveal>\n  <form data-abide=\"ajax\">\n    <div class=\"row\">\n      <h3>Create A New Meeting</h3>\n      <div class=\"large-12 columns\">\n        <label>* Name of the Meeting\n          <input type=\"text\" placeholder=\"My Super Cool Group Meeting\" required pattern=\"^[a-zA-Z0-9\\s]+$\" class=\"name\">\n        </label>\n        <small class=\"error\">Can only use alpha numeric characters</small>\n      </div>\n    </div>\n    <div class=\"row triggers\">\n      <h4>JavaScript code to execute on Guest Checkin</h4>\n      <p>Example code given below. <a id=\"moreHelpLink\" href=\"/help#triggers\">For more Information and Templates click here</a></p>\n      <textarea style=\"height:9rem;\">\nfunction() {\n  mail({\n    to      : {{checkedIn.email}},\n    from    : {{organization.contact.email}},\n    subject : Glad you had fun at: {{meeting.name}},\n    message : \"\n      Hi {{checkedIn.name}},\n      Hope you had fun at {{organization.name}}'s event.  We sure did!.\n      Cordially,\n      {{organization.contact.name}}\n    \";\n  });\n}\n       </textarea>\n      <div class=\"medium-4 columns\">\n        <div class=\"row collapse\">\n          <label>At End of Meeting</label>\n          <div class=\"small-10 columns\">\n            <select class=\"end\">\n              <option value=\"null\">None</option>\n              <option>Something else here</option>\n            </select>\n          </div>\n          <div class=\"small-2 columns\">\n            <a class=\"button postfix secondary addEvTrigger\" href=\"/triggers/new/end\">+</a>\n          </div>            \n        </div>\n      </div>\n    </div>\n    <div class=\"row\">\n      <div class=\"large-12 columns\">\n        <button class=\"createAMeeting\" type=\"submit\">Create</button>\n      </div>\n    </div>\n  </form>\n  <a class=\"close-reveal-modal\">&#215;</a>\n</div>";
+  buffer += "<div id=\"newMeetingModal\" class=\"reveal-modal\" data-reveal>\n  <form id=\"createNewMeeting\" data-abide=\"ajax\">\n    <div class=\"row\">\n      <h3>Create A New Meeting</h3>\n      <div class=\"large-12 columns\">\n        <label>* Name of the Meeting\n          <input type=\"text\" placeholder=\"My Super Cool Group Meeting\" required pattern=\"^[a-zA-Z0-9\\s]+$\" class=\"meetingName\">\n        </label>\n        <small class=\"error\">Can only use alpha numeric characters</small>\n      </div>\n    </div>\n    <div class=\"row triggers\">\n      <h4>JavaScript code to execute on Guest Checkin</h4>\n      <p>Example code given below. <a id=\"moreHelpLink\" href=\"/help#triggers\">For more Information and Templates click here</a></p>\n      <textarea id=\"onCheckIn\" style=\"height:9rem;\">\nfunction() {\n  mail({\n    to      : {{checkedIn.email}},\n    from    : {{organization.contact.email}},\n    subject : Glad you had fun at: {{meeting.name}},\n    message : \"\n      Hi {{checkedIn.name}},\n      Hope you had fun at {{organization.name}}'s event.  We sure did!.\n      Cordially,\n      {{organization.contact.name}}\n    \";\n  });\n}\n       </textarea>\n    <div class=\"row\">\n      <div class=\"large-12 columns\">\n        <button class=\"createAMeeting\" type=\"submit\">Create</button>\n      </div>\n    </div>\n  </form>\n  <a class=\"close-reveal-modal\">&#215;</a>\n</div>";
   return buffer;
   }));
 
@@ -320,6 +320,44 @@ function program1(depth0,data) {
   return buffer;
   });
 
+this["templates"]["forms/orgMeeting/alert"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <div data-alert=\"\" class=\"alert-box alert\">\n    ";
+  if (stack1 = helpers.error) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.error); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\n  </div>\n";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <div data-alert=\"\" class=\"alert-box success\">\n    Created meeting: ";
+  if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.name); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + ", for organization ";
+  if (stack1 = helpers.orgName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.orgName); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\n  </div>\n";
+  return buffer;
+  }
+
+  buffer += "<div class=\"alertBox\">\n";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.error), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>";
+  return buffer;
+  });
+
 this["templates"]["forms/orgMeeting/layout"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); partials = this.merge(partials, Handlebars.partials); data = data || {};
@@ -375,7 +413,7 @@ function program6(depth0,data) {
   return buffer;
   }
 
-  buffer += "<h3>";
+  buffer += "<section id=\"orgMeetingAlert\">\n</section>\n<h3>";
   if (stack1 = helpers.headerTXT) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.headerTXT); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
