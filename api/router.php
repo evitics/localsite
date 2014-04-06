@@ -39,6 +39,24 @@ $app->get('/organizations/:id', function($id) {
     }
 });
 /*
+	Change user's write permissions
+*/	
+$app->get('/organizations/permissions/:id/:userID', function($id, $userId){
+	$org = Organization::get($id);
+	if(!$org){
+		throw new Exception("Could not fetch org with id: $id");
+	}
+	$row = User::getPermissions($id);
+	if(isset($row["writePerm"]) && is_numeric($row["writePerm"]){
+		$perm = intval($row["writePerm"]);
+	}
+	if(!$perm){
+		throw new Exception("User with id: $userId does not have write permissions");
+	}
+	$res = Organization::changeWritePerm($id, $userId);
+	
+});
+/*
     Get meeting's information
 */
 $app->get('/meeting/:orgId/:meetingId', function($orgId, $meetingId) { 
