@@ -47,14 +47,16 @@ $app->get('/organizations/permissions/:id/:userID', function($id, $userId){
 		throw new Exception("Could not fetch org with id: $id");
 	}
 	$row = User::getPermissions($id);
-	if(isset($row["writePerm"]) && is_numeric($row["writePerm"]){
+	if(isset($row["writePerm"]) && is_numeric($row["writePerm"])){
 		$perm = intval($row["writePerm"]);
 	}
 	if(!$perm){
 		throw new Exception("User with id: $userId does not have write permissions");
 	}
 	$res = Organization::changeWritePerm($id, $userId);
-	
+	if(!$res){
+		throw new Exception("Could not change write permissions of userId: $userId to groupId: $id");
+	}	
 });
 /*
     Get meeting's information

@@ -42,13 +42,13 @@ class Organization {
 		$config = require("./config.php");
 		$eviticsDB = new DB("evitics");
 		$statement = "SELECT COUNT(*) FROM `user` WHERE `orgId` =:orgId AND `userId` =:userId";
-		$count = $eviticsDB=>fetchAll($statement, array("orgId"=>$id, "userId"=>$userId));
+		$count = $eviticsDB->fetchAll($statement, array("orgId"=>$id, "userId"=>$userId));
 		if($count){
 			$statement = "UPDATE `user` SET `orgId`=:orgId, `userId` =:userId, `writePerm`=1, `isPending`=0 WHERE `orgId`=:orgId AND `userId`=:userId";
-			$res = $eviticsDB=>query($statement, array("orgId"=>$id, "userId"=>$userId));
+			$res = $eviticsDB->query($statement, array("orgId"=>$id, "userId"=>$userId));
 		} else {
 			$statement = "INSERT INTO `user` (`userId`, `orgId`, `writePerm`, `isPending`) VALUES (:userId, :orgId, 1, 0)";
-			$res = $eviticsDB=>query($statement, array("userId"=>$userId, "orgId"=>$id));
+			$res = $eviticsDB->query($statement, array("userId"=>$userId, "orgId"=>$id));
 		}
 		return $res;
 	}
