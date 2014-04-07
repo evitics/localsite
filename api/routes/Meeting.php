@@ -5,26 +5,22 @@ require_once("./library/DB.php");
 class Meeting {
   public static function create($params) {
     //require param
-    if(empty($params['name']) || empty($params['orgId'])) {
+    if(empty($params['name']) || empty($params['orgId']) || !isset($params['emailFrom']) ||
+       !isset($params['emailSubject']) || !isset($params['emailMessage'])) {
       return array("error"=>"To create a meeting reequries a meeting name and orgId");
     }
-
-    //for optional params that are not set, set them to null
-    if(!isset($params['onCheckIn'])) {
-      $params['onCheckIn'] = null;
-    } 
 
     //if meetingId not specified, let MySQL generate it
     if(isset($params['meetingId'])) {
       $meetingId = $params['meetingId'];
       $values = array(
-          '(`meetingId`, `orgId`, `name`, `onCheckIn`)',
-          '(:meetingId , :orgId , :name , :onCheckIn )'
+          '(`meetingId`, `orgId`, `name`, `sendEmailOnCheckin`, `emailFrom`,`emailSubject`,`emailMessage`)',
+          '(:meetingId , :orgId , :name , :sendEmailOnCheckin , :emailFrom, :emailSubject, :emailMessage  )'
       );
     } else {
       $values = array(
-          '(`orgId`, `name`, `onCheckIn`)',
-          '(:orgId , :name , :onCheckIn )'
+          '(`orgId`, `name`, `sendEmailOnCheckin`, `emailFrom`,`emailSubject`,`emailMessage`)',
+          '(:orgId , :name , :sendEmailOnCheckin , :emailFrom, :emailSubject, :emailMessage  )'
       );
     }
     

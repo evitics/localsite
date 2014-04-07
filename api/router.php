@@ -67,9 +67,17 @@ $app->post('/meeting/:orgId', function($orgId) {
     if(!isset($_POST['name'])) {
         echo '{ "error" : "Meeting Name not specified" }'; return;
     }
+    if(!isset($_POST['emailFrom']) || !isset($_POST['emailSubject']) ||
+       !isset($_POST['sendEmailOnCheckin']) || !isset($_POST['emailMessage'])) {
+        echo '{ "error" : "Need email information" }'; return;
+    }
     $params = array(
         'orgId'=>$orgId,
-        'name' => $_POST['name']
+        'name' => $_POST['name'],
+        'emailFrom' => $_POST['emailFrom'],
+        'emailSubject'=>$_POST['emailSubject'],
+        'emailMessage'=>$_POST['emailMessage'],
+        'sendEmailOnCheckin'=>$_POST['sendEmailOnCheckin']
     );
     if(isset($_POST['onCheckIn'])) {
         $params['onCheckIn'] = $_POST['onCheckIn'];
@@ -83,14 +91,19 @@ $app->put('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
     if(!isset($_POST['name'])) {
         echo '{ "error" : "Meeting Name not specified'.$_POST['name'].'"  }'; return;
     }
+    if(!isset($_POST['emailFrom']) || !isset($_POST['emailSubject']) ||
+       !isset($_POST['sendEmailOnCheckin']) || !isset($_POST['emailMessage'])) {
+        echo '{ "error" : "Need email information" }'; return;
+    }
     $params = array(
         'orgId'=>$orgId,
         'meetingId'=>$meetingId,
-        'name' => $_POST['name']
+        'name' => $_POST['name'],
+        'emailFrom' => $_POST['emailFrom'],
+        'emailSubject'=>$_POST['emailSubject'],
+        'emailMessage'=>$_POST['emailMessage'],
+        'sendEmailOnCheckin'=>$_POST['sendEmailOnCheckin']
     );
-    if(isset($_POST['onCheckIn'])) {
-        $params['onCheckIn'] = $_POST['onCheckIn'];
-    }
     echo json_encode(Meeting::create($params));
 });
 /*

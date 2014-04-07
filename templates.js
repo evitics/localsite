@@ -26,7 +26,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "";
 
 
-  buffer += "<div id=\"newMeetingModal\" class=\"reveal-modal\" data-reveal>\n  <form id=\"createNewMeeting\" data-abide=\"ajax\">\n    <div class=\"row\">\n      <h3>Create A New Meeting</h3>\n      <div class=\"large-12 columns\">\n        <label>* Name of the Meeting\n          <input type=\"text\" placeholder=\"My Super Cool Group Meeting\" required pattern=\"^[a-zA-Z0-9\\s]+$\" class=\"meetingName\">\n        </label>\n        <small class=\"error\">Can only use alpha numeric characters</small>\n      </div>\n    </div>\n    <div class=\"row triggers\">\n      <h4>JavaScript code to execute on Guest Checkin</h4>\n      <p>Example code given below. <a id=\"moreHelpLink\" href=\"/help#triggers\">For more Information and Templates click here</a></p>\n      <textarea id=\"onCheckIn\" style=\"height:9rem;\">\nfunction() {\n  mail({\n    to      : {{checkedIn.email}},\n    from    : {{organization.contact.email}},\n    subject : Glad you had fun at: {{meeting.name}},\n    message : \"\n      Hi {{checkedIn.name}},\n      Hope you had fun at {{organization.name}}'s event.  We sure did!.\n      Cordially,\n      {{organization.contact.name}}\n    \";\n  });\n}\n       </textarea>\n    <div class=\"row\">\n      <div class=\"large-12 columns\">\n        <button class=\"createAMeeting\" type=\"submit\">Create</button>\n      </div>\n    </div>\n  </form>\n  <a class=\"close-reveal-modal\">&#215;</a>\n</div>";
+  buffer += "<div id=\"newMeetingModal\" class=\"reveal-modal\" data-reveal>\n  <form id=\"createNewMeeting\" data-abide=\"ajax\">\n    <div class=\"row collapse\">\n      <h3>Create A New Meeting</h3>\n        <label>* Name of the Meeting\n          <input type=\"text\" placeholder=\"My Super Cool Group Meeting\" required pattern=\"^[a-zA-Z0-9\\s]+$\" class=\"meetingName\">\n        </label>\n        <small class=\"error\">Can only use alpha numeric characters</small>\n    </div>\n    <div class=\"row collapse\">\n      <label>Send Email when guest checks in?\n      <select class=\"sendEmailOnCheckin\">\n        <option value=\"false\">Don't send any email</option>\n        <option value=\"all\">All Guests</option>\n        <option value=\"new\">Guests new to organization</option>\n      </select>\n    </div>\n    <div class=\"row collapse triggers\" style=\"display:none;\">\n      <div class=\"row\">\n        <label>From:\n          <input id=\"email-from\" type=\"email\">\n        </label>\n      </div>\n      <div class=\"row\">\n        <label>Subject:\n          <input id=\"email-subject\" type=\"text\">\n        </label>\n      </div>\n      <div class=\"row\">\n        <label>Message:\n          <textarea id=\"email-message\" style=\"height:9rem;\">\n            Hi {{checkedIn.name}},\n\n            Hope you had fun at {{organization.name}}'s event.  We sure did!.\n\n            Cordially,\n            {{organization.contact.name}}\n         </textarea>\n        </label>\n      </div>\n    </div>\n    <div class=\"row\">\n      <div class=\"large-12 columns\">\n        <button class=\"createAMeeting\" type=\"submit\">Create</button>\n      </div>\n    </div>\n  </form>\n  <a class=\"close-reveal-modal\">&#215;</a>\n</div>";
   return buffer;
   }));
 
@@ -468,7 +468,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<h3>FAQ:</h3>\n<ul>\n  <li><a href=\"#triggers\">Trigger Code</a></li>\n  <li><a href=\"#checkIns\">CheckIns</a></li>\n  <li><a href=\"#marketing\">Marketing</a></li>\n  <li><a href=\"#analytics\">Analytics</a></li>\n</ul>\n<article id=\"triggers\">\n  <code>\n  {\n    \"name\" : \"Hi World\"\n  }\n  </code>\n</article>\n\n<article id=\"checkIns\">\n <h4>Checkins</h4>\n</article>\n\n<article id=\"marketing\">\n  <h4>Marketing</h4>\n</article>\n\n<article id=\"analytics\">\n  <h4>Analytics</h4>\n</article>";
+  return "<h3>FAQ:</h3>\nHelp and FAQs\n\n<pre><article id=\"unabletologin\">\n  Q: I am unable to log in to the website. I have tried logging in multiple times on different occasions but it does not seem to work for me.\n\n  A: This website uses Georgia Tech’s CAS login service. The username and password for the website is the same one you use for other Georgia Tech resources. If you are able to log in successfully to T-Square or Buzzport, you should be able to log into the website as well. If you have changed your password recently, please allow the website up to 3 hours to get the updated credentials. if you still run into issues, you should contact Georgia Tech’s OIT: www.oit.gatech.edu\n</article>\n\n<article id=\"nonews\">\n  Q: I don’t see anything under the News section when I log in. What could be wrong?\n\n  A: There will be nothing under News section if you have not joined any organization yet or the organizations you are the part of have no updates.\n</article>\n\n<article id=\"validUserIds\">\n  Q: What can I use to check-in people for a meeting?\n\n  A: You can check-in people using their GTID or GT username. You can also use Buzzcard to check-in people if you are using our RFID reader.\n</article>\n\n<article id=\"joinRequest\">\n  Q: I have requested to join an organization but I don’t see it under my organization in the Organization page. When will I see the new organization?\n\n  A: You are unable to see your requested organization under your organization because your request is still pending with the organization’s administrator. Once they approve your pending request only then you will be able to see the organization under My Organization.\n</article>\n\n<article id=\"analyticsTypes\">\n  Q: What type of analytics do you perform?\n   \n  A: We provide the ability for the user to see the logs of check-ins for the meetings as well as the organization for the past day, month, and year and you can download the file in .csv format as well.\n</article>\n\n<article id=\"whoStartsCheckin\">\n  Q: Who all can start the check-in process for a meeting?\n\n  A: Any member who is a part of the organization can start the check-in process for a meeting.\n</article>\n\n<article id=\"contact\">\n  If you have any more questions, please feel free to email us at eventanalytics@lists.gatech.edu\n</article>\n</pre>";
   });
 
 this["templates"]["home/main"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -506,33 +506,29 @@ function program1(depth0,data) {
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.name); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "\" style=\"font-size:1.5em; height:2em;\">\n    </label>\n  </div>\n\n  <div class=\"row\">\n    <label>JavaScript code to execute on Guest Checkin\n      <a id=\"moreHelpLink\" href=\"/help#triggers\">\n        For more Information and Templates click here\n      </a>\n      <textarea id=\"onCheckIn\" style=\"height:15rem;\">\n        ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.onCheckIn), {hash:{},inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n      </textarea>\n    </label>\n  </div>\n  <div class=\"row\">\n    <input class=\"button save\" type=\"submit\" value=\"Save\">\n    <button class=\"delete\">Delete</button>\n  </div>\n</form>\n\n";
+    + "\" style=\"font-size:1.5em; height:2em;\">\n    </label>\n  </div>\n  <div class=\"row collapse\">\n    <label>Send Email when guest checks in?\n    <select id=\"modify-sendEmailOnCheckin\">\n      <option value=\"false\">Don't send any email</option>\n      <option value=\"all\">All Guests</option>\n      <option value=\"new\">Guests new to organization</option>\n    </select>\n  </div>\n  <div class=\"row collapse modify-triggers\" style=\"display:none;\">\n    <div class=\"row\">\n      <label>From:\n        <input id=\"modify-email-from\" type=\"email\" value=\"";
+  if (stack1 = helpers.emailFrom) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.emailFrom); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" placeholder=\"gburdell3@gatech.edu\">\n      </label>\n    </div>\n    <div class=\"row\">\n      <label>Subject:\n        <input id=\"modify-email-subject\" type=\"text\" value=\"";
+  if (stack1 = helpers.emailSubject) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.emailSubject); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\">\n      </label>\n    </div>\n    <div class=\"row\">\n      <label>Message:\n        <textarea id=\"modify-email-message\" style=\"height:9rem;\">";
+  if (stack1 = helpers.emailMessage) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.emailMessage); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "</textarea>\n      </label>\n    </div>\n  </div>\n  <div class=\"row\">\n    <input class=\"button save\" type=\"submit\" value=\"Save\">\n    <button class=\"delete\">Delete</button>\n  </div>\n</form>\n\n";
   return buffer;
   }
-function program2(depth0,data) {
-  
-  var stack1;
-  if (stack1 = helpers.onCheckIn) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
-  else { stack1 = (depth0 && depth0.onCheckIn); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
-  return escapeExpression(stack1);
-  }
 
-function program4(depth0,data) {
-  
-  
-  return "\n          //example email code\n          function() {\n            mail({\n              from: null,\n              to: null,\n              subject : null,\n              message: null\n            });\n          }\n        ";
-  }
-
-function program6(depth0,data) {
+function program3(depth0,data) {
   
   
   return "\n  <div data-alert class=\"alert-box alert\">\n    You do not have write permissions for this oganization.  Therefore you cannot not modify/delete this meeting.\n  </div>\n";
   }
 
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.writePerm), {hash:{},inverse:self.program(6, program6, data),fn:self.program(1, program1, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.writePerm), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { return stack1; }
   else { return ''; }
   });

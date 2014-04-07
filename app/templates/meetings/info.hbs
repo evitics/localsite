@@ -5,26 +5,30 @@
       <input type="text" id="meetingName" value="{{name}}" style="font-size:1.5em; height:2em;">
     </label>
   </div>
-
-  <div class="row">
-    <label>JavaScript code to execute on Guest Checkin
-      <a id="moreHelpLink" href="/help#triggers">
-        For more Information and Templates click here
-      </a>
-      <textarea id="onCheckIn" style="height:15rem;">
-        {{#if onCheckIn}}{{onCheckIn}}{{else}}
-          //example email code
-          function() {
-            mail({
-              from: null,
-              to: null,
-              subject : null,
-              message: null
-            });
-          }
-        {{/if}}
-      </textarea>
-    </label>
+  <div class="row collapse">
+    <label>Send Email when guest checks in?
+    <select id="modify-sendEmailOnCheckin">
+      <option value="false">Don't send any email</option>
+      <option value="all">All Guests</option>
+      <option value="new">Guests new to organization</option>
+    </select>
+  </div>
+  <div class="row collapse modify-triggers" style="display:none;">
+    <div class="row">
+      <label>From:
+        <input id="modify-email-from" type="email" value="{{emailFrom}}" placeholder="gburdell3@gatech.edu">
+      </label>
+    </div>
+    <div class="row">
+      <label>Subject:
+        <input id="modify-email-subject" type="text" value="{{emailSubject}}">
+      </label>
+    </div>
+    <div class="row">
+      <label>Message:
+        <textarea id="modify-email-message" style="height:9rem;">{{emailMessage}}</textarea>
+      </label>
+    </div>
   </div>
   <div class="row">
     <input class="button save" type="submit" value="Save">

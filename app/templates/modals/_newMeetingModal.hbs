@@ -1,32 +1,44 @@
 <div id="newMeetingModal" class="reveal-modal" data-reveal>
   <form id="createNewMeeting" data-abide="ajax">
-    <div class="row">
+    <div class="row collapse">
       <h3>Create A New Meeting</h3>
-      <div class="large-12 columns">
         <label>* Name of the Meeting
           <input type="text" placeholder="My Super Cool Group Meeting" required pattern="^[a-zA-Z0-9\s]+$" class="meetingName">
         </label>
         <small class="error">Can only use alpha numeric characters</small>
+    </div>
+    <div class="row collapse">
+      <label>Send Email when guest checks in?
+      <select class="sendEmailOnCheckin">
+        <option value="false">Don't send any email</option>
+        <option value="all">All Guests</option>
+        <option value="new">Guests new to organization</option>
+      </select>
+    </div>
+    <div class="row collapse triggers" style="display:none;">
+      <div class="row">
+        <label>From:
+          <input id="email-from" type="email">
+        </label>
+      </div>
+      <div class="row">
+        <label>Subject:
+          <input id="email-subject" type="text">
+        </label>
+      </div>
+      <div class="row">
+        <label>Message:
+          <textarea id="email-message" style="height:9rem;">
+            Hi \{{checkedIn.name}},
+
+            Hope you had fun at \{{organization.name}}'s event.  We sure did!.
+
+            Cordially,
+            \{{organization.contact.name}}
+         </textarea>
+        </label>
       </div>
     </div>
-    <div class="row triggers">
-      <h4>JavaScript code to execute on Guest Checkin</h4>
-      <p>Example code given below. <a id="moreHelpLink" href="/help#triggers">For more Information and Templates click here</a></p>
-      <textarea id="onCheckIn" style="height:9rem;">
-function() {
-  mail({
-    to      : \{{checkedIn.email}},
-    from    : \{{organization.contact.email}},
-    subject : Glad you had fun at: \{{meeting.name}},
-    message : "
-      Hi \{{checkedIn.name}},
-      Hope you had fun at \{{organization.name}}'s event.  We sure did!.
-      Cordially,
-      \{{organization.contact.name}}
-    ";
-  });
-}
-       </textarea>
     <div class="row">
       <div class="large-12 columns">
         <button class="createAMeeting" type="submit">Create</button>

@@ -27,17 +27,29 @@ function($      ,  foundation ,  Backbone,   templates ,  MeetingModel) {
     closeModal : function() {
       this.$newMeetingModal.foundation('reveal', 'close');
     },
+    sendEmailDropdown : function(ev) {
+      alert("HI");
+    },
     createAMeeting : function(ev) {
       ev.preventDefault();
       ev.stopPropagation();
       var orgId = this.$el.find('.organization-dropdown').val();
-      var that = this;
+      
+      
+      var sendEmailOnCheckin = this.$newMeetingModal.find('.sendEmailOnCheckin').val();
+      
+      //create new meeting model
       var meeting = new MeetingModel({
-        name: $("#createNewMeeting .meetingName").val(),
+        name: this.$newMeetingModal.find('.meetingName').val(),
         orgId : orgId,
-        onCheckIn : $('#createNewMeeting #onCheckIn').val()
+        emailFrom: this.$newMeetingModal.find('#email-from').val(),
+        emailSubject: this.$newMeetingModal.find('#email-subject').val(),
+        emailMessage: this.$newMeetingModal.find('#email-message').val(),
+        sendEmailOnCheckin : sendEmailOnCheckin
       });
       
+      //save meeting, and append to user if successful, or display error msg
+      var that = this;
       meeting.save(null, {
         success : function(res) {
           debug3 = res;
@@ -120,9 +132,13 @@ function($      ,  foundation ,  Backbone,   templates ,  MeetingModel) {
         that.createAMeeting(ev);
       });
 
-      //Bind to the buttons for adding event triggers
-      this.$newMeetingModal.find('a.addEvTrigger').on('click', function(ev) {
-        that.$newMeetingModal.foundation('reveal', 'close');
+      //Bind to the buttons for addming email
+      this.$newMeetingModal.find('select.sendEmailOnCheckin').on('change', function(ev) {
+        if(ev.target.value != 'false') {
+          that.$newMeetingModal.find('.triggers').show();
+        } else {
+          that.$newMeetingModal.find('.triggers').hide();
+        }
       });
     },
     unbindModalEvents : function() {
