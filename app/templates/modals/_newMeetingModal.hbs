@@ -17,24 +17,29 @@
     </div>
     <div class="row collapse triggers" style="display:none;">
       <div class="row">
+        <label>To:
+          <input id="email-to" type="email" value="\{{guest.email}}">
+        </label>
+      </div>
+      <div class="row">
         <label>From:
-          <input id="email-from" type="email">
+          <input id="email-from" type="email" placeholder="\{{organization.email}}">
         </label>
       </div>
       <div class="row">
         <label>Subject:
-          <input id="email-subject" type="text">
+          <input id="email-subject" type="text" placeholder="\{{organization.name}} welcomes you to \{{meeting.name}}">
         </label>
       </div>
       <div class="row">
         <label>Message:
           <textarea id="email-message" style="height:9rem;">
-            Hi \{{checkedIn.name}},
+Hi \{{checkedIn.name}},
 
-            Hope you had fun at \{{organization.name}}'s event.  We sure did!.
+Hope you had fun at \{{organization.name}}'s event.  We sure did!.
 
-            Cordially,
-            \{{organization.contact.name}}
+Cordially,
+\{{organization.contact.name}}
          </textarea>
         </label>
       </div>

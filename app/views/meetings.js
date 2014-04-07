@@ -115,11 +115,12 @@ function($,        Backbone,   templates ,  OrgMeetingForm        ,  MeetingMode
 
       var that = this;
       this.user.get('organizations').get(orgId).get('meetings').get(meetingId).save({
-        name : this.$el.find('#meetingName').val(),
-        onCheckIn : this.$el.find("#onCheckIn").val(),
-        emailFrom: this.$el.find('#modify-email-from').val(),
-        emailSubject: this.$el.find('#modify-email-subject').val(),
-        emailMessage: this.$el.find('#modify-email-message').val(),
+        name         : this.$el.find('#meetingName').val(),
+        onCheckIn    : this.$el.find("#onCheckIn").val(),
+        emailTo      : this.$el.find('#modify-email-to').val(),
+        emailFrom    : this.$el.find('#modify-email-from').val(),
+        emailSubject : this.$el.find('#modify-email-subject').val(),
+        emailMessage : this.$el.find('#modify-email-message').val(),
         sendEmailOnCheckin : sendEmailOnCheckin
       },
       {
@@ -145,7 +146,7 @@ function($,        Backbone,   templates ,  OrgMeetingForm        ,  MeetingMode
     stopForm : function(ev) {
       ev.stopPropagation();
       ev.preventDefault();
-    },
+    }, 
     remove : function() {
       this.stopListening();
       this.meetingForm.remove();

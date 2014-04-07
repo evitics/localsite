@@ -127,7 +127,7 @@ $app->get('/checkin/:orgId/:meetingId(/)', function($orgId, $meetingId) {
     }
 
     //Get statistics on event
-    $statistics = $checkin->getStaistics($orgId, $meetingId);
+    $statistics = $checkin->getStatistics($orgId, $meetingId);
     if($statistics) {
         $output["statistics"] = $statistics;
     }
@@ -153,7 +153,7 @@ $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $u
     }
     
     //Get statistics on event
-    $statistics = $checkin->getStaistics($orgId, $meetingId);
+    $statistics = $checkin->getStatistics($orgId, $meetingId);
     if($statistics) {
         $output["statistics"] = $statistics;  
     }
@@ -162,6 +162,7 @@ $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $u
 
 });
 $app->post('/mail', function() {
+    require_once('./library/Email.php');
     $requiredParams = array('from', 'to', 'subject', 'message');
     foreach($requiredParams as $requiredParam) {
         if(empty($_POST[$requiredParam])){
@@ -170,12 +171,15 @@ $app->post('/mail', function() {
         } 
     }
     //turn array of $_POST['to'], to proper form
-    if(is_array($_POST['to'])) { $_POST['to'] = implode(',', $_POST['to']); }
-    //Gen PHP Headers
-    $headers = 'From: ' . $_POST['from'] . "\r\n" .
-               'Reply-To: ' . $_POST['from'] . "\r\n" .
-               'X-Mailer: PHP/' . phpversion();
-    //attempt to send mail
+    if(is_array($_POST['to'])) { $_POST['to'] = implode(', ', $_POST['to']); }
+
+    //send email
+    echo json_encode(Email::send(array(
+        'to'=>$_POST['to'],
+        'subject'=>$_POST['subject'],
+        'message'=>$_POST['message'],
+        'from'=>'noreply@evitics.com'
+    )));
     if(mail($_POST['to'], $_POST['subject'], $_POST['message'], $headers)) {
         echo '{ "success" : "email sent"}';
     } else {

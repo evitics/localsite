@@ -25,7 +25,7 @@ class Organization {
   public static function getAll() {
     $config = require("./config.php");
     $jacketpagesDB = new DB("jacketpages");
-    $query = "SELECT `orgId`, `name`, `short_name`, `description`, `logo_path` FROM `organizations` ORDER BY `name` ASC";
+    $query = "SELECT `orgId`, `name`, `short_name`, `description`, `logo_path` FROM `organizations` WHERE `status` = 'Active' ORDER BY `name` ASC";
     
     $organizations = $jacketpagesDB->fetchAll($query, array());
 
@@ -33,6 +33,38 @@ class Organization {
       $organization["logo_path"] = $config["jacketpagesURL"] . $organization["logo_path"];
     }   
     return $organizations;  
+  }
+  /*
+    Returns organization with sane fieldnames
+  */
+  public static function saneitize($orgObj) {
+    $output =  array(
+      'id' => $orgObj['orgId'],
+      'name' => $orgObj['name'],
+      'description' => $orgObj['description'],
+      'dues' => $orgObj['dues'],
+      'logoURL'=>$orgObj['logo_path'],
+    );
+    //only add if not empty
+    $sometimesEmpty = array(
+      'short_name' => 'abbreviation',
+      'website'=>'website',
+      'phone_number'=>'phone',
+      'org_email'=>'email',
+      'fax_number'=>'fax',
+      'annual_events'=>'annualEvents',
+      'charter_date' => 'created',
+      'elections'=>'elections',
+      'meeting_information' => 'meetingInformation',
+      'meeting_frequency'=>'meetingFrequency',
+    );
+    foreach($sometimesEmpty as $sqlField=>$saneField) {
+      $testVal = trim($orgObj[$sqlField]);
+      if(!empty($testVal)) {
+        $output[$saneField] = $orgObj[$sqlField];
+      }
+    }
+    return $output;
   }
 }
 

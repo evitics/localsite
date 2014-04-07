@@ -18,6 +18,7 @@ $GLOBALS["USERNAME"] = $_ENV["REMOTE_USER"];
 require 'vendor/autoload.php';
 $app = new \Slim\Slim(array("debug"=>false));
 $GLOBALS["APP"] = $app;
+
 //Change the http Content-type header to json
 $response = $app->response();
 $response['Content-Type'] = "application/json; charset=utf-8";
@@ -38,7 +39,7 @@ require "./router.php";
 register_shutdown_function(function() {
   $error = error_get_last();
   if(isset($error)) {
-    $GLOBLAS["APP"]->response()->status(404);
+    $GLOBALS["APP"]->response()->status(404);
     $error =  $error["type"] . ' - '. $error["message"];
     echo '{ "error" : "' . $error .'" }'; die();
   }

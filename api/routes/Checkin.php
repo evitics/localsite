@@ -1,15 +1,22 @@
 <?php
+require_once('./library/DB.php');
+require_once('./library/GTED.php');
+require_once('./library/Helpers.php');
+require_once('./routes/Meeting.php');
+require_once('./routes/Organization.php');
+require_once('./library/Email.php');
+require_once './vendor/xamin/handlebars.php/src/Handlebars/Autoloader.php';
+
+Handlebars\Autoloader::register();
+use Handlebars\Handlebars;
+
 Class Checkin {
-  public function __construct () {
-    require_once("./library/DB.php");
-    require_once("./library/GTED.php");
-    require_once("./library/Helpers.php");
+  public function __construct () {    
     $this->gted = new GTED();
     $this->userDb = new DB("evitics");
     $this->checkinDb = new DB("checkin");
-
   }
-  public function getStaistics($orgId, $meetingId) {
+  public function getStatistics($orgId, $meetingId) {
     $orgId = Helpers::id2Int($orgId);
     $sql = "SELECT COUNT(`userId`) FROM `$orgId` WHERE `meetingId` = :meetingId AND `timestamp` > DATE_SUB(NOW(), INTERVAL 6 HOUR)";
     $attendance = $this->checkinDb->fetchAll($sql, array("meetingId"=>$meetingId), "NUMERIC");
@@ -46,10 +53,14 @@ Class Checkin {
     //Check if guest has already checked in
     if(!$this->isCheckedIn($orgId, $meetingId, $gtUsername)) {
       $res = $this->checkInUser($orgId, $meetingId, $gtUsername);
-      //if error, pass it
+      //Error, pass it
       if(isset($res["error"])) { 
         return $res; 
-      } else { //else pass a success!
+      //Checked in guest successfully
+      } else {
+        //send an email if requested
+        $this->sendEmail($userId, $orgId, $meetingId);
+        //return w/success
         return array("success"=>$gtFullName . " was checked in");
       } 
     } else {
@@ -139,6 +150,92 @@ Class Checkin {
     } else {
       return false;
     }
+  }
+  /*
+    Returns true if the user has never checked in before, or only
+    checked in once for said organization (or organization->meeting)
+  */
+  public function isNewUser($userId, $orgId, $meetingId = false) {
+    Helpers::id2Int($orgId);
+    $newUserSQL = "SELECT COUNT(*) as `total` FROM `$orgId` WHERE `userId` = :userId";
+    $sqlParams = array('userId'=>$userId);
+
+    if($meetingId) { 
+      $newUserSQL .= " AND `meeetingId` = :meetingId"; 
+      $sqlParams['meetingId'] = $meetingId;
+    }
+    $isNew = $this->checkinDb->fetchAll($newUserSQL, $sqlParams);
+    
+    if(isset($isNew[0]) && isset($isNew[0]['total']) && $isNew[0]['total'] <= 1) { 
+      return true;
+    } else {
+      return false;
+    }
+  }
+  /*
+    Returns:
+      false if somethign went wrong,
+      -1: sendEmailOnCheckin was false
+      true: sent an email successfully
+      2: sendEmailOnCheckin was for only new guests, guest wasn't new
+  */
+  public function sendEmail($userId, $orgId, $meetingId) {
+    $orgId = Helpers::id2Int($orgId); //sanatize orgId
+    
+    //get meeting information
+    $meeting = Meeting::getMeetId($orgId, $meetingId);
+    if(!$meeting) { return false; } //Could not fetch meeting
+
+    //if we should send an email, return
+    if($meeting['sendEmailOnCheckin'] == 'false') { //we shouldn't send an email
+      return 1;
+    }
+    
+    //get the guest's information
+    $gted = new GTED();
+    $guest = $gted->sanityCheck($gted->getUser($userId));
+    if(!$guest) { return false; } //could not fetch guest
+
+    //if we only want to send emails to new guests, and guest  wasn't new, return
+    if(strtolower($meeting['sendEmailOnCheckin']) == 'new' && 
+      $this->isNewUser($guest['username'], $orgId)) {
+      return 2;
+    }
+
+    //Get the organization's information
+    $organization = Organization::get($orgId);
+    if(!$organization) { return false; } //could not fetch organizaiton
+    
+    $organization = Organization::saneitize($organization); 
+
+    //generate handlebar's template context
+    $context = array(
+      "meeting"=>array('name'=>$meeting['name'], 'id'=>$meeting['meetingId']),
+      "organization"=>$organization,
+      "guest"=>$guest
+    );
+    //render email templates with Handlebars
+    $engine = new Handlebars;
+
+    //allow to have test emails sent to dev vs actual person
+    $config = require('./config.php');
+    if(isset($config['development']) && isset($config['development']['email'])) {
+      $to = $config['development']['email'];
+    } else {
+      $to    = $engine->render($meeting['emailTo']     , $context);
+    }
+
+    $from    = $engine->render($meeting['emailFrom']   , $context);
+    $subject = $engine->render($meeting['emailSubject'], $context);
+    $message = $engine->render($meeting['emailMessage'], $context);        
+    //send email
+    return Email::send(array(
+      'to'=>$to,
+      'from'=>$from,
+      'subject'=>$subject,
+      'message'=>$message
+    ));
+
   }
 }
 

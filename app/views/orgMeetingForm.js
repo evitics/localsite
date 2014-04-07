@@ -40,11 +40,12 @@ function($      ,  foundation ,  Backbone,   templates ,  MeetingModel) {
       
       //create new meeting model
       var meeting = new MeetingModel({
-        name: this.$newMeetingModal.find('.meetingName').val(),
-        orgId : orgId,
-        emailFrom: this.$newMeetingModal.find('#email-from').val(),
-        emailSubject: this.$newMeetingModal.find('#email-subject').val(),
-        emailMessage: this.$newMeetingModal.find('#email-message').val(),
+        name               : this.$newMeetingModal.find('.meetingName').val(),
+        orgId              : orgId,
+        emailTo            : this.$newMeetingModal.find('#email-to').val(),
+        emailFrom          : this.$newMeetingModal.find('#email-from').val(),
+        emailSubject       : this.$newMeetingModal.find('#email-subject').val(),
+        emailMessage       : this.$newMeetingModal.find('#email-message').val(),
         sendEmailOnCheckin : sendEmailOnCheckin
       });
       

@@ -270,6 +270,25 @@ Class GTED {
     }
     return $output;
   }
+  /*
+    Returns an object with more sane object key's
+  */
+  public function sanityCheck($gtedInfo) {
+    $output = array();
+    $output['username'] = $gtedInfo['gtprimarygtaccountusername'];
+    $output['curriculum'] = $gtedInfo['gtcurriculum'][1];
+    $output['email'] = $gtedInfo['mail'][0];
+    $output['phone'] = $gtedInfo['telephonenumber'][0];
+    $output['affiliation'] = $gtedInfo['edupersonprimaryaffiliation'][0];
+    $output['name'] = array(
+      'first'=>$gtedInfo['givenname'][0],
+      'last'=>$gtedInfo['sn'][0],
+      'middle'=>$gtedInfo['initials'][0],
+      'full'=>$gtedInfo['cn'][0],
+    );
+    return $output;
+
+  }
 }
 
 
