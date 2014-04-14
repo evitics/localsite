@@ -19,8 +19,8 @@ function($,        Backbone,   templates) {
       if(userOrganization) {
         //Check for pending request
         userOrganization = userOrganization.toJSON();
-        if(userOrganization.hasOwnProperty("requestPending") &&
-           userOrganization.requestPending === true) {
+        if(userOrganization.hasOwnProperty("isPending") &&
+           userOrganization.isPending) {
             context.requestPending = true;
         } else {
           context.joined = true;

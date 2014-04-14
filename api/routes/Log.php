@@ -20,7 +20,7 @@ Class Log {
     $meetings = Meeting::getOrgId($orgId);
 
     //build query based on optional parameters
-    $sql = "SELECT `userId`, `meetingId`, `timestamp`, `by` FROM `$orgId` WHERE `meetingId` LIKE :meetingId";
+    $sql = "SELECT `userId`, `meetingId`, `timestamp`, `checkedInBy` FROM `$orgId` WHERE `meetingId` LIKE :meetingId";
     $queryParams = array('meetingId'=>'%');
 
     //if the user specifies a meetingId
@@ -48,7 +48,7 @@ Class Log {
     
     if(!$rows) { return 'no data'; }
 
-    $csv = "'userId', 'meeting', 'timestamp', 'by'" . "\r\n";
+    $csv = "'userId', 'meeting', 'timestamp', 'checkedInBy'" . "\r\n";
     foreach($rows as $row) {
       //convert meetingId to meetingName
       foreach($meetings as $meeting) {

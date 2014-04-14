@@ -16,6 +16,23 @@ Class Checkin {
     $this->userDb = new DB("evitics");
     $this->checkinDb = new DB("checkin");
   }
+  public function createCheckinTable($orgId) {
+    $orgId = Helpers::id2Int($orgId);
+    $sql = 'CREATE TABLE IF NOT EXISTS `'.$orgId.'` ( ' .
+              '`userId` varchar(255) NOT NULL, '        .
+              '`meetingId` int(11) NOT NULL, '          .
+              '`timestamp` datetime NOT NULL, '         .
+              '`checkedInBy` varchar(255) NOT NULL, '   .
+              'KEY `checkedInBy` (`checkedInBy`), '     .
+              'KEY `meetingId` (`meetingId`), '         .
+              'KEY `userId` (`userId`)  '               .
+            ') ENGINE=InnoDB DEFAULT CHARSET=utf8';   
+    if($this->checkinDb->query($sql, array())) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   public function getStatistics($orgId, $meetingId) {
     $orgId = Helpers::id2Int($orgId);
     $sql = "SELECT COUNT(`userId`) FROM `$orgId` WHERE `meetingId` = :meetingId AND `timestamp` > DATE_SUB(NOW(), INTERVAL 6 HOUR)";
@@ -44,7 +61,7 @@ Class Checkin {
     if(!$this->doesBelong2Org($GLOBALS["USERNAME"], $orgId)) {
       return array("error"=>"Logged in user (".$GLOBALS["USERNAME"].") does not belong to orgId: ". $orgId, "userId"=>$userId);
     }
-
+    $this->createCheckinTable($orgId);
     //Check if guest has already checked in
     if(!$this->isCheckedIn($orgId, $meetingId, $gtUsername)) {
       $res = $this->checkInUser($orgId, $meetingId, $gtUsername);
@@ -73,7 +90,7 @@ Class Checkin {
     $orgId = Helpers::id2Int($orgId);
     $number = intval($number);
 
-    $sql = "SELECT `userId`, `timestamp`, `by` FROM `$orgId` WHERE `meetingId` = :meetingId ORDER BY `timestamp` DESC LIMIT 0, $number";
+    $sql = "SELECT `userId`, `timestamp`, `checkedInBy` FROM `$orgId` WHERE `meetingId` = :meetingId ORDER BY `timestamp` DESC LIMIT 0, $number";
     $records = $this->checkinDb->fetchAll($sql, array("meetingId"=>$meetingId));
     
     //Check if user has ever checked into this organization
@@ -110,9 +127,8 @@ Class Checkin {
   */
   private function checkInUser($orgId, $meetingId, $userId) {
     $orgId = Helpers::id2Int($orgId);
-
-    $sql = "INSERT INTO `$orgId` (`userId`, `meetingId`, `timestamp`, `by`) VALUES  (:userId ,  :meetingId,  now(), :by )";
-    if($this->checkinDb->query($sql, array("userId"=>$userId, "meetingId"=>$meetingId, "by"=>$GLOBALS["USERNAME"]))) {
+    $sql = "INSERT INTO `$orgId` (`userId`, `meetingId`, `timestamp`, `checkedInBy`) VALUES  (:userId ,  :meetingId,  now(), :checkedInBy )";
+    if($this->checkinDb->query($sql, array("userId"=>$userId, "meetingId"=>$meetingId, "checkedInBy"=>$GLOBALS["USERNAME"]))) {
       return true;
     } else {
       return array("error"=>"Could not checkin: " . $userId . ", into meeting: " . $meetingId . ", for organization: " . $orgId);
@@ -140,7 +156,7 @@ Class Checkin {
             false if logged in user doesn't belong to said org id
   */
   public function doesBelong2Org($userId, $orgId) {
-    $sql = "SELECT * FROM `user` WHERE `userId` = :userId AND `orgId` = :orgId";
+    $sql = "SELECT * FROM `user` WHERE `userId` = :userId AND `orgId` = :orgId AND `isPending` = 0";
     $this->userDb->query($sql, array("orgId"=>$orgId, "userId"=>$userId));
     if($this->userDb->rowCount() >= 1) {
       return true;

@@ -8,13 +8,15 @@
       <select class="organization-dropdown">
         <option value="">--Please Select One--</option>
        {{#each organizations}}
-        <option value="{{orgId}}">
-          {{#if short_name}}
-            {{short_name}} - {{name}}
-          {{else}}
-            {{name}}
-          {{/if}}
-        </option>
+        {{#unless isPending}}
+          <option value="{{orgId}}">
+            {{#if short_name}}
+              {{short_name}} - {{name}}
+            {{else}}
+              {{name}}
+            {{/if}}
+          </option>
+        {{/unless}}
        {{/each}}
       </select>
     </div>

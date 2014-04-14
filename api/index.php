@@ -53,18 +53,19 @@ $app->error(function (\Exception $e) use ($app) {
 //Make PUT and POST payloads of JSON to php array
 if($_SERVER['REQUEST_METHOD'] == 'PUT' || $_SERVER['REQUEST_METHOD'] == 'POST') {
   $postStr = file_get_contents("php://input");
-  if(strlen($postStr) === 0) {
+  if(strlen($postStr) > 0) {
     try {
-      $json = json_decode($postStr, true);
+      $json = json_decode($postStr, true); //true forces an associative PHP array
       if(!empty($json)) {
         $_POST = $json; 
       }
-    } catch(Exception $e) { 
+    } catch(Exception $e) {
       /*  
         not valid json - disregard Exception 
       */
     }
   }
+
 }
 //Run app
 $app->run();

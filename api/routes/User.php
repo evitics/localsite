@@ -62,13 +62,14 @@ class User {
         }
         //add jacketpages url to logo path
         $orgs[$i]["logo_path"] = $config["jacketpagesURL"] . $orgs[$i]["logo_path"];
-        
-        //Fetch organization's meeting
-        $orgs[$i]["meetings"] = array();
+        if(!$org[$i]["isPending"]) {
+          //Fetch organization's meeting, if we're not in 'pending status'
+          $orgs[$i]["meetings"] = array();
 
-        if($preparedMeetingQuery->execute(array("orgId"=>$orgId)) && $preparedMeetingQuery->rowCount() > 0) {
-          $orgs[$i]["meetings"] = $preparedMeetingQuery->fetchAll(PDO::FETCH_ASSOC);
-        } 
+          if($preparedMeetingQuery->execute(array("orgId"=>$orgId)) && $preparedMeetingQuery->rowCount() > 0) {
+            $orgs[$i]["meetings"] = $preparedMeetingQuery->fetchAll(PDO::FETCH_ASSOC);
+          } 
+        }
       }
     }
     $result["organizations"] = $orgs;

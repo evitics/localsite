@@ -66,6 +66,9 @@ class Organization {
     }
     return $output;
   }
+  public static function requestJoin($orgId, $userId) {
+    $requestDB = DB("evitics");
+  }
 }
 
 

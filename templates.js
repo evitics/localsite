@@ -373,20 +373,29 @@ helpers = this.merge(helpers, Handlebars.helpers); partials = this.merge(partial
 function program1(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n        <option value=\"";
-  if (stack1 = helpers.orgId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
-  else { stack1 = (depth0 && depth0.orgId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
-  buffer += escapeExpression(stack1)
-    + "\">\n          ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.short_name), {hash:{},inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data});
+  buffer += "\n        ";
+  stack1 = helpers.unless.call(depth0, (depth0 && depth0.isPending), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </option>\n       ";
+  buffer += "\n       ";
   return buffer;
   }
 function program2(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n            ";
+  buffer += "\n          <option value=\"";
+  if (stack1 = helpers.orgId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.orgId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\">\n            ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.short_name), {hash:{},inverse:self.program(5, program5, data),fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n          </option>\n        ";
+  return buffer;
+  }
+function program3(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n              ";
   if (stack1 = helpers.short_name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.short_name); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
@@ -394,22 +403,22 @@ function program2(depth0,data) {
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.name); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "\n          ";
+    + "\n            ";
   return buffer;
   }
 
-function program4(depth0,data) {
+function program5(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n            ";
+  buffer += "\n              ";
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.name); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
-    + "\n          ";
+    + "\n            ";
   return buffer;
   }
 
-function program6(depth0,data) {
+function program7(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n  <div class=\"row\">\n    <div class=\"small-12 columns\">\n      <button type=\"submit\" class=\"button submit\" disabled=\"true\">";
@@ -428,7 +437,7 @@ function program6(depth0,data) {
   stack1 = helpers.each.call(depth0, (depth0 && depth0.organizations), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n      </select>\n    </div>\n    <div class=\"small-1 small-pull-1 medium-1 medium-pull-0 columns\">\n      <a class=\"button postfix secondary joinAnOrganization\" href=\"/organizations\" style=\"min-width:3em;\">+</a>\n    </div>\n  </div>\n\n  <div class=\"row collapse\">\n    <label>Meeting Name</label>\n    <div class=\"small-10 medium-11 columns\">\n      <select disabled=\"disabled\" class=\"meeting-dropdown\">\n        \n      </select>\n    </div>\n    <div class=\"small-1 small-pull-1 medium-1 medium-pull-0 columns\">\n      <a class=\"disabled button postfix secondary revealNewMeetingModal\" style=\"min-width:3em\">+</a>\n    </div>\n  </div>\n  ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.submitButtonTXT), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.submitButtonTXT), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</form>\n\n";
   stack1 = self.invokePartial(partials.newMeetingModal, 'newMeetingModal', depth0, helpers, partials, data);
@@ -608,7 +617,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div id=\"meetingsWrapper\" class=\"small-12 columns\">\n  <section class=\"orgMeetingForm\" class=\"row collapse\">\n  </section>\n  <section id=\"alertInformation\" data-alert class=\"alert-box\">\n  </section>\n  <section id=\"meetingInfo\" class=\"row collapse\">\n  </section>\n</div>";
+  return "<div id=\"meetingsWrapper\" class=\"small-12 columns\">\n  <section class=\"orgMeetingForm\" class=\"row collapse\">\n  </section>\n  <section id=\"alertInformation\">\n  </section>\n  <section id=\"meetingInfo\" class=\"row collapse\">\n  </section>\n</div>";
   });
 
 this["templates"]["nav/leftOffCanvas"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {

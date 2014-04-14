@@ -36,7 +36,11 @@ $app->get('/organizations/:id', function($id) {
     Put in a request to join an organization
 */
 $app->post('/organization/join/:id', function($orgId) {
-    echo json_encode(User::joinOrg($orgId));
+    if(!isset($_POST['userId'])) { 
+        echo '{ "error" : "userId not specified" }';
+    } else {
+        echo json_encode(Organization::requestJoin($orgId, $_POST['userId']));
+    }
 });
 /*
     Get meetings for said organization
