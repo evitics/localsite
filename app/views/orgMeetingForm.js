@@ -148,6 +148,7 @@ function($      ,  foundation ,  Backbone,   templates ,  MeetingModel) {
     },
     remove : function() {
       this.stopListening();
+      this.undelegateEvents();
       this.unbindModalEvents();
       //Make sure the modal actually removes itself (ugh)
       this.closeModal(); //removes any stray elements w/animation

@@ -52,14 +52,17 @@ $app->error(function (\Exception $e) use ($app) {
 
 //Make PUT and POST payloads of JSON to php array
 if($_SERVER['REQUEST_METHOD'] == 'PUT' || $_SERVER['REQUEST_METHOD'] == 'POST') {
-  //parse_str(file_get_contents("php://input"),$post_vars);
   $postStr = file_get_contents("php://input");
-  try {
-    $_POST = json_decode($postStr, true);
-  } catch(Error $e) { //must not be json, use query str version
-    $postStr = parse_str($postStr);
-    foreach($post_vars as $key=>$post_var) {
-      $_POST[$key] = $post_var;
+  if(strlen($postStr) === 0) {
+    try {
+      $json = json_decode($postStr, true);
+      if(!empty($json)) {
+        $_POST = $json; 
+      }
+    } catch(Exception $e) { 
+      /*  
+        not valid json - disregard Exception 
+      */
     }
   }
 }

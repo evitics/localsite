@@ -5,12 +5,12 @@ require_once('./library/Helpers.php');
 require_once('./routes/Meeting.php');
 require_once('./routes/Organization.php');
 require_once('./library/Email.php');
-require_once './vendor/xamin/handlebars.php/src/Handlebars/Autoloader.php';
-
-Handlebars\Autoloader::register();
-use Handlebars\Handlebars;
 
 Class Checkin {
+  private $gted;
+  private $userDb;
+  private $checkinDb;
+  
   public function __construct () {    
     $this->gted = new GTED();
     $this->userDb = new DB("evitics");
@@ -29,18 +29,13 @@ Class Checkin {
     Checks in a guest, returns true if successful, or false if unsucsessful
   */
   public function guest($orgId, $meetingId, $userId) {
-
     $gtUsername = null;
     $gtFullName = "";
     //get userId in form of gtusername
-    try {
-      $userGTED = $this->gted->getUser($userId);
-      $gtUsername = $userGTED["gtprimarygtaccountusername"][0];
-      $gtFullName = $userGTED["cn"][0];
-    } catch(Exception $e) {
-      //disregard exceptions, empty($userId) takes care of err handling
-    }
-
+    $userGTED = $this->gted->getUser($userId);
+    $gtUsername = $userGTED["gtprimarygtaccountusername"][0];
+    $gtFullName = $userGTED["cn"][0];
+    
     if(empty($gtUsername)) {
       return array("error"=>"There is no user with an id of: " . $userId, "userId"=>$userId);
     }
@@ -49,7 +44,7 @@ Class Checkin {
     if(!$this->doesBelong2Org($GLOBALS["USERNAME"], $orgId)) {
       return array("error"=>"Logged in user (".$GLOBALS["USERNAME"].") does not belong to orgId: ". $orgId, "userId"=>$userId);
     }
-    
+
     //Check if guest has already checked in
     if(!$this->isCheckedIn($orgId, $meetingId, $gtUsername)) {
       $res = $this->checkInUser($orgId, $meetingId, $gtUsername);
@@ -59,9 +54,13 @@ Class Checkin {
       //Checked in guest successfully
       } else {
         //send an email if requested
-        $this->sendEmail($userId, $orgId, $meetingId);
-        //return w/success
-        return array("success"=>$gtFullName . " was checked in");
+        $emailRes = $this->sendEmail($userId, $orgId, $meetingId);
+        if(isset($emailRes['error'])) {
+          return $emailRes;
+        } else {
+          //return w/success
+          return array("success"=>$gtFullName . " was checked in");
+        }
       } 
     } else {
       return array("warning"=>"".$gtFullName . " has already checked in", "userId"=>$userId);
@@ -141,9 +140,7 @@ Class Checkin {
             false if logged in user doesn't belong to said org id
   */
   public function doesBelong2Org($userId, $orgId) {
-
     $sql = "SELECT * FROM `user` WHERE `userId` = :userId AND `orgId` = :orgId";
-
     $this->userDb->query($sql, array("orgId"=>$orgId, "userId"=>$userId));
     if($this->userDb->rowCount() >= 1) {
       return true;
@@ -193,7 +190,7 @@ Class Checkin {
     
     //get the guest's information
     $gted = new GTED();
-    $guest = $gted->sanityCheck($gted->getUser($userId));
+    $guest = $gted->saneitize($gted->getUser($userId));
     if(!$guest) { return false; } //could not fetch guest
 
     //if we only want to send emails to new guests, and guest  wasn't new, return
@@ -207,33 +204,19 @@ Class Checkin {
     if(!$organization) { return false; } //could not fetch organizaiton
     
     $organization = Organization::saneitize($organization); 
-
+    $saneMeeting = Meeting::saneitize($meeting);
     //generate handlebar's template context
     $context = array(
-      "meeting"=>array('name'=>$meeting['name'], 'id'=>$meeting['meetingId']),
+      "meeting"=>$saneMeeting,
       "organization"=>$organization,
       "guest"=>$guest
     );
-    //render email templates with Handlebars
-    $engine = new Handlebars;
-
-    //allow to have test emails sent to dev vs actual person
-    $config = require('./config.php');
-    if(isset($config['development']) && isset($config['development']['email'])) {
-      $to = $config['development']['email'];
-    } else {
-      $to    = $engine->render($meeting['emailTo']     , $context);
-    }
-
-    $from    = $engine->render($meeting['emailFrom']   , $context);
-    $subject = $engine->render($meeting['emailSubject'], $context);
-    $message = $engine->render($meeting['emailMessage'], $context);        
-    //send email
     return Email::send(array(
-      'to'=>$to,
-      'from'=>$from,
-      'subject'=>$subject,
-      'message'=>$message
+      'to'=>$meeting['emailTo'],
+      'from'=>$meeting['emailFrom'],
+      'subject'=>$meeting['emailSubject'],
+      'message'=>$meeting['emailMessage'],
+      'context'=>$context
     ));
 
   }

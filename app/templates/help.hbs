@@ -1,43 +1,172 @@
-<h3>FAQ:</h3>
+<style>
+  .help-page section {
+    padding-top:3rem;
+    background-colors:green;
+  }
+</style>
+
+<div class="help-page">
+<h2>FAQ:</h2>
 Help and FAQs
+<h4>Table of Contents</h4>
+<ul>
+  <li><a href="#email-context">Email Templiting</a>
+    <ul>
+      <li><a href="#email-context-howto">How to write templates</a></li>
+      <li><a href="#email-context-fields">Available Fields</a></li>
+      <li><a href="#email-context-porting">Porting email templates from thunderbird to evitics</a></li>
+    </ul>
+  </li>
+  <li><a href="#unabletologin">Unable to login</a></li>
+  <li><a href="#nonews">No news on your homepage</a></li>
+  <li><a href="#validUserIds">What is a valid user id</a></li>
+  <li><a href="#joinRequest">My organization join request has yet to go through</a></li>
+  <li><a href="#analyticsTypes">What types of analytics are preformed</a></li>
+  <li><a href="#whoStartsCheckin">Who starts the checkin process</a></li>
+  <li><a href="#contact">Contact Us</a></li>
+</ul>
+<div id="email-context">
+  <h3>Email Templeting</h3>
+  <section id="email-context-howto">
+    <h4>How to write an email template</h4>
+    <p>
+      Lets start out with an example.  If you want to write a template personally addressed to each guest that checks in, you would use {{guest.name.full}}.  Take the following message for example:
+      <pre><code>
+        Hi George Burdell,
+        
+        Hope you had fun today!
+      </code></pre>
+      To make this email dynamically addressed you would write the following:
+      <pre><code>
+        Hi \{{guest.name.first}} \{{guest.name.last}},
 
-<pre><article id="unabletologin">
-  Q: I am unable to log in to the website. I have tried logging in multiple times on different occasions but it does not seem to work for me.
+        Hope you had fun today!
+      </code></pre>
+      Now, Handlebars will insert the guest's first name and last name into both <code>\{{ }}</code> cells
+    </p>
+  </section>
+  <section id="email-context-fields">
+    <h4>Available Fields</h4>
+    <a href="http://handlebarsjs.com/">Handlebars.js Documentation</a>
+    <ul>
+      <li>
+        <h4>Meeting</h4>
+        <ul>
+          <li>\{{meeting.name}}</li>
+          <li>\{{meeting.id}}</li>
+        </li>
+      </li>
+      <li>
+        <h4>Organization</h4>
+        <ul>
+          <li>Always Available
+            <ul>
+              <li>\{{organization.id}}</li>
+              <li>\{{organization.name}}</li>
+              <li>\{{organization.description}}</li>
+              <li>\{{organization.dues}}</li>
+              <li>\{{organization.logoURL}}</li>
+            </ul>
+          </li>
+          <li>Available if organization provided them to JacketPages
+            <ul>
+              <li>\{{organization.abbreviation}}</li>
+              <li>\{{organization.website}}</li>
+              <li>\{{organization.phone}}</li>
+              <li>\{{organization.email}}</li>
+              <li>\{{organization.fax}}</li>
+              <li>\{{organization.annualEvents}}</li>
+              <li>\{{organization.created}}</li>
+              <li>\{{organization.elections}}</li>
+              <li>\{{organization.meetingInformation}}</li>
+              <li>\{{organization.meetingFrequency}}</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <h4>Guest</h4>
+        <ul>
+          <li>\{{guest.username}}</li>
+          <li>\{{guest.curriculum}}</li>
+          <li>\{{guest.email}}</li>
+          <li>\{{guest.phone}}</li>
+          <li>\{{guest.affiliation}}</li>
+          <li>\{{guest.name.first}}</li>
+          <li>\{{guest.name.last}}</li>
+          <li>\{{guest.name.middle}}</li>
+          <li>\{{guest.name.full}}</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+</div>
 
-  A: This website uses Georgia Tech’s CAS login service. The username and password for the website is the same one you use for other Georgia Tech resources. If you are able to log in successfully to T-Square or Buzzport, you should be able to log into the website as well. If you have changed your password recently, please allow the website up to 3 hours to get the updated credentials. if you still run into issues, you should contact Georgia Tech’s OIT: www.oit.gatech.edu
-</article>
+<section id="unabletologin">
+  <h4>Unable to login</h4>
+  <p>
+    Q: I am unable to log in to the website. I have tried logging in multiple times on different occasions but it does not seem to work for me.
+  </p>
+  <p>
+    A: This website uses Georgia Tech’s CAS login service. The username and password for the website is the same one you use for other Georgia Tech resources. If you are able to log in successfully to T-Square or Buzzport, you should be able to log into the website as well. If you have changed your password recently, please allow the website up to 3 hours to get the updated credentials. if you still run into issues, you should contact Georgia Tech’s OIT: www.oit.gatech.edu
+  </p>
+</section>
 
-<article id="nonews">
-  Q: I don’t see anything under the News section when I log in. What could be wrong?
+<section id="nonews">
+  <h4>No news on your homepage</h4>
+  <p>
+    Q: I don’t see anything under the News section when I log in. What could be wrong?
+  </p>
+  <p>
+    A: There will be nothing under News section if you have not joined any organization yet or the organizations you are the part of have no updates.
+  </p>
+</section>
 
-  A: There will be nothing under News section if you have not joined any organization yet or the organizations you are the part of have no updates.
-</article>
+<section id="validUserIds">
+  <h4>What is a valid user id</h4>
+  <p>
+    Q: What can I use to check-in people for a meeting?
+  </p>
+  <p>
+    A: You can check-in people using their GTID or GT username. You can also use Buzzcard to check-in people if you are using our RFID reader.
+  </p>
+</section>
 
-<article id="validUserIds">
-  Q: What can I use to check-in people for a meeting?
+<section id="joinRequest">
+  <h4>My organization join request has yet to go through</h4>
+  <p>
+    Q: I have requested to join an organization but I don’t see it under my organization in the Organization page. When will I see the new organization?
+  </p>
+  <p>
+    A: You are unable to see your requested organization under your organization because your request is still pending with the organization’s administrator. Once they approve your pending request only then you will be able to see the organization under My Organization.
+  </p>
+</section>
 
-  A: You can check-in people using their GTID or GT username. You can also use Buzzcard to check-in people if you are using our RFID reader.
-</article>
+<section id="analyticsTypes">
+  <h4>What types of analytics are preformed</h4>
+  <p>
+    Q: What type of analytics do you perform?
+  </p>
+  <p>
+    A: We provide the ability for the user to see the logs of check-ins for the meetings as well as the organization for the past day, month, and year and you can download the file in .csv format as well.
+  </p>
+</section>
 
-<article id="joinRequest">
-  Q: I have requested to join an organization but I don’t see it under my organization in the Organization page. When will I see the new organization?
+<section id="whoStartsCheckin">
+  <h4>Who starts the checkin process</h4>
+  <p>
+    Q: Who all can start the check-in process for a meeting?
+  </p>
+  <p>
+    A: Any member who is a part of the organization can start the check-in process for a meeting.
+  </p>
+</section>
 
-  A: You are unable to see your requested organization under your organization because your request is still pending with the organization’s administrator. Once they approve your pending request only then you will be able to see the organization under My Organization.
-</article>
+<section id="contact">
+  <h4>Contact Us</h4>
+  <p>
+    If you have any more questions, please feel free to email us at eventanalytics@lists.gatech.edu
+  </p>
+</section>
 
-<article id="analyticsTypes">
-  Q: What type of analytics do you perform?
-   
-  A: We provide the ability for the user to see the logs of check-ins for the meetings as well as the organization for the past day, month, and year and you can download the file in .csv format as well.
-</article>
-
-<article id="whoStartsCheckin">
-  Q: Who all can start the check-in process for a meeting?
-
-  A: Any member who is a part of the organization can start the check-in process for a meeting.
-</article>
-
-<article id="contact">
-  If you have any more questions, please feel free to email us at eventanalytics@lists.gatech.edu
-</article>
-</pre>
+</div>

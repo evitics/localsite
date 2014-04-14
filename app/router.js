@@ -14,6 +14,7 @@ define(function(require, exports, module) {
       "analytics/log/:orgId/:meetingId/:year" : "log",
       "analytics/log/:orgId/:meetingId/:year/:month" : "log",
       "analytics/log/:orgId/:meetingId/:year/:month/:day" : "log",
+      "marketing" : "marketing",
       "triggers/new/:triggerType" : "newTrigger",
       "organizations" : "organizations",
       "organizations/new"    : "newOrganizationForm",

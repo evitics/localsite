@@ -13,6 +13,9 @@ Class GTED {
   private function _connect2Ldap() {
     $ldapConfig = $this->ldapConfig;
     $this->link = $ldapconn = ldap_connect($ldapConfig["host"], $ldapConfig["port"]);
+    //Have ldap timeout if it cannot connect after $ldapConfig['timeout'] seconds
+    ldap_set_option($this->link, LDAP_OPT_NETWORK_TIMEOUT,$ldapConfig['timeout']);
+    
     if(!$this->link) {
       throw new Exception("Unable to connect to the LDAP database");
     } else {
@@ -273,21 +276,23 @@ Class GTED {
   /*
     Returns an object with more sane object key's
   */
-  public function sanityCheck($gtedInfo) {
+  public function saneitize($gtedInfo) {
     $output = array();
     $output['username'] = $gtedInfo['gtprimarygtaccountusername'];
     $output['curriculum'] = $gtedInfo['gtcurriculum'][1];
     $output['email'] = $gtedInfo['mail'][0];
-    $output['phone'] = $gtedInfo['telephonenumber'][0];
+    //might not exist
+    if(isset($output['telephonenumber'])) {
+      $output['phone'] = $gtedInfo['telephonenumber'][0];
+    }
+    
     $output['affiliation'] = $gtedInfo['edupersonprimaryaffiliation'][0];
     $output['name'] = array(
       'first'=>$gtedInfo['givenname'][0],
       'last'=>$gtedInfo['sn'][0],
-      'middle'=>$gtedInfo['initials'][0],
       'full'=>$gtedInfo['cn'][0],
     );
     return $output;
-
   }
 }
 

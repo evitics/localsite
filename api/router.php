@@ -11,12 +11,6 @@ $app->get('/user', function() {
     }
 });
 /*
-    Put in a request to join an organization
-*/
-$app->post('/organization/join/:id', function($orgId) {
-    echo json_encode(User::joinOrg($orgId));
-});
-/*
     Get list of organizations
 */
 $app->get('/organizations', function() { 
@@ -39,26 +33,21 @@ $app->get('/organizations/:id', function($id) {
     }
 });
 /*
-    Get meeting's information
+    Put in a request to join an organization
 */
-$app->get('/meeting/:orgId/:meetingId', function($orgId, $meetingId) { 
-	$meeting = Meeting::getMeetId($orgId, $meetingId); 
-	if($meeting) {
-		echo json_encode($meeting);
-	} else {
-        throw new Exception("Could not fetch the meeting with orgId: $orgId, and meetingId: $meetingId");
-	}
+$app->post('/organization/join/:id', function($orgId) {
+    echo json_encode(User::joinOrg($orgId));
 });
 /*
     Get meetings for said organization
 */
 $app->get('/meeting/:orgId(/)', function($orgId) {
     $org = Meeting::getOrgId($orgId); 
-	if($org) {
-		echo json_encode($org);
-	} else {
+    if($org) {
+        echo json_encode($org);
+    } else {
         throw new Exception("Could not fetch meetings for orgId: $orgId");
-	}
+    }
 });
 /*
     Create new meeting
@@ -67,13 +56,14 @@ $app->post('/meeting/:orgId', function($orgId) {
     if(!isset($_POST['name'])) {
         echo '{ "error" : "Meeting Name not specified" }'; return;
     }
-    if(!isset($_POST['emailFrom']) || !isset($_POST['emailSubject']) ||
+    if(!isset($_POST['emailTo']) || !isset($_POST['emailFrom']) || !isset($_POST['emailSubject']) ||
        !isset($_POST['sendEmailOnCheckin']) || !isset($_POST['emailMessage'])) {
         echo '{ "error" : "Need email information" }'; return;
     }
     $params = array(
         'orgId'=>$orgId,
         'name' => $_POST['name'],
+        'emailTo' => $_POST['emailTo'],
         'emailFrom' => $_POST['emailFrom'],
         'emailSubject'=>$_POST['emailSubject'],
         'emailMessage'=>$_POST['emailMessage'],
@@ -91,7 +81,7 @@ $app->put('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
     if(!isset($_POST['name'])) {
         echo '{ "error" : "Meeting Name not specified'.$_POST['name'].'"  }'; return;
     }
-    if(!isset($_POST['emailFrom']) || !isset($_POST['emailSubject']) ||
+    if(!isset($_POST['emailTo']) || !isset($_POST['emailFrom']) || !isset($_POST['emailSubject']) ||
        !isset($_POST['sendEmailOnCheckin']) || !isset($_POST['emailMessage'])) {
         echo '{ "error" : "Need email information" }'; return;
     }
@@ -99,6 +89,7 @@ $app->put('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
         'orgId'=>$orgId,
         'meetingId'=>$meetingId,
         'name' => $_POST['name'],
+        'emailTo' => $_POST['emailTo'],
         'emailFrom' => $_POST['emailFrom'],
         'emailSubject'=>$_POST['emailSubject'],
         'emailMessage'=>$_POST['emailMessage'],
@@ -107,12 +98,25 @@ $app->put('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
     echo json_encode(Meeting::create($params));
 });
 /*
+    Get meeting's information
+*/
+$app->get('/meeting/:orgId/:meetingId', function($orgId, $meetingId) { 
+	$meeting = Meeting::getMeetId($orgId, $meetingId); 
+	if($meeting) {
+		echo json_encode($meeting);
+	} else {
+        throw new Exception("Could not fetch the meeting with orgId: $orgId, and meetingId: $meetingId");
+	}
+});
+/*
     Remove specified meeting
 */
 $app->delete('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
     echo json_encode(Meeting::delete($orgId, $meetingId));
 });
-//Gets the current checkins
+/*
+    Gets the current checkins
+*/
 $app->get('/checkin/:orgId/:meetingId(/)', function($orgId, $meetingId) {
     $checkin = new Checkin();
     $output = array(
@@ -161,32 +165,20 @@ $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $u
     echo json_encode($output);
 
 });
-$app->post('/mail', function() {
-    require_once('./library/Email.php');
-    $requiredParams = array('from', 'to', 'subject', 'message');
-    foreach($requiredParams as $requiredParam) {
-        if(empty($_POST[$requiredParam])){
-            echo '{"error" : "Missing a required param (from, to, subject, and message are required)" }';
-            return;
-        } 
-    }
-    //turn array of $_POST['to'], to proper form
-    if(is_array($_POST['to'])) { $_POST['to'] = implode(', ', $_POST['to']); }
 
-    //send email
-    echo json_encode(Email::send(array(
-        'to'=>$_POST['to'],
-        'subject'=>$_POST['subject'],
-        'message'=>$_POST['message'],
-        'from'=>'noreply@evitics.com'
-    )));
-    if(mail($_POST['to'], $_POST['subject'], $_POST['message'], $headers)) {
-        echo '{ "success" : "email sent"}';
-    } else {
-        echo '{ "error" : "email could not be sent" }';
-    }
+/*
+    Send out marketing emails
+*/
+$app->post('/marketing/email', function() {
+    echo json_encode(Marketing::sendEmails($_POST));
 });
-
+/*
+    Pivot Table Data
+*/
+$app->get('/log/:orgId/:meetingId', function($orgId, $meetingId) {
+    $log = new Log();
+    echo json_encode($log->getOverview(array("orgId"=>$orgId, "meetingId"=>$meetingId)));
+});
 /*
     Raw log data
 */
@@ -204,13 +196,7 @@ $app->get('/log/download/:orgId(/:meetingId)(/:year)(/:month)(/:day)', function(
     header("Content-Disposition: attachment; filename=\"$filename.csv\"");
     echo $log->getAll($params);
 });
-/*
-    Pivot Table Data
-*/
-$app->get('/log/:orgId/:meetingId', function($orgId, $meetingId) {
-    $log = new Log();
-    echo json_encode($log->getOverview(array("orgId"=>$orgId, "meetingId"=>$meetingId)));
-});
+
 $app->get('/gted/:userId', function($userId) {
     require_once("./library/GTED.php");
     $gted = new GTED();

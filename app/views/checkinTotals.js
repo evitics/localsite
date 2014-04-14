@@ -94,6 +94,7 @@ function($,        Backbone,   templates ,  OrgMeetingForm       ) {
     remove : function() {
       this.meetingForm.remove();
       this.stopListening();
+      this.undelegateEvents();
       this.vent.off("post:orgMeetingForm");
       this.$el.html('');
     }

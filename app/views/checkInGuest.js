@@ -63,6 +63,8 @@ function($,        Backbone,   templates ,  CheckInCollection    ) {
     },
     remove : function() {
       this.stopListening();
+      this.undelegateEvents();
+      this.$el.off("#checkinAGuest");
       this.$el.html('');
     }
   });

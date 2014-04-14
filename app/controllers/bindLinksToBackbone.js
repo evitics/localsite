@@ -18,7 +18,6 @@ function($,        Backbone) {
         
         // Route to only new url paths
         if(Backbone.history.fragment !== url) {
-          // Remove old view
           if(app.views.current && app.views.current.remove) {
               app.views.current.remove();
           }

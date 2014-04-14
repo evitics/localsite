@@ -5,22 +5,21 @@ require_once("./library/DB.php");
 class Meeting {
   public static function create($params) {
     //require param
-    if(empty($params['name']) || empty($params['orgId']) || !isset($params['emailFrom']) ||
+    if(empty($params['name']) || empty($params['orgId']) || !isset($params['emailTo']) || !isset($params['emailFrom']) ||
        !isset($params['emailSubject']) || !isset($params['emailMessage'])) {
       return array("error"=>"To create a meeting reequries a meeting name and orgId");
     }
 
     //if meetingId not specified, let MySQL generate it
     if(isset($params['meetingId'])) {
-      $meetingId = $params['meetingId'];
       $values = array(
-          '(`meetingId`, `orgId`, `name`, `sendEmailOnCheckin`, `emailFrom`,`emailSubject`,`emailMessage`)',
-          '(:meetingId , :orgId , :name , :sendEmailOnCheckin , :emailFrom, :emailSubject, :emailMessage  )'
+          '(`meetingId`, `orgId`, `name`, `sendEmailOnCheckin`, `emailTo`, `emailFrom`,`emailSubject`,`emailMessage`)',
+          '(:meetingId , :orgId , :name , :sendEmailOnCheckin , :emailTo , :emailFrom, :emailSubject, :emailMessage  )'
       );
     } else {
       $values = array(
-          '(`orgId`, `name`, `sendEmailOnCheckin`, `emailFrom`,`emailSubject`,`emailMessage`)',
-          '(:orgId , :name , :sendEmailOnCheckin , :emailFrom, :emailSubject, :emailMessage  )'
+          '(`orgId`, `name`, `sendEmailOnCheckin`, `emailTo`, `emailFrom`,`emailSubject`,`emailMessage`)',
+          '(:orgId , :name , :sendEmailOnCheckin , :emailTo , :emailFrom, :emailSubject, :emailMessage  )'
       );
     }
     
@@ -29,7 +28,8 @@ class Meeting {
 
     if($db->query($sql, $params)) {
       $sql = 'SELECT * FROM `meeting` WHERE `meetingId` = :lastInsertId';
-      return $db->fetchAll($sql, array('lastInsertId'=>$db->lastInsertId()))[0];
+      $output = $db->fetchAll($sql, array('lastInsertId'=>$db->lastInsertId()));
+      return $output[0];
     } else {
       return array('error'=>'Could not create/update meeting');
     }
@@ -51,28 +51,37 @@ class Meeting {
       }
     }
   }
-  public static function getMeetId($orgId, $meetingId) 
-  {
-	$db = new DB("evitics");
-	$query = "SELECT * FROM `meeting` WHERE `meetingId` = :meetingId AND `orgId` = :orgId";
-			
-	$result = $db->fetchAll($query, array("meetingId"=>$meetingId, "orgId"=>$orgId));
-  if($result && count($result) ==1) {
-		$result = $result[0];
-	}
-	return $result;
+  public static function get($orgId, $meetingId=false) {
+    if($meetingId) {
+      return $this::getMeetId($orgId, $meetingId);
+    } else {
+      return $this::getOrgId($orgId);
+    }
   }
-
-  public static function getOrgId($orgId)
-  {
-	$db = new DB("evitics");
-	$query = "SELECT * FROM `meeting` WHERE `orgId` =:orgId";
+  public static function saneitize($meetingObj) {
+    return array(
+      'name'=>$meetingObj['name'], 
+      'id'=>$meetingObj['meetingId']
+    );
+  }
+  public static function getMeetId($orgId, $meetingId) {
+    $db = new DB("evitics");
+    $query = "SELECT * FROM `meeting` WHERE `meetingId` = :meetingId AND `orgId` = :orgId";
+			
+    $result = $db->fetchAll($query, array("meetingId"=>$meetingId, "orgId"=>$orgId));
+    if($result && count($result) ==1) {
+		  $result = $result[0];
+    }
+    return $result;
+  }
+  public static function getOrgId($orgId) {
+  	$db = new DB("evitics");
+  	$query = "SELECT * FROM `meeting` WHERE `orgId` =:orgId";
 		$result = $db->fetchAll($query, array("orgId"=>$orgId));
-		 	
 		if($result && count($result) ==1) {
-		$result = $result[0];
-	}
-	return $result;
+		  $result = $result[0];
+	  }
+    return $result;
   }
 }
 

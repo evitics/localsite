@@ -16,6 +16,7 @@ function($,        Backbone,   templates) {
     },
     remove : function() {
       this.stopListening();
+      this.undelegateEvents();
       this.$el.html('');
     }
   });

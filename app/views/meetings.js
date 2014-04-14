@@ -151,6 +151,7 @@ function($,        Backbone,   templates ,  OrgMeetingForm        ,  MeetingMode
       this.stopListening();
       this.meetingForm.remove();
       this.vent.off("post:orgMeetingForm");
+      this.undelegateEvents();
       this.$el.html('');
     }
   });
