@@ -1,4 +1,5 @@
 <?php
+  assert_options(ASSERT_BAIL, 1); //force php to end script if assert fail
   echo "Starting Tests\n";
   //TEST GTED
   require("./tests/GTED.php");
@@ -13,6 +14,13 @@
     echo "\t-DB Passed Tests\n";
   } else {
     echo "\t-DB FAILED TESTS!\n";
+  }
+
+  require("./tests/Helpers.php");
+  if(testHelpers()) {
+    echo "\t-Helpers Passed Tests\n";
+  } else {
+    echo "\t-Helpers FAILED TESTS!\n";
   }
   echo "Ending Tests\n";
 ?>

@@ -41,7 +41,7 @@ function($,        Backbone,   templates ,  OrgMeetingForm       ) {
           emailTo : "{{guest.email}}",
           emailFrom : "{{organization.email}}",
           emailSubject : "{{organization.name}} sends their regards",
-          emailMessage : "Hi {{guest.name.full}},\n.....\n\nRegards,\n{{organization.name}}"
+          emailMessage : "Hi {{guest.name.first}} {{guest.name.last}},\n.....\n\nRegards,\n{{organization.name}}"
         };
       } else {
         context = this.user.get('organizations').get(orgId).get('meetings').get(meetingId).toJSON();
