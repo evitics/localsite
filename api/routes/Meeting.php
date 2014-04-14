@@ -1,7 +1,6 @@
 <?php
 
 require_once("./library/DB.php");
-
 class Meeting {
   public static function create($params) {
     //require param
@@ -25,7 +24,7 @@ class Meeting {
     
     $sql = 'REPLACE INTO `meeting`' . $values[0] .' VALUES ' . $values[1];
     $db = new DB('evitics');
-
+    
     if($db->query($sql, $params)) {
       $sql = 'SELECT * FROM `meeting` WHERE `meetingId` = :lastInsertId';
       $output = $db->fetchAll($sql, array('lastInsertId'=>$db->lastInsertId()));

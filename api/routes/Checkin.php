@@ -10,32 +10,18 @@ Class Checkin {
   private $gted;
   private $userDb;
   private $checkinDb;
-  
-  public function __construct () {    
+
+  public function __construct ($orgId) {    
     $this->gted = new GTED();
     $this->userDb = new DB("evitics");
     $this->checkinDb = new DB("checkin");
+    $this->orgId = Helpers::id2Int($orgId);
+    Organization::createCheckinTable($orgId); //creates a checkin table if it does not exist
+
   }
-  public function createCheckinTable($orgId) {
-    $orgId = Helpers::id2Int($orgId);
-    $sql = 'CREATE TABLE IF NOT EXISTS `'.$orgId.'` ( ' .
-              '`userId` varchar(255) NOT NULL, '        .
-              '`meetingId` int(11) NOT NULL, '          .
-              '`timestamp` datetime NOT NULL, '         .
-              '`checkedInBy` varchar(255) NOT NULL, '   .
-              'KEY `checkedInBy` (`checkedInBy`), '     .
-              'KEY `meetingId` (`meetingId`), '         .
-              'KEY `userId` (`userId`)  '               .
-            ') ENGINE=InnoDB DEFAULT CHARSET=utf8';   
-    if($this->checkinDb->query($sql, array())) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  public function getStatistics($orgId, $meetingId) {
-    $orgId = Helpers::id2Int($orgId);
-    $sql = "SELECT COUNT(`userId`) FROM `$orgId` WHERE `meetingId` = :meetingId AND `timestamp` > DATE_SUB(NOW(), INTERVAL 6 HOUR)";
+  public function getStatistics($meetingId) {
+
+    $sql = "SELECT COUNT(`userId`) FROM `$this->orgId` WHERE `meetingId` = :meetingId AND `timestamp` > DATE_SUB(NOW(), INTERVAL 6 HOUR)";
     $attendance = $this->checkinDb->fetchAll($sql, array("meetingId"=>$meetingId), "NUMERIC");
     if($attendance) {
       $attendance = $attendance[0]; //first record, first field
@@ -45,7 +31,7 @@ Class Checkin {
   /*
     Checks in a guest, returns true if successful, or false if unsucsessful
   */
-  public function guest($orgId, $meetingId, $userId) {
+  public function guest($meetingId, $userId) {
     $gtUsername = null;
     $gtFullName = "";
     //get userId in form of gtusername
@@ -58,20 +44,20 @@ Class Checkin {
     }
 
     //Check if logged in user belongs to org
-    if(!$this->doesBelong2Org($GLOBALS["USERNAME"], $orgId)) {
-      return array("error"=>"Logged in user (".$GLOBALS["USERNAME"].") does not belong to orgId: ". $orgId, "userId"=>$userId);
+    if(!$this->doesBelong2Org($GLOBALS["USERNAME"])) {
+      return array("error"=>"Logged in user (".$GLOBALS["USERNAME"].") does not belong to orgId: ". $this->orgId, "userId"=>$userId);
     }
-    $this->createCheckinTable($orgId);
+
     //Check if guest has already checked in
-    if(!$this->isCheckedIn($orgId, $meetingId, $gtUsername)) {
-      $res = $this->checkInUser($orgId, $meetingId, $gtUsername);
+    if(!$this->isCheckedIn($meetingId, $gtUsername)) {
+      $res = $this->checkInUser($meetingId, $gtUsername);
       //Error, pass it
       if(isset($res["error"])) { 
         return $res; 
       //Checked in guest successfully
       } else {
         //send an email if requested
-        $emailRes = $this->sendEmail($userId, $orgId, $meetingId);
+        $emailRes = $this->sendEmail($userId, $meetingId);
         if(isset($emailRes['error'])) {
           return $emailRes;
         } else {
@@ -86,15 +72,14 @@ Class Checkin {
   /*
     Gets records in desc order
   */
-  public function getRecords($orgId, $meetingId, $number) {
-    $orgId = Helpers::id2Int($orgId);
+  public function getRecords($meetingId, $number) {
     $number = intval($number);
 
-    $sql = "SELECT `userId`, `timestamp`, `checkedInBy` FROM `$orgId` WHERE `meetingId` = :meetingId ORDER BY `timestamp` DESC LIMIT 0, $number";
+    $sql = "SELECT `userId`, `timestamp`, `checkedInBy` FROM `$this->orgId` WHERE `meetingId` = :meetingId ORDER BY `timestamp` DESC LIMIT 0, $number";
     $records = $this->checkinDb->fetchAll($sql, array("meetingId"=>$meetingId));
     
     //Check if user has ever checked into this organization
-    $existsQuery = $this->checkinDb->prepare("SELECT COUNT(*) FROM `$orgId` WHERE `userId` = :userId");
+    $existsQuery = $this->checkinDb->prepare("SELECT COUNT(*) FROM `$this->orgId` WHERE `userId` = :userId");
     $existsQuery->setFetchMode(PDO::FETCH_NUM);
     //For w/e reason count(false) == 1...go figure
     $iterations = 0;
@@ -125,9 +110,8 @@ Class Checkin {
   /*
     adds the gtusername associated with userId to our checkin table
   */
-  private function checkInUser($orgId, $meetingId, $userId) {
-    $orgId = Helpers::id2Int($orgId);
-    $sql = "INSERT INTO `$orgId` (`userId`, `meetingId`, `timestamp`, `checkedInBy`) VALUES  (:userId ,  :meetingId,  now(), :checkedInBy )";
+  private function checkInUser($meetingId, $userId) {
+    $sql = "INSERT INTO `$this->orgId` (`userId`, `meetingId`, `timestamp`, `checkedInBy`) VALUES  (:userId ,  :meetingId,  now(), :checkedInBy )";
     if($this->checkinDb->query($sql, array("userId"=>$userId, "meetingId"=>$meetingId, "checkedInBy"=>$GLOBALS["USERNAME"]))) {
       return true;
     } else {
@@ -139,10 +123,9 @@ Class Checkin {
     Returns trus if the specified user hasn't checked into the meetingId 
     in the past 6 hours
   */
-  public function isCheckedIn($orgId, $meetingId, $userId) {
-    $orgId = Helpers::id2Int($orgId);
+  public function isCheckedIn($meetingId, $userId) {
     $meetingId = Helpers::id2Int($meetingId);
-    $sql = "SELECT * FROM `$orgId` WHERE `timestamp` > DATE_SUB(NOW(), INTERVAL 6 HOUR) AND `userId` = :userId AND `meetingId` = :meetingId";
+    $sql = "SELECT * FROM `$this->orgId` WHERE `timestamp` > DATE_SUB(NOW(), INTERVAL 6 HOUR) AND `userId` = :userId AND `meetingId` = :meetingId";
     $this->checkinDb->query($sql, array("userId" => $userId, "meetingId" => $meetingId));
 
     if($this->checkinDb->rowCount() === 0) {
@@ -155,9 +138,9 @@ Class Checkin {
     Returns true if logged in user belogns to said org id
             false if logged in user doesn't belong to said org id
   */
-  public function doesBelong2Org($userId, $orgId) {
+  public function doesBelong2Org($userId) {
     $sql = "SELECT * FROM `user` WHERE `userId` = :userId AND `orgId` = :orgId AND `isPending` = 0";
-    $this->userDb->query($sql, array("orgId"=>$orgId, "userId"=>$userId));
+    $this->userDb->query($sql, array("orgId"=>$this->orgId, "userId"=>$userId));
     if($this->userDb->rowCount() >= 1) {
       return true;
     } else {
@@ -168,9 +151,8 @@ Class Checkin {
     Returns true if the user has never checked in before, or only
     checked in once for said organization (or organization->meeting)
   */
-  public function isNewUser($userId, $orgId, $meetingId = false) {
-    Helpers::id2Int($orgId);
-    $newUserSQL = "SELECT COUNT(*) as `total` FROM `$orgId` WHERE `userId` = :userId";
+  public function isNewUser($userId, $meetingId = false) {
+    $newUserSQL = "SELECT COUNT(*) as `total` FROM `$this->orgId` WHERE `userId` = :userId";
     $sqlParams = array('userId'=>$userId);
 
     if($meetingId) { 
@@ -192,11 +174,9 @@ Class Checkin {
       true: sent an email successfully
       2: sendEmailOnCheckin was for only new guests, guest wasn't new
   */
-  public function sendEmail($userId, $orgId, $meetingId) {
-    $orgId = Helpers::id2Int($orgId); //sanatize orgId
-    
+  public function sendEmail($userId, $meetingId) {    
     //get meeting information
-    $meeting = Meeting::getMeetId($orgId, $meetingId);
+    $meeting = Meeting::getMeetId($this->orgId, $meetingId);
     if(!$meeting) { return false; } //Could not fetch meeting
 
     //if we should send an email, return
@@ -211,12 +191,12 @@ Class Checkin {
 
     //if we only want to send emails to new guests, and guest  wasn't new, return
     if(strtolower($meeting['sendEmailOnCheckin']) == 'new' && 
-      $this->isNewUser($guest['username'], $orgId)) {
+      $this->isNewUser($guest['username'], $this->orgId)) {
       return 2;
     }
 
     //Get the organization's information
-    $organization = Organization::get($orgId);
+    $organization = Organization::get($this->orgId);
     if(!$organization) { return false; } //could not fetch organizaiton
     
     $organization = Organization::saneitize($organization); 

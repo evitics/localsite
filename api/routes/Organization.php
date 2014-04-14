@@ -1,9 +1,27 @@
 <?php
 
 require_once("./library/DB.php");
+require_once("./library/Helpers.php");
 
 class Organization {
-
+  public static function createCheckinTable($orgId) {
+    $checkinDB = new DB('checkin');
+    $orgId = Helpers::id2Int($orgId);
+    $sql = 'CREATE TABLE IF NOT EXISTS `'.$orgId.'` ( ' .
+              '`userId` varchar(255) NOT NULL, '        .
+              '`meetingId` int(11) NOT NULL, '          .
+              '`timestamp` datetime NOT NULL, '         .
+              '`checkedInBy` varchar(255) NOT NULL, '   .
+              'KEY `checkedInBy` (`checkedInBy`), '     .
+              'KEY `meetingId` (`meetingId`), '         .
+              'KEY `userId` (`userId`)  '               .
+            ') ENGINE=InnoDB DEFAULT CHARSET=utf8';   
+    if($checkinDB->query($sql, array())) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   public static function get($id) {
     $config = require("./config.php");
 

@@ -122,20 +122,20 @@ $app->delete('/meeting/:orgId/:meetingId', function($orgId, $meetingId) {
     Gets the current checkins
 */
 $app->get('/checkin/:orgId/:meetingId(/)', function($orgId, $meetingId) {
-    $checkin = new Checkin();
+    $checkin = new Checkin($orgId);
     $output = array(
         "checkins" => array(),
         "statistics" => array()
     );
     
     //Get list of records
-    $records= $checkin->getRecords($orgId, $meetingId, 25);
+    $records= $checkin->getRecords($meetingId, 25);
     if($records) {
         $output["checkins"]= array_merge($output["checkins"], $records);
     }
 
     //Get statistics on event
-    $statistics = $checkin->getStatistics($orgId, $meetingId);
+    $statistics = $checkin->getStatistics($meetingId);
     if($statistics) {
         $output["statistics"] = $statistics;
     }
@@ -144,24 +144,24 @@ $app->get('/checkin/:orgId/:meetingId(/)', function($orgId, $meetingId) {
 });
 
 $app->post('/checkin/:orgId/:meetingId/:userId', function($orgId, $meetingId, $userId) {
-    $checkin = new Checkin();
+    $checkin = new Checkin($orgId);
     $output = array(
         "res" => array(),
         "checkins" => array(),
         "statistics" => array()
     );
     //checkin user, and attach result to the 'message' property
-    $output["res"]=$checkin->guest($orgId, $meetingId, $userId);
+    $output["res"]=$checkin->guest($meetingId, $userId);
 
 
     //Get list of records
-    $records = $checkin->getRecords($orgId, $meetingId, 25);
+    $records = $checkin->getRecords($meetingId, 25);
     if($records) {
         $output["checkins"]= array_merge($output["checkins"], $records);
     }
     
     //Get statistics on event
-    $statistics = $checkin->getStatistics($orgId, $meetingId);
+    $statistics = $checkin->getStatistics($meetingId);
     if($statistics) {
         $output["statistics"] = $statistics;  
     }
