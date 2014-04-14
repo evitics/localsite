@@ -1,12 +1,14 @@
 <?php   
 require_once("./library/Helpers.php");
 require_once("./library/DB.php");
-
+require_once("./routes/Organization.php");
 Class Log {
   private $checkinDb;
   
-  public function __construct() {    
+  public function __construct($orgId) {    
     $this->checkinDb = new DB("checkin");
+    $this->orgId = Helpers::id2Int($orgId);
+    Organization::createCheckinTable($orgId); //creates checkin table if not exists
   }
   /*
     Get the raw log:
@@ -14,13 +16,11 @@ Class Log {
       optional: year, month, day
   */
   public function getAll($params) {
-    if(!isset($params['orgId'])) { throw new Exception("orgId is a required param"); return; }
     //sanatize orgId
-    $orgId = Helpers::id2Int($params['orgId']);
     $meetings = Meeting::getOrgId($orgId);
-
+    
     //build query based on optional parameters
-    $sql = "SELECT `userId`, `meetingId`, `timestamp`, `checkedInBy` FROM `$orgId` WHERE `meetingId` LIKE :meetingId";
+    $sql = "SELECT `userId`, `meetingId`, `timestamp`, `checkedInBy` FROM `$this->orgId` WHERE `meetingId` LIKE :meetingId";
     $queryParams = array('meetingId'=>'%');
 
     //if the user specifies a meetingId
@@ -66,14 +66,10 @@ Class Log {
     Totals for a Year->month->day combo
   */
   public function getOverview($params) {
-    if(!isset($params['orgId'])) {
-      throw new Exception('orgId is a required param');
-    }
     if(!isset($params['meetingId'])) {
       throw new Exception('meetingId is a required param');
     }
 
-    $orgId = Helpers::id2Int($params["orgId"]);
     $meetingId = $params['meetingId'];
     $sql = "SELECT
               YEAR(`timestamp`) as `year`, 
@@ -81,12 +77,12 @@ Class Log {
               DAYOFMONTH(`timestamp`) as `day`, 
               COUNT(*) as `total` 
             FROM 
-              `$orgId` WHERE `meetingId` = :meetingId
+              `$this->orgId` WHERE `meetingId` = :meetingId
                GROUP BY `year`, `month`, `day`";
     //grab the overview of all attendance counts and group by year, month, day
     $results = $this->checkinDb->fetchAll($sql, array("meetingId"=>$meetingId));
     if(!$results) {
-      return array("error"=>"could not get overview for orgId: " . $orgId . " for meeting: " . $meetingId);
+      return array("error"=>"could not get overview for orgId: " . $this->orgId . " for meeting: " . $meetingId);
     }
     //order data for display in the pivot table
     $output = array();

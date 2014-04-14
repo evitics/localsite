@@ -177,21 +177,13 @@ $app->post('/marketing/email', function() {
     echo json_encode(Marketing::sendEmails($_POST));
 });
 /*
-    Pivot Table Data
-*/
-$app->get('/log/:orgId/:meetingId', function($orgId, $meetingId) {
-    $log = new Log();
-    echo json_encode($log->getOverview(array("orgId"=>$orgId, "meetingId"=>$meetingId)));
-});
-/*
-    Raw log data
+    Raw log data, must go before /log/:orgId/:meetingId
 */
 $app->get('/log/download/:orgId(/:meetingId)(/:year)(/:month)(/:day)', function($orgId, $meetingId = false, $year = false, $month = false, $day = false) {
     $filename = "log.$orgId";
-    $log = new Log();
-    $params = array(
-        "orgId" => $orgId,
-    );
+    $log = new Log($orgId);
+    $params = array();
+    
     //optional parameters
     if($meetingId) { $params['meetingId'] = $meetingId;    $filename .= ".$meetingId"; }
     if($year)      { $params["year"]      = $year;         $filename .= ".$year";      }
@@ -200,6 +192,14 @@ $app->get('/log/download/:orgId(/:meetingId)(/:year)(/:month)(/:day)', function(
     header("Content-Disposition: attachment; filename=\"$filename.csv\"");
     echo $log->getAll($params);
 });
+/*
+    Pivot Table Data
+*/
+$app->get('/log/:orgId/:meetingId', function($orgId, $meetingId) {
+    $log = new Log($orgId);
+    echo json_encode($log->getOverview(array("meetingId"=>$meetingId)));
+});
+
 
 $app->get('/gted/:userId', function($userId) {
     require_once("./library/GTED.php");

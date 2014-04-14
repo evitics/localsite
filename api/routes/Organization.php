@@ -5,6 +5,9 @@ require_once("./library/Helpers.php");
 
 class Organization {
   public static function createCheckinTable($orgId) {
+    if(empty($orgId) || !Organization::get($orgId)) {
+      throw new Exception($orgId . " is not a valid orgId");
+    }
     $checkinDB = new DB('checkin');
     $orgId = Helpers::id2Int($orgId);
     $sql = 'CREATE TABLE IF NOT EXISTS `'.$orgId.'` ( ' .
