@@ -19,6 +19,7 @@ define(function(require, exports, module) {
       "organizations" : "organizations",
       "organizations/new"    : "newOrganizationForm",
       "organizations/:orgId" : "organizations",
+      "oganization/:orgId/:userId/:ref" : "viewOrgJoinRequest",
       "meeting/:orgId/:meetingId" : "checkInGuest"
     }
   });

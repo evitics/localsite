@@ -1,0 +1,43 @@
+<div class="row collapse">
+<h3>Pending Requests</h3>
+{{#if pendingMembers.length}}
+  <table>
+    <tr>
+      <th>Username</th>
+      <th>Add</th>
+      <th>Remove</th>
+    </tr>
+  {{#each}}
+    <tr>
+      <td>{{userId}}</td>
+      <td><button data-userId="{{userId}}" class="button tiny radius add">Add</button></td>
+      <td><button data-userId="{{userId}}" class="button tiny radius alert remove">Remove</button></td>
+    </tr>
+  {{/each}}
+  </table>
+{{else}}
+  <p>No Pending requests</p>
+{{/if}}
+
+<h3>Administrative Users</h3>
+{{µ#if members.length}}
+  <table>
+    <tr>
+      <th>Username</th>
+      <th>Write Permission</th>
+      <th>Remove</th>
+    </tr>
+  {{#each members}}
+    {{#unless isPending}}
+    <tr>
+      <td>{{userId}}</td>
+      <td>{{writePerm}}</td>
+      <td><button data-userId="{{userId}}" class="button tiny alert remove">X</a></td>
+    </tr>
+    {{/unless}}
+  {{/each}}
+  <table>
+{{else}}
+  <p>No Administrative users</p>
+{{/if}}
+</div>

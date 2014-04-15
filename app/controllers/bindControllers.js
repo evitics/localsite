@@ -44,7 +44,6 @@ function($      ,  _          ,  Backbone ,  HomeController   ,  CheckInTotalsCo
         orgId: orgId
       });
     });
-
     app.router.on('route:newOrganizationForm', function() {
       window.location.href= "http://jacketpages.gatech.edu/pages/contact";
     });

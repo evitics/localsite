@@ -1,8 +1,9 @@
 <?php
 
-require_once("./library/DB.php");
-require_once("./library/Helpers.php");
-
+require_once(dirname(__FILE__).'/../library/DB.php');
+require_once(dirname(__FILE__).'/../library/Helpers.php');
+require_once(dirname(__FILE__).'/../library/GTED.php');
+require_once(dirname(__FILE__).'/../library/Email.php');
 class Organization {
   public static function createCheckinTable($orgId) {
     if(empty($orgId) || !Organization::get($orgId)) {
@@ -26,7 +27,7 @@ class Organization {
     }
   }
   public static function get($id) {
-    $config = require("./config.php");
+    $config = require(dirname(__FILE__)."/../config.php");
 
     if(empty($id)){
       return $this::getAll();
@@ -46,7 +47,7 @@ class Organization {
   public static function getAll() {
     $config = require("./config.php");
     $jacketpagesDB = new DB("jacketpages");
-    $query = "SELECT `orgId`, `name`, `short_name`, `description`, `logo_path` FROM `organizations` WHERE `status` = 'Active' ORDER BY `name` ASC";
+    $query = "SELECT `orgId`, `name`, `short_name`, `description`, `logo_path` FROM `organizations` ORDER BY `name` ASC";
     
     $organizations = $jacketpagesDB->fetchAll($query, array());
 
@@ -87,8 +88,107 @@ class Organization {
     }
     return $output;
   }
-  public static function requestJoin($orgId, $userId) {
-    $requestDB = DB("evitics");
+  /*
+    returns an array with two properties, user and pending.
+      user = list of pending users
+      pending = list of users awaiting approval.
+  */
+  public static function permissionList($orgId) {
+    $eviticsDB = new DB("evitics");
+    $sql = "SELECT * FROM `user` WHERE `orgId` = :orgId";
+    $users = $eviticsDB->fetchAll($sql . ' and `isPending` = 0', array('orgId'=>$orgId));
+    $pending = $eviticsDB->fetchAll($sql . ' and `isPending` = 1', array('orgId'));
+    if(!$users) { $users = array(); }
+    if(!$pending) { $pending = array(); }
+    return array('users'=>$users, 'pending'=>$pending);
+  }
+  public static function requestJoin($userId, $orgId) {
+    $gted = new GTED();
+    $userInfo = $gted->getUser($userId);
+    if(!$userInfo) {
+      throw new Exception("User was not found in gted");      
+    }
+    $userId = $userInfo['gtprimarygtaccountusername'][0];
+
+    //check if user has already requested to join the organization
+    if(self::hasRequestedJoin($userId, $orgId)) {
+      return array('warning'=>'user has already requested to join the organization');
+    }
+
+    //add user as pending
+    $ref = self::addPendingUser($userId, $orgId);
+    if(!$ref) {
+      return array('error'=>'could not fulfill your request to join said organization');
+    }
+    //generate uuid, and store it in request table
+    $ref = self::addPendingRequest($userId, $orgId);
+    if(!$ref) {
+      return array('warning'=>'could not send out email to organization head, but your request has been sent');
+    }
+    //send email out to organization head
+    if(!self::sendPendingEmail($userId, $orgId, $ref)) {
+      return array('error'=>'added as pending, but organization head could not be contacted. Please contact evitics administrator');
+    } else {
+      return array('success'=>'email sent to organization');
+    }
+    
+  }
+  public static function sendPendingEmail($userId, $orgId, $ref) {
+    $jacketpagesDB = new DB('jacketpages');
+    $sql = 'SELECT `org_email` FROM `organizations` WHERE `orgId` = :orgId';
+    $res = $jacketpagesDB->fetchAll($sql, array('orgId'=>$orgId));
+    if($res && isset($res[0]) && !empty($res[0]['org_email'])) {
+      $emailParams = array(
+        'to' => $res[0]['org_email'],
+        'from' => 'noreply@evitics.com',
+        'subject' => $userId . ' has requested to join your organization',
+        'message' =>  'Hi,' . "\n" .
+                  '   To add ' . $userId . ' to your organization, please navigate to the following url:' . "\n" .
+                  '   http://evitics.gatech.edu/api/admin/joinReq.php?ref=' . $ref . '&orgId=' . $orgId . '&userId=' . $userId,
+        'context' =>array()
+      );
+      return Email::send($emailParams);
+    } else {
+      return false;
+    }
+  }
+  public static function addPendingUser($userId, $orgId) {
+    $eviticsDB = new DB('evitics');
+    $sql = 'INSERT INTO `user` (`userId`, `orgId`, `writePerm`, `isPending`) VALUES (:userId, :orgId, 0, 1)';
+    if(!$eviticsDB->query($sql, array('userId'=>$userId, 'orgId'=>$orgId))) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  public static function addPendingRequest($userId, $orgId) {
+    $eviticsDB = new DB('evitics');
+    $addPendingReqSQL = 'INSERT INTO `pendingRequests` (userId, orgId, referallCode) VALUES (:userId, :orgId, UUID())';
+    $eviticsDB->query($addPendingReqSQL, array('userId'=>$userId, 'orgId'=>$orgId));
+    
+    $rowId = $eviticsDB->lastInsertId();
+    $res = $eviticsDB->fetchAll("SELECT * FROM `pendingRequests` WHERE `id` = :id", array('id'=>$rowId));
+    
+    if($res && isset($res[0]) && isset($res[0]['referallCode'])) {
+      return $res[0]['referallCode'];
+    } else {
+      return false;
+    }
+  }
+
+  public static function hasRequestedJoin($userId, $orgId) {
+    $eviticsDB = new DB("evitics");
+    $sql = "SELECT count(*) as `numRows` FROM `user` WHERE `orgId` = :orgId AND `userId` = :userId";
+    $res = $eviticsDB->fetchAll($sql, array('orgId'=>$orgId, 'userId'=>$userId));
+    if(!$res || !isset($res[0])) {
+      throw new Exception("Could not fetch user rows");
+    }
+
+    if($res[0]['numRows'] > 0) {
+      return true; 
+    } else {
+      return false;
+    }
   }
 }
 

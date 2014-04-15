@@ -285,7 +285,7 @@ Class GTED {
   */
   public function saneitize($gtedInfo) {
     $output = array();
-    $output['username'] = $gtedInfo['gtprimarygtaccountusername'];
+    $output['username'] = $gtedInfo['gtprimarygtaccountusername'][0];
     $output['curriculum'] = $gtedInfo['gtcurriculum'][1];
     $output['email'] = $gtedInfo['mail'][0];
     //might not exist

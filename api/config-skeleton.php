@@ -47,7 +47,10 @@ return array(
         "table"=>"gtedCache"   //table which stores the ldap cache
       )
     ),
-    "jacketpagesURL"=> "http://jacketpages.gatech.edu"
+    "jacketpagesURL"=> "http://jacketpages.gatech.edu",
+    "adminUserAccounts"=> array(
+	'gburdell3', 'gburdell69'
+    )
 );
 
 ?>

@@ -32,7 +32,7 @@ require.config({
     "views/log"                 :  "views/log",
     "views/meetings"            :  "views/meetings",
     "views/marketing"           :  "views/marketing",
-    
+
     //Models
     "models/user" : "models/user",
     "models/organization" : "models/organization",

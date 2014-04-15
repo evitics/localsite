@@ -33,13 +33,33 @@ $app->get('/organizations/:id', function($id) {
     }
 });
 /*
+    Get a list of all users which belong to an organization.
+    Logged in user must have write perms for said org
+*/
+$app->get('/organization/permission/:orgId', function($orgId) {
+    $userPerms = User::getPermissions($orgId);
+    if($userPerms && $userPerms['writePerm']) {
+        $permList = Organization::permissionList($orgId);
+        if($permList) {
+            echo json_encode($permList);    
+        } else {
+            echo '{ "error" : "could not fetch the permission list" }';
+        }
+        
+    } else {
+        echo '{ "error" : "user does not have permission to view the permission list for specified orgId" }';
+    }
+
+});
+/*
     Put in a request to join an organization
 */
 $app->post('/organization/join/:id', function($orgId) {
+    $_POST['userId'] = 'cbookman3';
     if(!isset($_POST['userId'])) { 
         echo '{ "error" : "userId not specified" }';
     } else {
-        echo json_encode(Organization::requestJoin($orgId, $_POST['userId']));
+        echo json_encode(Organization::requestJoin($_POST['userId'], $orgId));
     }
 });
 /*

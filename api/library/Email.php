@@ -1,6 +1,6 @@
 <?php
 
-require_once './vendor/xamin/handlebars.php/src/Handlebars/Autoloader.php';
+require_once(dirname(__FILE__).'/../vendor/xamin/handlebars.php/src/Handlebars/Autoloader.php');
 Handlebars\Autoloader::register();
 use Handlebars\Handlebars;
 
@@ -42,7 +42,7 @@ Class Email {
     $headers .= 'From: ' . $from . "\r\n" . 
                 'Reply-To: ' . $from . "\r\n" . 
                 'X-Mailer: PHP/' . phpversion();
-
+    
     if(mail($to, $subject, $message, $headers)) {
       return array('success'=>'Sent email to ' . $params['to']);
     } else {
