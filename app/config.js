@@ -37,12 +37,13 @@ require.config({
     "models/user" : "models/user",
     "models/organization" : "models/organization",
     "models/meeting"      : "models/meeting",
+    "models/permissions"  : "models/permissions",
     
     //Collections
-    "collections/organization" : "collections/organization",
-    "collections/meeting"      : "collections/meeting",
-    "collections/checkIns.js"  : "collections/checkIns",
-    
+    "collections/organization"    : "collections/organization",
+    "collections/meeting"         : "collections/meeting",
+    "collections/checkIns.js"     : "collections/checkIns",
+
     //Controllers
     "controllers/bindControllers"     : "controllers/bindControllers",
     "controllers/bindLinksToBackbone" : "controllers/bindLinksToBackbone",

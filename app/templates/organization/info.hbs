@@ -1,4 +1,4 @@
-<div class="small-12 columns">
+<section id="orgInformation" class="small-12 columns">
   <div class="row collapse">
       <h2><img class="org-logo" src="{{logo_path}}"></img>{{name}}</h2>
   </div>
@@ -12,14 +12,17 @@
   <div class="row collapse">
     <div class="small-12">
       {{#if joined}}
-        <button class="alert">Leave Organization</button>
+        <button class="alert leaveOrg">Leave Organization</button>
       {{else}}
         {{#if requestPending}}
           <button class="disabled">Request Pending</button>
         {{else}}
-          <button>Join Organization</button>
+          <button class="joinOrg">Join Organization</button>
         {{/if}}
       {{/if}}
     </div>
   </div>
-</div>
+</section>
+<section id="orgPermissions" class="small-12 columns">
+  {{! only populated if user has write permission for organization }}
+</section> 

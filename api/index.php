@@ -51,13 +51,19 @@ $app->error(function (\Exception $e) use ($app) {
 });
 
 //Make PUT and POST payloads of JSON to php array
-if($_SERVER['REQUEST_METHOD'] == 'PUT' || $_SERVER['REQUEST_METHOD'] == 'POST') {
+if($_SERVER['REQUEST_METHOD'] == 'PUT' || $_SERVER['REQUEST_METHOD'] == 'POST' || $_SERVER['REQUEST_METHOD'] == 'DELETE') {
   $postStr = file_get_contents("php://input");
   if(strlen($postStr) > 0) {
     try {
       $json = json_decode($postStr, true); //true forces an associative PHP array
       if(!empty($json)) {
         $_POST = $json; 
+      } else {
+        $queryStrArr = array();
+        parse_str($postStr, $queryStrArr);
+        if(!empty($queryStrArr)) {
+          $_POST = $queryStrArr;
+        }
       }
     } catch(Exception $e) {
       /*  
@@ -65,7 +71,6 @@ if($_SERVER['REQUEST_METHOD'] == 'PUT' || $_SERVER['REQUEST_METHOD'] == 'POST') 
       */
     }
   }
-
 }
 //Run app
 $app->run();

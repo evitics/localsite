@@ -3,10 +3,10 @@
     DO NOT JUDGE THIS CODE, ITS A POS made in < 3 mins.  I do realize
     that its ugly....but its ment only as a quick interface to MySQL.
   */
-  require_once('./routes/Organization.php');
-  require_once('./library/GTED.php');
-  require_once('./library/DB.php');
-  $config = require('./config.php');
+  require_once('../routes/Organization.php');
+  require_once('../library/GTED.php');
+  require_once('../library/DB.php'); 
+  $config = require('../config.php');
   $eviticsDB = new DB("evitics");
   $gted = new GTED();
   $organizations = Organization::getAll();

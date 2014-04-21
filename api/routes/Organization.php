@@ -4,6 +4,8 @@ require_once(dirname(__FILE__).'/../library/DB.php');
 require_once(dirname(__FILE__).'/../library/Helpers.php');
 require_once(dirname(__FILE__).'/../library/GTED.php');
 require_once(dirname(__FILE__).'/../library/Email.php');
+require_once(dirname(__FILE__).'/../routes/User.php');
+
 class Organization {
   public static function createCheckinTable($orgId) {
     if(empty($orgId) || !Organization::get($orgId)) {
@@ -45,7 +47,7 @@ class Organization {
   }
 
   public static function getAll() {
-    $config = require("./config.php");
+    $config = require(dirname(__FILE__)."/../config.php");
     $jacketpagesDB = new DB("jacketpages");
     $query = "SELECT `orgId`, `name`, `short_name`, `description`, `logo_path` FROM `organizations` ORDER BY `name` ASC";
     
@@ -95,9 +97,9 @@ class Organization {
   */
   public static function permissionList($orgId) {
     $eviticsDB = new DB("evitics");
-    $sql = "SELECT * FROM `user` WHERE `orgId` = :orgId";
+    $sql = "SELECT `userId`, `writePerm` FROM `user` WHERE `orgId` = :orgId";
     $users = $eviticsDB->fetchAll($sql . ' and `isPending` = 0', array('orgId'=>$orgId));
-    $pending = $eviticsDB->fetchAll($sql . ' and `isPending` = 1', array('orgId'));
+    $pending = $eviticsDB->fetchAll($sql . ' and `isPending` = 1', array('orgId'=>$orgId));
     if(!$users) { $users = array(); }
     if(!$pending) { $pending = array(); }
     return array('users'=>$users, 'pending'=>$pending);
@@ -159,6 +161,53 @@ class Organization {
       return false;
     } else {
       return true;
+    }
+  }
+  public static function delUser($userId, $orgId) {
+    if(!User::hasWritePerms($orgId)) {
+      return false;
+    }
+    $sql = "DELETE FROM `user` WHERE `userId` = :userId AND `orgId` = :orgId";
+    $eviticsDB = new DB('evitics');
+    if($eviticsDB->query($sql, array('userId'=>$userId, 'orgId'=>$orgId))) {
+      return true;
+    } else {
+      return false;
+    }
+
+  }
+  public static function addUser($userId, $orgId, $writePerm) {
+    //make sure logged in user has permission to add ppl
+    if(!User::hasWritePerms($orgId)) {
+      return false;
+    }
+    $loggedInPerms = User::getPermissions($orgId);
+    if(!$loggedInPerms['writePerm']) {
+      return false;
+    }
+
+    $eviticsDB = new DB('evitics');
+    $gted = new GTED();
+    $userInfo = $gted->getUser($userId);
+    if(!$userInfo || !isset($userInfo['gtprimarygtaccountusername']) || !isset($userInfo['gtprimarygtaccountusername'][0])) {
+
+      return false;
+    }
+
+    //force userId to be a username...e.g. gburdell3
+    $userId = $userInfo['gtprimarygtaccountusername'][0];
+    //clean up any pending rows
+    $delOldRows = 'DELETE FROM `user` WHERE `orgId` = :orgId AND `userId` = :userId';
+    if(!$eviticsDB->query($delOldRows, array('orgId'=>$orgId, 'userId'=>$userId))) {
+      return false;
+    }
+
+    //add new user row
+    $addNewRow = 'INSERT INTO `user` (`userId`, `orgId`, `writePerm`, `isPending`) VALUES (:userId, :orgId, :writePerm, 0)';
+    if($eviticsDB->query($addNewRow, array('writePerm'=>$writePerm, 'userId'=>$userId, 'orgId'=>$orgId))) {
+      return true;
+    } else {
+      return false;
     }
   }
   public static function addPendingRequest($userId, $orgId) {

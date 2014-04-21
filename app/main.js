@@ -21,6 +21,13 @@ require(["config"], function() {
         // Captures <a href="/...."></a> and forces a backbone.js route
         bindLinksToBackbone(app);
 
+        //remove old views on popstate
+        window.onpopstate = function(ev) {
+          if(app.views.current.remove) {
+           app.views.current.remove();
+          }
+        };
+
         // This code binds the new route events to each controller
         bindControllers(app, user);
         
@@ -32,6 +39,8 @@ require(["config"], function() {
         // Trigger the initial route and enable HTML5 History API support, set the
         // root folder to '/' by default.  Change in app.js.
         Backbone.history.start({ pushState: true, root: app.root });
+
+
       },
       error : function(m, r)  {
         ( new ErrorPage() ).render("Could not load user account");

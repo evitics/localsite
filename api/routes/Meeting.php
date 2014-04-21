@@ -52,9 +52,9 @@ class Meeting {
   }
   public static function get($orgId, $meetingId=false) {
     if($meetingId) {
-      return $this::getMeetId($orgId, $meetingId);
+      return self::getMeetId($orgId, $meetingId);
     } else {
-      return $this::getOrgId($orgId);
+      return self::getOrgId($orgId);
     }
   }
   public static function saneitize($meetingObj) {

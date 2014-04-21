@@ -2,7 +2,7 @@ define(['jquery', 'underscore', 'backbone', 'controllers/home', 'controllers/che
 function($      ,  _          ,  Backbone ,  HomeController   ,  CheckInTotalsController   ,  NewTriggerController     ,  OrganizationController   ,  CheckInGuestController   ,  LogController   ,  MeetingsController   ,  MarketingController   ,  HelpView   ) {
   var bindControllers = function(app, user) {
     var vent = _.extend({}, Backbone.Events);
-
+    
     app.router.on('route:index', function() {
       app.controller = new HomeController({app : app, user: user, vent : vent});
     });

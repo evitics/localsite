@@ -1,6 +1,6 @@
 <?php
-require_once("./library/DB.php");
-require_once("./library/GTED.php");
+require_once(dirname(__FILE__)."/../library/DB.php");
+require_once(dirname(__FILE__)."/../library/GTED.php");
 class User {
   //TODO - REFACTOR - SUPER LONG FUNCTION CODE, Which has reusable parts
   public static function get($userId) {
@@ -48,10 +48,10 @@ class User {
       //If Checks if organization exists, and we can get jacketpages info on said org
       $orgId = $userRecords[$i]["orgId"];
       if($preparedOrgQuery->execute(array("orgId"=>$orgId)) && $preparedOrgQuery->rowCount() === 1) {
-        $orgs[$i] = array();
+        $orgs[$i] = array();;
         $orgs[$i]["orgId"]     = $orgId;
-        $orgs[$i]["writePerm"] = $userRecords[$i]["writePerm"];
-        $orgs[$i]["isPending"] = $userRecords[$i]["isPending"];    
+        $orgs[$i]["writePerm"] = intval($userRecords[$i]["writePerm"]);
+        $orgs[$i]["isPending"] = intval($userRecords[$i]["isPending"]); //force as int for templating
 
         //fetch organization information
         $org = $preparedOrgQuery->fetchAll(PDO::FETCH_ASSOC);
@@ -62,7 +62,7 @@ class User {
         }
         //add jacketpages url to logo path
         $orgs[$i]["logo_path"] = $config["jacketpagesURL"] . $orgs[$i]["logo_path"];
-        if(!$org[$i]["isPending"]) {
+        if(!$orgs[$i]["isPending"]) {
           //Fetch organization's meeting, if we're not in 'pending status'
           $orgs[$i]["meetings"] = array();
 
@@ -114,8 +114,13 @@ class User {
                'X-Mailer: PHP/' . phpversion();
     return mail($to, $from, $subject, $message, $headers);
   }
-  public static function leaveOrg($orgId) {
-
+  public static function hasWritePerms($orgId) {
+    $loggedInPerms = self::getPermissions($orgId);
+    if($loggedInPerms['writePerm']) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 ?>

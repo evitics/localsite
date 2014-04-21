@@ -651,7 +651,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   
-  return "\n        <button class=\"alert\">Leave Organization</button>\n      ";
+  return "\n        <button class=\"alert leaveOrg\">Leave Organization</button>\n      ";
   }
 
 function program3(depth0,data) {
@@ -672,10 +672,10 @@ function program4(depth0,data) {
 function program6(depth0,data) {
   
   
-  return "\n          <button>Join Organization</button>\n        ";
+  return "\n          <button class=\"joinOrg\">Join Organization</button>\n        ";
   }
 
-  buffer += "<div class=\"small-12 columns\">\n  <div class=\"row \">\n      <h2><img class=\"org-logo\" src=\"";
+  buffer += "<section id=\"orgInformation\" class=\"small-12 columns\">\n  <div class=\"row collapse\">\n      <h2><img class=\"org-logo\" src=\"";
   if (stack1 = helpers.logo_path) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = (depth0 && depth0.logo_path); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
   buffer += escapeExpression(stack1)
@@ -690,7 +690,7 @@ function program6(depth0,data) {
     + "\n      </p>\n    </div>\n  </div>\n  <div class=\"row collapse\">\n    <div class=\"small-12\">\n      ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.joined), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    </div>\n  </div>\n</div>";
+  buffer += "\n    </div>\n  </div>\n</section>\n<section id=\"orgPermissions\" class=\"small-12 columns\">\n  \n</section> ";
   return buffer;
   });
 
@@ -743,6 +743,117 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 
   return "<div class=\"small-12 columns organization-list\">\n  <section id=\"myOrganizations\" class=\"row collapse\">\n    <h3>My Organizations:</h3>\n    <ul class=\"myOrganizationList small-block-grid-2 medium-block-grid-5 large-block-grid-6\">\n    \n    </ul>\n  </section>\n\n  <section id=\"otherOrganizations\" class=\"row collapse\">\n    <h3>Other Organizations:</h3>\n    <ul class=\"otherOrganizationList small-block-grid-2 medium-block-grid-4 large-block-grid-5 organization-list\">\n    </ul>\n  </section>\n\n  <section id=\"requestNew\" class=\"row collapse\" style=\"text-align:center;\">\n    <h3><a class=\"button\" href=\"/organizations/new\">Request a New Organization</a></h3>\n  </section>\n\n</div>";
+  });
+
+this["templates"]["organization/permissions"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, stack2, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <table>\n    <thead>\n    <tr>\n      <th>Username</th>\n      <th>Write Permission</th>\n      <th>Add</th>\n      <th>Remove</th>\n    </tr>\n    </thead>\n    <tbody>\n    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.pending), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </tbody>\n  </table>\n  ";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n      <tr id=\"";
+  if (stack1 = helpers.userId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.userId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" style=\"line-height:1em;\">\n        <td>";
+  if (stack1 = helpers.userId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.userId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "</td>\n        <td style=\"text-align:center;\">\n          <input type=\"checkbox\" class=\"writePerm\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.writePerm), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">\n        </td>\n        <td><button style=\"margin:0;\" data-userId=\"";
+  if (stack1 = helpers.userId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.userId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" class=\"button tiny radius add\">✓</button></td>\n        <td><button style=\"margin:0;\" data-userId=\"";
+  if (stack1 = helpers.userId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.userId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" class=\"button tiny radius alert remove\">X</button></td>\n      </tr>\n    ";
+  return buffer;
+  }
+function program3(depth0,data) {
+  
+  
+  return "checked";
+  }
+
+function program5(depth0,data) {
+  
+  
+  return "\n  <p>None</p>\n  ";
+  }
+
+function program7(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <table>\n    <thead>\n    <tr>\n      <th>Username</th>\n      <th>Write Permission</th>\n      <th>Remove</th>\n    </tr>\n    </thead>\n    <tbody>\n    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.users), {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </tbody>\n  <table>\n  ";
+  return buffer;
+  }
+function program8(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n      ";
+  stack1 = helpers.unless.call(depth0, (depth0 && depth0.isPending), {hash:{},inverse:self.noop,fn:self.program(9, program9, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    ";
+  return buffer;
+  }
+function program9(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n      <tr id=\"";
+  if (stack1 = helpers.userId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.userId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\">\n        <td>";
+  if (stack1 = helpers.userId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.userId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "</td>\n        <td style=\"text-align:center;\">\n          <input type=\"checkbox\" class=\"writePerm\" data-userId=\"";
+  if (stack1 = helpers.userId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.userId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.writePerm), {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ">\n        </td>\n        <td><button style=\"margin:0;\" data-userId=\"";
+  if (stack1 = helpers.userId) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = (depth0 && depth0.userId); stack1 = typeof stack1 === functionType ? stack1.call(depth0, {hash:{},data:data}) : stack1; }
+  buffer += escapeExpression(stack1)
+    + "\" class=\"button tiny alert remove\">X</button></td>\n      </tr>\n      ";
+  return buffer;
+  }
+
+function program11(depth0,data) {
+  
+  
+  return "\n  <p>No Administrative users</p>\n  ";
+  }
+
+  buffer += "<hr></hr>\n\n<article id=\"addNewUser\" class=\"row collapse\">\n<h4>Add User</h4>\n  <div class=\"small-10 columns\">\n    <input class=\"addNewUser username\" type=\"text\" placeholder=\"Username, gtid, or buzzcard\">\n  </div>\n  <div class=\"small-2 columns\">\n    <a href=\"#\" class=\"button postfix addNewUser submit\">Add</a>\n  </div>\n</article>\n\n<hr></hr>\n\n<article id=\"pendingRequestsPermissions\" class=\"row collapse\">\n  <h4>Pending Requests</h4>\n  ";
+  stack2 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.pending)),stack1 == null || stack1 === false ? stack1 : stack1.length), {hash:{},inverse:self.program(5, program5, data),fn:self.program(1, program1, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n</article>\n\n<hr></hr>\n\n<article id=\"registeredUserPermissions\" class=\"row collapse\">\n  <h4>Registered Users</h4>\n  ";
+  stack2 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.users)),stack1 == null || stack1 === false ? stack1 : stack1.length), {hash:{},inverse:self.program(11, program11, data),fn:self.program(7, program7, data),data:data});
+  if(stack2 || stack2 === 0) { buffer += stack2; }
+  buffer += "\n</article>";
+  return buffer;
   });
 
 return this["templates"];

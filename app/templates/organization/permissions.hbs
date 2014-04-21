@@ -1,43 +1,75 @@
-<div class="row collapse">
-<h3>Pending Requests</h3>
-{{#if pendingMembers.length}}
+<hr></hr>
+
+<article id="addNewUser" class="row collapse">
+<h4>Add User</h4>
+  <div class="small-10 columns">
+    <input class="addNewUser username" type="text" placeholder="Username, gtid, or buzzcard">
+  </div>
+  <div class="small-2 columns">
+    <a href="#" class="button postfix addNewUser submit">Add</a>
+  </div>
+</article>
+
+<hr></hr>
+
+<article id="pendingRequestsPermissions" class="row collapse">
+  <h4>Pending Requests</h4>
+  {{#if pending.length}}
   <table>
+    <thead>
     <tr>
       <th>Username</th>
+      <th>Write Permission</th>
       <th>Add</th>
       <th>Remove</th>
     </tr>
-  {{#each}}
-    <tr>
-      <td>{{userId}}</td>
-      <td><button data-userId="{{userId}}" class="button tiny radius add">Add</button></td>
-      <td><button data-userId="{{userId}}" class="button tiny radius alert remove">Remove</button></td>
-    </tr>
-  {{/each}}
+    </thead>
+    <tbody>
+    {{#each pending}}
+      <tr id="{{userId}}" style="line-height:1em;">
+        <td>{{userId}}</td>
+        <td style="text-align:center;">
+          <input type="checkbox" class="writePerm" {{#if writePerm}}checked{{/if}}>
+        </td>
+        <td><button style="margin:0;" data-userId="{{userId}}" class="button tiny radius add">✓</button></td>
+        <td><button style="margin:0;" data-userId="{{userId}}" class="button tiny radius alert remove">X</button></td>
+      </tr>
+    {{/each}}
+    </tbody>
   </table>
-{{else}}
-  <p>No Pending requests</p>
-{{/if}}
+  {{else}}
+  <p>None</p>
+  {{/if}}
+</article>
 
-<h3>Administrative Users</h3>
-{{µ#if members.length}}
+<hr></hr>
+
+<article id="registeredUserPermissions" class="row collapse">
+  <h4>Registered Users</h4>
+  {{#if users.length}}
   <table>
+    <thead>
     <tr>
       <th>Username</th>
       <th>Write Permission</th>
       <th>Remove</th>
     </tr>
-  {{#each members}}
-    {{#unless isPending}}
-    <tr>
-      <td>{{userId}}</td>
-      <td>{{writePerm}}</td>
-      <td><button data-userId="{{userId}}" class="button tiny alert remove">X</a></td>
-    </tr>
-    {{/unless}}
-  {{/each}}
+    </thead>
+    <tbody>
+    {{#each users}}
+      {{#unless isPending}}
+      <tr id="{{userId}}">
+        <td>{{userId}}</td>
+        <td style="text-align:center;">
+          <input type="checkbox" class="writePerm" data-userId="{{userId}}" {{#if writePerm}}checked{{/if}}>
+        </td>
+        <td><button style="margin:0;" data-userId="{{userId}}" class="button tiny alert remove">X</button></td>
+      </tr>
+      {{/unless}}
+    {{/each}}
+    </tbody>
   <table>
-{{else}}
+  {{else}}
   <p>No Administrative users</p>
-{{/if}}
-</div>
+  {{/if}}
+</article>

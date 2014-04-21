@@ -52,10 +52,52 @@ $app->get('/organization/permission/:orgId', function($orgId) {
 
 });
 /*
+    Remove user with specified userId, and orgId
+*/
+$app->delete('/organization/permission/:orgId/:userId', function($orgId, $userId) {
+    if(Organization::delUser($userId, $orgId)) {
+        echo '{ "success" : "removed userId of '.$userId.' from org '.$orgId.'" }';
+    } else {
+        echo '{ "error" : "could not remove userId of '.$userId.' from org '.$orgId.'" }';
+    }
+});
+/*
+    Rmove old information on user, and new user with orgId, userId, and the posted
+    writePerm
+*/
+$app->post('/organization/permission/:orgId/:userId', function($orgId, $userId) {
+    if(!isset($_POST['writePerm']) || !is_numeric($_POST['writePerm'])) {
+        echo '{ "error" : "must specify a 1 or 0 for writePerm" }'; return; 
+    }
+    if(Organization::addUser($userId, $orgId, intval($_POST['writePerm']))) {
+        echo '{ "success" : "added user" }';
+    } else {
+        echo '{ "error" : "could not add user" }';
+    }
+});
+/*
+    Remove old information on user, and add POST(ed) user to organization.
+    Or add new user to org w/specified credentials
+*/
+$app->post('/organization/permission/:orgId', function($orgId) {
+    if(empty($_POST['userId'])) {  
+        echo '{ "error" : "must specify userId" }'; return; 
+    }
+    if(!isset($_POST['writePerm']) || !is_numeric($_POST['writePerm']) ) { 
+        echo '{ "error" : "must specify a 1 or 0 for writePerm" }'; return; 
+    }
+    $userId = $_POST['userId'];
+    $writePerm = intval($_POST['writePerm']);
+    if(Organization::addUser($userId, $orgId, $writePerm)) {
+        echo '{ "success" : "added user" }';
+    } else {
+        echo '{ "error" : "could not add user" }';
+    }
+});
+/*
     Put in a request to join an organization
 */
 $app->post('/organization/join/:id', function($orgId) {
-    $_POST['userId'] = 'cbookman3';
     if(!isset($_POST['userId'])) { 
         echo '{ "error" : "userId not specified" }';
     } else {

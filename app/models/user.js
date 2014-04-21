@@ -3,6 +3,7 @@ function(backbone,   OrganizationCollection   ,  MeetingCollection   ,  ErrorPag
   var UserModel = Backbone.Model.extend({
     idAttribute : "username",
     parse : function(res) {
+
       if(res.hasOwnProperty("error")) {
         ( new ErrorPage() ).render(res.error);
         return false;
@@ -11,7 +12,9 @@ function(backbone,   OrganizationCollection   ,  MeetingCollection   ,  ErrorPag
       res.organizations = new OrganizationCollection(res.organizations);
       res.organizations.each(function(organization) {
         //Make the meetings property a collection
-        organization.set("meetings", new MeetingCollection(organization.get('meetings')));
+        if(!organization.get('isPending')) {
+          organization.set("meetings", new MeetingCollection(organization.get('meetings')));
+        }
       });
       return res;
     },

@@ -17,7 +17,7 @@ Class Log {
   */
   public function getAll($params) {
     //sanatize orgId
-    $meetings = Meeting::getOrgId($orgId);
+    $meetings = Meeting::get($this->orgId);
     
     //build query based on optional parameters
     $sql = "SELECT `userId`, `meetingId`, `timestamp`, `checkedInBy` FROM `$this->orgId` WHERE `meetingId` LIKE :meetingId";
