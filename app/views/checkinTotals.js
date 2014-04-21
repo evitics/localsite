@@ -47,65 +47,54 @@ function($,        Backbone,   templates ,  OrgMeetingForm       ) {
       }
     },
     renderTotals : function(orgId, meetingId) {
-      var model = {
-        res : {
-          total: 2352,
-          page : 1
-        },
-        hits : {
-          2014 : {
-            January : {
-              1 : 23,
-              5 : 25,
-              8 : 29,
-              total : 77
-            },
-            February : {
-              20 : 20,
-              22 : 35,
-              total : 55
-            },
-          },
-          2013 : {
-            December : {
-              1 : 25,
-              total : 25
-            },
+      var that = this;
+      $.get('/api/log/' + orgId + '/' + meetingId)
+        .fail(function() {
+          alert("Error: Could not fetch data");
+        })
+        .done(function(data) {
+          if(data.hasOwnProperty('error')) {
+            that.$el.find("#analyticsData").html("<p>No Checkin Data for this meeting</p>");
+            return;
           }
-        }
-      };
-      this.$el.find("#analyticsData").html(templates['analytics/total/index'](context));
-      var html = '';
-      var hits = model.hits;
-      var context = {
-        orgId : orgId,
-        meetingId : meetingId
-      };
-      for(var year in hits) {
-        context.year = year;
-        html += '<tbody class="year">';
-        html += templates['analytics/total/yearRow'](context);
-        for(var month in hits[year]) {
-          context.month = month;
-          html += '</tbody><tbody class="month">';
-          html += templates['analytics/total/monthRow'](context);
-          for(var day in hits[year][month]) {
-            context.day = day;
-            context.value = hits[year][month][day];
-            html+= templates['analytics/total/dayRow'](context);
+          that.$el.find("#analyticsData").html(templates['analytics/total/index']());
+          var html = '';
+          var context = {
+            orgId : orgId,
+            meetingId : meetingId
+          };
+          for(var year in data) {
+            context.year = year;
+            html += '<tbody class="year">';
+            html += templates['analytics/total/yearRow'](context);
+            for(var month in data[year]) {
+              context.month = month;
+              html += '</tbody><tbody class="month">';
+              html += templates['analytics/total/monthRow'](context);
+              for(var day in data[year][month]) {
+                if(day == 'total') {
+                  context.isTotal = true;
+                } else {
+                  context.isTotal = false;
+                }
+                context.day = day;
+                context.value = data[year][month][day];
+                html+= templates['analytics/total/dayRow'](context);
+              }
+            }
+            html +='</tbody>';
           }
-        }
-        html +='</tbody>';
-      }
-      this.$el.find("table#analyticsTotals").append(html);
-      this.$el.find("#analyticsData").append(templates["analytics/total/downloadButtons"]({
-        orgId : orgId,
-        meetingId : meetingId
-      }));
+          that.$el.find("table#analyticsTotals").append(html);
+          that.$el.find("#analyticsData").append(templates["analytics/total/downloadButtons"]({
+            orgId : orgId,
+            meetingId : meetingId
+          }));
+        });
     },
     remove : function() {
       this.meetingForm.remove();
       this.stopListening();
+      this.undelegateEvents();
       this.vent.off("post:orgMeetingForm");
       this.$el.html('');
     }

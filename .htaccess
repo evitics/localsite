@@ -1,8 +1,8 @@
-#AuthType Cas 
-#Require valid-user
+AuthType Cas 
+Require valid-user
 
-#RewriteEngine On
-#RewriteRule ^/styles.min.css$ /dist/styles.min.css [QSA,L]
-#RewriteRule ^/source.min.js$  /dist/source.min.js  [QSA,L]
-#RewriteRule ^/templates.js$   /dist/templates.js   [QSA,L]
-#RewriteRule ^/(?!app|dist|vendor|api).*$ /dist/index.php [QSA,L]
+RewriteEngine on
+RewriteRule ^styles.min.css$ dist/styles.min.css [QSA,L]
+RewriteRule ^source.min.js$  dist/source.min.js  [QSA,L]
+RewriteRule ^templates.js$   dist/templates.js   [QSA,L]
+RewriteRule ^(?!app|dist|vendor|api).*$ dist/index.html [QSA,L]

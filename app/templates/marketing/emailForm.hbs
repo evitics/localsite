@@ -1,0 +1,33 @@
+<form id="marketingEmailForm">
+  <div class="row collapse">
+    <label>To:
+      <input id="marketing-emailTo" type="text" value="{{emailTo}}" required>
+    </label>
+  </div>
+  <div class="row collapse">
+    <label>From:
+      <input id="marketing-emailFrom" type="text" value="{{emailFrom}}" required>
+    </label>
+  </div>
+  <div class="row collapse">
+    <label>Subject:
+      <input id="marketing-emailSubject" type="text" value="{{emailSubject}}" required>
+    </label>
+  </div>
+  <div class="row collapse">
+    <label>Message:
+      <textarea id="marketing-emailMessage" style="height:9rem;" required>{{emailMessage}}</textarea>
+    </label>
+  </div>
+  <div class="row collapse">
+    <input type="submit" class="button" value="Send Emails">
+  </div>
+</form>
+
+<div id="emailStatusModal" class="reveal-modal" data-reveal>
+  <h2>Sending Emails</h2>
+  <div class="progress">
+    <span id="emailProgressBar" class="meter" style="width: 1%"></span>
+  </div>
+  <a class="close-reveal-modal">&#215;</a>
+</div>

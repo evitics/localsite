@@ -38,3 +38,7 @@ a.button.secondary {
   height: 100px;
   width: 150px;
 }
+.delButton {
+  color: red;
+  font-size:1.2em;
+}

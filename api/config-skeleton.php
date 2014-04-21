@@ -6,7 +6,8 @@ return array(
   user is set to $this["development"]["username"].
 */
 //    "development"=>array(
-//      "username"=>"gburdell3"
+//      "username"=>"gburdell3",
+//      "email" => "gburdell3@gatech.edu"
 //    ),
 
 //Database configuration
@@ -46,7 +47,10 @@ return array(
         "table"=>"gtedCache"   //table which stores the ldap cache
       )
     ),
-    "jacketpagesURL"=> "http://jacketpages.gatech.edu"
+    "jacketpagesURL"=> "http://jacketpages.gatech.edu",
+    "adminUserAccounts"=> array(
+	'gburdell3', 'gburdell69'
+    )
 );
 
 ?>

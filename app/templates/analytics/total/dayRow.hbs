@@ -1,6 +1,12 @@
 <tr>
   <td></td>
   <td></td>
-  <td><a href="/analytics/log/{{orgId}}/{{meetingId}}/{{year}}/{{day}}">{{day}}</a></td>
+  <td>
+    {{#if isTotal}}
+      total
+    {{else}}
+      <a href="/api/log/download/{{orgId}}/{{meetingId}}/{{year}}/{{month}}/{{day}}" target="_blank" download>{{day}}</a>
+    {{/if}}
+  </td>
   <td>{{value}}</td>
 </tr>

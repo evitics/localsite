@@ -1,4 +1,5 @@
 <?php
+require_once( dirname(__FILE__) . '/Helpers.php');
 Class GTED {
   private $ldapConfig;
   private $cacheDB;
@@ -13,6 +14,9 @@ Class GTED {
   private function _connect2Ldap() {
     $ldapConfig = $this->ldapConfig;
     $this->link = $ldapconn = ldap_connect($ldapConfig["host"], $ldapConfig["port"]);
+    //Have ldap timeout if it cannot connect after $ldapConfig['timeout'] seconds
+    ldap_set_option($this->link, LDAP_OPT_NETWORK_TIMEOUT,$ldapConfig['timeout']);
+    
     if(!$this->link) {
       throw new Exception("Unable to connect to the LDAP database");
     } else {
@@ -258,16 +262,43 @@ Class GTED {
   */
   public function getUser($userId) {
     $output = false;
-    if(is_numeric($userId)) { //must be a buzzcard or gtid
-      $userId = strval($userId);
-      if(strlen($userId) >= 9) {
-        $output = $this->_cacheByGTID($userId);
-      } else {
-        $output = $this->_cacheByBuzzcardId($userId);
-      }
-    } else { //its a gt-username
+    $isNumeric = is_numeric($userId);
+    $strLength = strlen('' . $userId);
+    $bitLength = strlen('' . decbin(intval($userId)));
+    //check if gt-username
+    if(!$isNumeric) {
       $output = $this->_cacheByUsername($userId);
+    //check if a gtid
+    } else if($isNumeric && $strLength == 9) {
+      $output = $this->_cacheByGTID(strval($userId));
+    //check if parsed out buzzcard id
+    } else if($isNumeric && $strLength == 6 && $bitLength == 19) {
+      $output = $this->_cacheByBuzzcardId($userId);
+    //check if a raw buzzcard output
+    } else if($isNumeric && $strLength >= 6 && $bitLength > 19) {
+      $output = $this->_cacheByBuzzcardId(Helpers::parseRawBuzzCard($userId)); 
     }
+    return $output;
+  }
+  /*
+    Returns an object with more sane object key's
+  */
+  public function saneitize($gtedInfo) {
+    $output = array();
+    $output['username'] = $gtedInfo['gtprimarygtaccountusername'][0];
+    $output['curriculum'] = $gtedInfo['gtcurriculum'][1];
+    $output['email'] = $gtedInfo['mail'][0];
+    //might not exist
+    if(isset($output['telephonenumber'])) {
+      $output['phone'] = $gtedInfo['telephonenumber'][0];
+    }
+    
+    $output['affiliation'] = $gtedInfo['edupersonprimaryaffiliation'][0];
+    $output['name'] = array(
+      'first'=>$gtedInfo['givenname'][0],
+      'last'=>$gtedInfo['sn'][0],
+      'full'=>$gtedInfo['cn'][0],
+    );
     return $output;
   }
 }

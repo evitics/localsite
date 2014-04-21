@@ -10,6 +10,7 @@ function($,        Backbone,   templates) {
     },
     remove : function() {
       this.stopListening();
+      this.undelegateEvents();
       $('.top-bar').html('');
       $('.left-off-canvas-menu').html('');
     }

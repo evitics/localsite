@@ -22,6 +22,7 @@ SET time_zone = "+00:00";
 CREATE DATABASE IF NOT EXISTS `evitics` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `evitics`;
 
+
 -- --------------------------------------------------------
 
 --
@@ -54,19 +55,16 @@ CREATE TABLE IF NOT EXISTS `meeting` (
   `meetingId` int(11) NOT NULL AUTO_INCREMENT,
   `orgId` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `sendEmailOnCheckin` varchar(50) NOT NULL DEFAULT 'false',
+  `emailFrom` varchar(255) NOT NULL,
+  `emailSubject` varchar(255) NOT NULL,
+  `emailMessage` mediumtext NOT NULL,
   PRIMARY KEY (`meetingId`),
   UNIQUE KEY `meetingId` (`meetingId`),
   KEY `meetingId_2` (`meetingId`),
   KEY `orgId` (`orgId`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=38 ;
 
---
--- Dumping data for table `meeting`
---
-
-INSERT INTO `meeting` (`meetingId`, `orgId`, `name`) VALUES
-(1, 27752, 'UHR Finance Meeting'),
-(2, 27752, 'Executive Meeting');
 
 -- --------------------------------------------------------
 
@@ -83,13 +81,8 @@ CREATE TABLE IF NOT EXISTS `user` (
   KEY `orgId` (`orgId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `user`
---
-
-INSERT INTO `user` (`userId`, `orgId`, `writePerm`, `isPending`) VALUES
-('cbookman3', 27752, 0, 0);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+

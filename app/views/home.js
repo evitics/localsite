@@ -38,6 +38,7 @@ function($,        Backbone,   templates,   OrgMeetingForm) {
       this.meetingForm.remove();
       this.unBindVents();
       this.stopListening();
+      this.undelegateEvents();
       this.$el.html('');
     },
     unBindVents : function() {

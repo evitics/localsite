@@ -58,8 +58,8 @@ Class DB {
     if(is_string($type)) {
       if(strtoupper($type) === "ASSOC") { 
         $type = PDO::FETCH_ASSOC; 
-      } else if(strtoupper($type) === "COLUMN") {
-        $type = PDO::FETCH_COLUMN;
+      } else if(strtoupper($type) === "NUMERIC") {
+        $type = PDO::FETCH_NUM;
       }  
     }
         

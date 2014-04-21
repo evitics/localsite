@@ -5,9 +5,10 @@ function($,        Backbone,   templates ,  OrgMeetingForm        ,  MeetingMode
     events: {
       'change .meeting-dropdown' : 'meetingChanged',
       'change .organization-dropdown' : 'meetingChanged', //whenever org changes, default meeting selected
+      'change #modify-sendEmailOnCheckin' : 'sendEmailOnCheckinChanged',
       'click .delete' : 'deleteMeeting',
       'click .save' : 'saveMeeting',
-      'submit #saveMeeting' : 'saveMeeting'
+      'submit #saveMeeting' : 'stopForm'
     },
     initialize: function(options) {
       if(!options.hasOwnProperty("user")) {
@@ -39,15 +40,19 @@ function($,        Backbone,   templates ,  OrgMeetingForm        ,  MeetingMode
       this.meetingInfo.fetch({
         success : function(results) {
           var context = that.meetingInfo.toJSON();
-          context.writePerm = that.user.get('organizations').get(orgId).toJSON().writePerm;
+          context.writePerm = that.user.get('organizations').get(orgId).get('writePerm');
           that.$el.find("#meetingInfo").html(templates['meetings/info'](context));
+          
+          //change email dropdown to correct value, then 'throw event'
+          that.$el.find('#modify-sendEmailOnCheckin').val(that.user.get('organizations').get(orgId).get('meetings').get(meetingId).get('sendEmailOnCheckin'));
+          that.sendEmailOnCheckinChanged(); //throwing event
         },
         error : function() {
           alert("Could not fetch meeting info :(");
         }
       });
     },
-    meetingChanged : function() {
+    meetingChanged : function(ev) {
       var meetingId = this.$el.find(".meeting-dropdown").val();
       var orgId = this.$el.find(".organization-dropdown").val();
       /*
@@ -61,6 +66,14 @@ function($,        Backbone,   templates ,  OrgMeetingForm        ,  MeetingMode
         
       } else {
         this.renderMeeting(orgId, meetingId);
+      }
+    },
+    sendEmailOnCheckinChanged : function(ev) {
+      var shouldSendEmail = this.$el.find('#modify-sendEmailOnCheckin').val();
+      if(shouldSendEmail !== 'false') {
+        this.$el.find(".modify-triggers").show();
+      } else {
+        this.$el.find(".modify-triggers").hide();
       }
     },
     deleteMeeting : function() {
@@ -94,11 +107,21 @@ function($,        Backbone,   templates ,  OrgMeetingForm        ,  MeetingMode
 
       var orgDropdown = this.$el.find('.organization-dropdown');
       var orgId = orgDropdown.val();
-      
+      //force to a true false
+      var sendEmailOnCheckin = this.$el.find('#modify-sendEmailOnCheckin').val();
+      if(sendEmailOnCheckin.length === 0) {
+        sendEmailOnCheckin = false;
+      }
+
       var that = this;
       this.user.get('organizations').get(orgId).get('meetings').get(meetingId).save({
-        'name' : this.$el.find('#meetingName').val(),
-        'onCheckIn' : this.$el.find("#onCheckIn").val()
+        name         : this.$el.find('#meetingName').val(),
+        onCheckIn    : this.$el.find("#onCheckIn").val(),
+        emailTo      : this.$el.find('#modify-email-to').val(),
+        emailFrom    : this.$el.find('#modify-email-from').val(),
+        emailSubject : this.$el.find('#modify-email-subject').val(),
+        emailMessage : this.$el.find('#modify-email-message').val(),
+        sendEmailOnCheckin : sendEmailOnCheckin
       },
       {
         success : function(res) {
@@ -120,10 +143,15 @@ function($,        Backbone,   templates ,  OrgMeetingForm        ,  MeetingMode
         }
       });
     },
+    stopForm : function(ev) {
+      ev.stopPropagation();
+      ev.preventDefault();
+    }, 
     remove : function() {
       this.stopListening();
       this.meetingForm.remove();
       this.vent.off("post:orgMeetingForm");
+      this.undelegateEvents();
       this.$el.html('');
     }
   });
