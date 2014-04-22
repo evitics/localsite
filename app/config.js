@@ -11,10 +11,10 @@ require.config({
     "underscore": "../vendor/bower/lodash/dist/lodash.underscore",
 
     // Map remaining vendor dependencies.
-    "jquery": "../vendor/bower/jquery/jquery",
+    "jquery": "../vendor/bower/jquery/dist/jquery",
     "backbone": "../vendor/bower/backbone/backbone",
     "handlebars" : "../vendor/bower/handlebars/handlebars.min",
-    "modernizr" : "../vendor/bower/foundation/js/vendor/modernizr",
+    "modernizr" : "../vendor/bower/modernizr/modernizr",
     "foundation" : "../vendor/bower/foundation/js/foundation.min",
     //templates
     "templates" : "../templates",

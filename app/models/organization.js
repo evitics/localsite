@@ -7,7 +7,7 @@ function(backbone ,  ErrorPage       ) {
     },
     url : function() {
       var out = '/api/organizations';
-      if(typeof this.orgId !== "undefined") {
+      if(this.orgId) {
         out += '/' + this.orgId;
       }
       return out;
