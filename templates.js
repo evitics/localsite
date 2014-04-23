@@ -489,7 +489,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<section id=\"main/startMeetingForm\" class=\"large-6 large-push-6 columns fixed-top-right orgMeetingForm\">\n  \n</section>\n<section id=\"news\" class=\"large-6 large-pull-6 columns\">\n  <h3>News</h3>\n  <div class=\"row\">\n    <div class=\"medium-12 columns\">\n      <h4>IEEE</h4>\n      <p>10 New Members</p>\n      <p>1/20 - 200 members at general Meeting</p>\n      <p>1/19 - 15 members at Hardware Meeting</p>\n    </div>\n  </div>\n  <div class=\"row\">\n    <div class=\"medium-12 columns\">\n      <h4>SGA</h4>\n      <p>100 New Members</p>\n      <p>1/20 - 200 members at IT Team Meeting</p>\n      <p>1/19 - 15 members at Executive Board Get-together</p>\n    </div>\n  </div>\n  <div class=\"row\">\n    <div class=\"medium-12 columns\">\n      <h4>SGA</h4>\n      <p>100 New Members</p>\n      <p>1/20 - 200 members at IT Team Meeting</p>\n      <p>1/19 - 15 members at Executive Board Get-together</p>\n    </div>\n  </div>\n  <div class=\"row\">\n    <div class=\"medium-12 columns\">\n      <h4>SGA</h4>\n      <p>100 New Members</p>\n      <p>1/20 - 200 members at IT Team Meeting</p>\n      <p>1/19 - 15 members at Executive Board Get-together</p>\n    </div>\n  </div>\n  <div class=\"row\">\n    <div class=\"medium-12 columns\">\n      <h4>SGA</h4>\n      <p>100 New Members</p>\n      <p>1/20 - 200 members at IT Team Meeting</p>\n      <p>1/19 - 15 members at Executive Board Get-together</p>\n    </div>\n  </div>\n</section>\n";
+  return "<section id=\"main/startMeetingForm\" class=\"small-12 columns orgMeetingForm\">\n  \n</section>\n";
   });
 
 this["templates"]["loading"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {

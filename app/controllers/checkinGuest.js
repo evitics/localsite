@@ -1,5 +1,5 @@
-define(["jquery", "backbone", "views/errorPage", "views/checkinGuest"],
-function($,        Backbone,   ErrorPage       ,  CheckinGuestView) {
+define(["jquery", "backbone", "views/errorPage", "views/checkInGuest"],
+function($,        Backbone,   ErrorPage       ,  CheckInGuestView) {
   var CheckInGuestController = function(options) {
     this.app = options.app;
     this.user = options.user;
@@ -12,14 +12,13 @@ function($,        Backbone,   ErrorPage       ,  CheckinGuestView) {
     } catch(e) {
       (new ErrorPage()).render("Could not load meeting Id: " + options.meetingId + " For organization: " + options.orgId);
     }
-    this.app.views.current = new CheckinGuestView({
+    this.app.views.current = new CheckInGuestView({
       user : this.user,
       vent : this.vent,
       organization : this.organization,
       meeting : this.meeting
     });
     this.app.views.current.render();
-
   };
   return CheckInGuestController;
 });

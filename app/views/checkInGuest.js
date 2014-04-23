@@ -32,8 +32,6 @@ function($,        Backbone,   templates ,  CheckInCollection    ) {
     },
     //Renders the checkins whenever checkInCollection is fetched
     renderCheckin : function(checkInCollection) {
-      debug = checkInCollection;
-      debug2 = this.checkInCollection;
       var html = '';
       //See if any errors, warning, or if successful (under res property) 
       var res = checkInCollection.get('res');

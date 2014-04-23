@@ -77,10 +77,6 @@ function($      ,  _          ,  Backbone ,  HomeController   ,  CheckInTotalsCo
         app.router.navigate("/meeting/" + post.orgId + "/" + post.meetingId, {trigger :true});
       }
     });
-    vent.bind("post:createAMeeting", function(post) {
-      alert("Creating Meeting...");
-      alert(JSON.stringify(post));
-    });
   };
   return bindControllers;
 });

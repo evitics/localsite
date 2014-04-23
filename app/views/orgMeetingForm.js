@@ -37,9 +37,7 @@ function($      ,  foundation ,  Backbone,   templates ,  MeetingModel) {
       
       
       var sendEmailOnCheckin = this.$newMeetingModal.find('.sendEmailOnCheckin').val();
-      
-      //create new meeting model
-      var meeting = new MeetingModel({
+      var meetingContext = {
         name               : this.$newMeetingModal.find('.meetingName').val(),
         orgId              : orgId,
         emailTo            : this.$newMeetingModal.find('#email-to').val(),
@@ -47,13 +45,21 @@ function($      ,  foundation ,  Backbone,   templates ,  MeetingModel) {
         emailSubject       : this.$newMeetingModal.find('#email-subject').val(),
         emailMessage       : this.$newMeetingModal.find('#email-message').val(),
         sendEmailOnCheckin : sendEmailOnCheckin
-      });
+      };
+      //make sure email params are there if required
+      if(meetingContext.sendEmailOnCheckin !== 'false') {
+        if(meetingContext.emailTo.trim().length      ===  0) { alert("No to address for emails, cannot create meeting");    return; }
+        if(meetingContext.emailFrom.trim().length    ===  0) { alert("No from address for emails, cannot create meeting");  return; }
+        if(meetingContext.emailSubject.trim().length ===  0) { alert("No subject for emails, cannot create meeting");       return; }
+        if(meetingContext.emailMessage.trim().length ===  0) { alert("No email message body, cannot create meeting");       return; }
+      }
+      //create new meeting model
+      var meeting = new MeetingModel(meetingContext);
       
       //save meeting, and append to user if successful, or display error msg
       var that = this;
       meeting.save(null, {
         success : function(res) {
-          debug3 = res;
           that.user.get('organizations').get(orgId).get('meetings').add(res);
           that.render();
           var context = res.toJSON();
@@ -79,22 +85,30 @@ function($      ,  foundation ,  Backbone,   templates ,  MeetingModel) {
         //disable start meeting button
         this.$el.find('.submit').prop('disabled', true);
         //disable the new meeting button
-        debug = this.$el;
         this.$el.find('.revealNewMeetingModal').addClass('disabled');
       }
     },
     showMeetingsFor : function(orgId) {
       var meetings = this.user.get('organizations').get(orgId).get('meetings');
-      var html = templates['forms/orgMeeting/meetings'](meetings.toJSON());
-      //display organizations meetings
       var meetingDropdown = this.$el.find('.meeting-dropdown');
-      meetingDropdown.html(html);
-      //make sure the meeting select dropdown is enabled
-      meetingDropdown.removeAttr('disabled');
-      //enable the start button
-      this.$el.find('.submit').removeAttr('disabled');
+
       //enable the new meeting button
       this.$el.find('.revealNewMeetingModal').removeClass('disabled');
+      
+      //make sure the meeting select dropdown is enabled
+      meetingDropdown.removeAttr('disabled');
+
+      //only if there are meetings do we render the templates
+      if(meetings.length > 0) {
+        //display organizations meetings
+        var html = templates['forms/orgMeeting/meetings'](meetings.toJSON());
+        meetingDropdown.html(html);
+        //enable the start button
+        this.$el.find('.submit').removeAttr('disabled');
+      } else { //no meetings available
+        this.$el.find('.submit').prop('disabled', true); //disable start button
+        meetingDropdown.html(''); //empty <select> tag
+      }
     },
     submitForm : function(ev) {
       ev.preventDefault();
