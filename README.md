@@ -10,7 +10,9 @@ First off you'll need a Linux or OS X based system, the following instructions a
 ###Step 1: Installing the Apache, Mysql (or mariaDB), and PHP###
 You can find detailed instructions from Digital Ocean: https://www.digitalocean.com/community/articles/how-to-install-linux-apache-mysql-php-lamp-stack-on-debian
 
-```sudo apt-get update && sudo apt-get install apache2 mysql-server php5 php-pear php5-suhosin php5-mysql```
+```
+sudo apt-get update && sudo apt-get install apache2 mysql-server php5 php-pear php5-suhosin php5-mysql
+```
 
 If you forgot to set the root password, simply issue the following command: 
 ```sudo mysql_secure_installation```
@@ -70,16 +72,24 @@ The field called adminUserAccounts will have permission to access the super-admi
 ###Step 5: Installing the webapp Package Management System###
 The front-end webapp uses npm and bower to keep its packages up to date. 
 We'll install bower using npm:
-```sudo apt-get install npm```
+```
+sudo apt-get install npm
+```
 
 Get any missing packages listed in packages.json, and update all packages to the most up-to-date syntax compatable version:
-```npm install```
+```
+npm install
+```
 
 Install the bower package manager (globally)
-```sudo npm install -g bower```
+```
+sudo npm install -g bower
+```
 
 Get any missing packjages listed in bower.json, and update all of them to the most up-to-date syntax compatable version:
-```bower install```
+```
+bower install
+```
 
 ###Step 6: Getting the grunt distribution builder, and making the dist/ folder###
 In our production environment, we want to reduce the number and size of our code files.  This is done to allow for the WebApp to load much faster.  Grunt.js uses node.js to read our dependency tree and build templates.js, source.min.js, and styles.min.js. When Grunt.js runs, it'll also pass the source code through a linter, which helps find code which doesn't correspond to the best-practice style guidelines (helping us find bugs).
@@ -88,17 +98,25 @@ First lets install node.js
 Joyent, the mainter of Node.js, published the following guide: https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager
 
 If you're using a Ubuntu distro, its as simple as issuing the following:
-```sudo apt-get install nodejs```
+```
+sudo apt-get install nodejs
+```
 
 If you're using Debian I'd suggest you use the backports or use the debian sid repo
 For backports, simply issue the following command:
-```curl https://www.npmjs.org/install.sh | sudo sh```
+```
+curl https://www.npmjs.org/install.sh | sudo sh
+```
 
 Now lets install grunt.js
-```sudo npm install -g grunt-cli```
+```
+sudo npm install -g grunt-cli
+```
 
 To build our distribution files run:
-```grunt```
+```
+grunt
+```
 
 This will concatinate and minify our CSS, and JavaScript, as-well as compile all the handlebars templates into templates.js. Then, all of the dependency files (including our backend) are copied into dist/ .  If you'd like to see exactly whats going on,read the Gruntfile.js .
 
@@ -107,4 +125,3 @@ After you run grunt, simply issue the following command:
 ```cp -R /var/www/localsite/dist/* /var/www```
 
 This will copy all of the distribution source code into your root web directory. To see the webapp, open your web-browser and navigate to localhost.
-
