@@ -37,12 +37,13 @@ function($      ,  _          ,  Backbone ,  HomeController   ,  CheckInTotalsCo
     });
 
     app.router.on('route:organizations' , function(orgId) {
-      app.controller = new OrganizationController({
-        app: app,
-        user: user,
-        vent: vent,
-        orgId: orgId
-      });
+      var context = {
+        app: app, user: user, vent: vent
+      };
+      if(orgId) {
+        context.orgId = orgId;
+      }
+      app.controller = new OrganizationController(context);
     });
     app.router.on('route:newOrganizationForm', function() {
       window.location.href= "http://jacketpages.gatech.edu/pages/contact";
@@ -75,10 +76,6 @@ function($      ,  _          ,  Backbone ,  HomeController   ,  CheckInTotalsCo
         app.views.current.remove();
         app.router.navigate("/meeting/" + post.orgId + "/" + post.meetingId, {trigger :true});
       }
-    });
-    vent.bind("post:createAMeeting", function(post) {
-      alert("Creating Meeting...");
-      alert(JSON.stringify(post));
     });
   };
   return bindControllers;

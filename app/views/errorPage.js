@@ -7,7 +7,6 @@ function($,        Backbone,   templates) {
       } else {
         this.errMsg = '';
       }
-      
       document.body.innerHTML = templates['404']({errMsg : this.errMsg});
       throw new Error(errMsg);
     }

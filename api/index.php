@@ -3,8 +3,10 @@ header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
 $config = require("./config.php");
+$debug = false;
 if(isset($config["development"])) {
   $_ENV["REMOTE_USER"] = $config["development"]["username"];
+  $debug = true;
 }
 
 //Make sure user is logged in
@@ -16,7 +18,7 @@ $GLOBALS["USERNAME"] = $_ENV["REMOTE_USER"];
 
 //Instatiate the SLIM framework
 require 'vendor/autoload.php';
-$app = new \Slim\Slim(array("debug"=>false));
+$app = new \Slim\Slim(array("debug"=>$debug));
 $GLOBALS["APP"] = $app;
 
 //Change the http Content-type header to json

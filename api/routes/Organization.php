@@ -164,7 +164,8 @@ class Organization {
     }
   }
   public static function delUser($userId, $orgId) {
-    if(!User::hasWritePerms($orgId)) {
+    //if one isn't requesting to delete oneself from an organization, and they don't have write perms. fail
+    if($GLOBALS['USERNAME'] !== $userId && !User::hasWritePerms($orgId)) {
       return false;
     }
     $sql = "DELETE FROM `user` WHERE `userId` = :userId AND `orgId` = :orgId";

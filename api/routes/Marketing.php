@@ -80,7 +80,7 @@ Class Marketing {
     return Organization::saneitize(Organization::get($orgId));
   }
   public static function meetingContext($meetingId) {
-    return Meeting::saneitize(Meeting::get($POST['meetingId']));
+    return Meeting::saneitize(Meeting::get($meetingId));
   }
 }
   

@@ -266,18 +266,18 @@ Class GTED {
     $strLength = strlen('' . $userId);
     $bitLength = strlen('' . decbin(intval($userId)));
     //check if gt-username
-    if(!$isNumeric) {
+    if(!$isNumeric) { 
       $output = $this->_cacheByUsername($userId);
     //check if a gtid
     } else if($isNumeric && $strLength == 9) {
       $output = $this->_cacheByGTID(strval($userId));
     //check if parsed out buzzcard id
-    } else if($isNumeric && $strLength == 6 && $bitLength == 19) {
+    } else if($isNumeric && $strLength <= 6 && $bitLength <= 19) {  
       $output = $this->_cacheByBuzzcardId($userId);
     //check if a raw buzzcard output
-    } else if($isNumeric && $strLength >= 6 && $bitLength > 19) {
+    } else if($isNumeric && $strLength >= 6 && $bitLength > 19) { 
       $output = $this->_cacheByBuzzcardId(Helpers::parseRawBuzzCard($userId)); 
-    }
+    } 
     return $output;
   }
   /*

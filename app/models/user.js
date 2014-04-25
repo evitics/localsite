@@ -24,7 +24,6 @@ function(backbone,   OrganizationCollection   ,  MeetingCollection   ,  ErrorPag
       json obj
     */
     toJSONR : function() {
-      debug = JSON.parse(JSON.stringify(this.attributes));
       return JSON.parse(JSON.stringify(this.attributes));
     }
   });

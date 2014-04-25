@@ -27,7 +27,7 @@
       'orgId'=>$_GET['orgId'],
       'ref'=>$_GET['ref']
   ));
-  if(!$res || !isset($res[0]) || !isset($res[0]['rowCount']) || $res[0]['rowCount'] !== 1) {
+  if(!$res || !isset($res[0]) || !isset($res[0]['rowCount']) || $res[0]['rowCount'] != 1) {
     die("Invalid url");
   }
 
