@@ -122,7 +122,8 @@ module.exports = function(grunt) {
         files: [
           { src: ["app/**"], dest: "dist/" },
           { src: "vendor/**", dest: "dist/" },
-          { src: "templates.js", dest: "dist/" }
+          { src: "templates.js", dest: "dist/" },
+          { expand: true, flatten: false, src: ['api/**'],  dest: 'dist/', filter: 'isFile' }
         ]
       }
     },
